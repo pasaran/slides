@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $filename = shift;
+
+my $md = `markdown_py $filename`;
+
+my @slides = split(/^<hr \/>$/sm, $md);
+
+my $html = <<HTML;
+<!doctype html>
+<html lang="en-us">
+<head>
+    <title>Yate</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=1274, user-scalable=no"/>
+    <link rel="stylesheet" href="shower/themes/ribbon/styles/style.css"/>
+    <style>
+    .slide:after, .slide pre code:before {
+        content: '';
+    }
+    .slide section:before {
+        background: none;
+    }
+    </style>
+</head>
+
+<body class="list">
+    <header class="caption">
+        <h1>yet another template engine</h1>
+    </header>
+
+HTML
+
+my $i = 0;
+for my $slide (@slides) {
+    $i++;
+    $slide =~ s{(<h2>.*?</h2>)}{<header>$1</header>}gsm;
+    $html .= <<HTML
+    <div class="slide" id="slide-$i"><div><section>$slide</section></div></div>
+
+HTML
+}
+
+$html .= <<HTML;
+
+    <script src="shower/scripts/script.js"></script>
+</body>
+</html>
+HTML
+
+print $html;
+
