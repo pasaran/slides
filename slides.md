@@ -50,7 +50,7 @@ JPath. Операторы
 JPath. Операторы
 ----------------
 
-    yate    xslt                yate    xslt
+    yate    xpath               yate    xpath
 
     +       +                   &&      and
     -       -                   ||      or
