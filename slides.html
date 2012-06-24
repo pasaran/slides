@@ -316,7 +316,7 @@ match .page title ( title = "Hello" ) {
 
     <div class="slide" id="slide-25"><div><section>
 <header><h2>Определения. Переменные</h2></header>
-<p>Переменные -- <strong>неизменяемы</strong>:</p>
+<p>Переменные — <strong>неизменяемы</strong>:</p>
 <pre><code>match / {
     a = 42
     a = "Hello" // Ошибка!
@@ -533,6 +533,18 @@ apply tree
 </section></div></div>
 
     <div class="slide" id="slide-43"><div><section>
+<header><h2>Будущее. Модули</h2></header>
+<p>Нужна возможность разбивать код шаблонов на модули.</p>
+<ul>
+<li>Возможность загрузить один модуль и потом подгрузить другой,
+    использующий первый.</li>
+<li><code>module "name"</code>.</li>
+<li><code>import "name"</code>.</li>
+<li><code>apply-imports</code>.</li>
+</ul>
+</section></div></div>
+
+    <div class="slide" id="slide-44"><div><section>
 <header><h2>Будущее. heredoc</h2></header>
 <pre><code>"""
 url = "{{ .url }}";
@@ -544,7 +556,7 @@ function(count) {
 </code></pre>
 </section></div></div>
 
-    <div class="slide" id="slide-44"><div><section>
+    <div class="slide" id="slide-45"><div><section>
 <header><h2>Всё</h2></header>
 <ul>
 <li><a href="http://git.io/yate">git.io/yate</a> — проект <code>yate</code> на github'е.</li>
@@ -552,13 +564,13 @@ function(count) {
 </ul>
 </section></div></div>
 
-    <div class="slide" id="slide-45"><div><section>
+    <div class="slide" id="slide-46"><div><section>
 <header><h2>Director's cut</h2></header>
 <p>Дальше идут слайды, выброшенные из основной презентации
 из-за весьма суровых ограничений по времени.</p>
 </section></div></div>
 
-    <div class="slide" id="slide-46"><div><section>
+    <div class="slide" id="slide-47"><div><section>
 <header><h2>JPath. Операторы</h2></header>
 <pre><code>jpath   xpath               jpath   xpath
 
@@ -569,7 +581,7 @@ function(count) {
 </code></pre>
 </section></div></div>
 
-    <div class="slide" id="slide-47"><div><section>
+    <div class="slide" id="slide-48"><div><section>
 <header><h2>JPath. Операторы</h2></header>
 <pre><code>jpath   xpath               jpath   xpath
 
@@ -581,7 +593,7 @@ function(count) {
 </code></pre>
 </section></div></div>
 
-    <div class="slide" id="slide-48"><div><section>
+    <div class="slide" id="slide-49"><div><section>
 <header><h2>JPath. Оператор <code>|</code></h2></header>
 <p>Работает не так, как в <code>XPath</code>:</p>
 <pre><code>.item[ .selected ] | .item[ .count &gt; 5 ]
@@ -593,7 +605,7 @@ function(count) {
 </ul>
 </section></div></div>
 
-    <div class="slide" id="slide-49"><div><section>
+    <div class="slide" id="slide-50"><div><section>
 <header><h2>Выражения. XML-строки</h2></header>
 <p>Длинные строки можно переносить:</p>
 <pre><code>&lt;img src="http://yandex.st/logo.png"
@@ -602,7 +614,7 @@ function(count) {
 <p>Теги <code>img</code>, <code>br</code>, <code>input</code> и др. выводятся в режиме html.</p>
 </section></div></div>
 
-    <div class="slide" id="slide-50"><div><section>
+    <div class="slide" id="slide-51"><div><section>
 <header><h2>JPath выражения</h2></header>
 <p>Помимо "чистых" <code>jpath</code>-ов есть выражения с участием <code>jpath</code>-ов:</p>
 <pre><code>/.items.item
@@ -613,7 +625,7 @@ items.item
 <p>От любого выражения типа <code>nodeset</code> можно "отложить" <code>jpath</code>.</p>
 </section></div></div>
 
-    <div class="slide" id="slide-51"><div><section>
+    <div class="slide" id="slide-52"><div><section>
 <header><h2>Определения. Переменные</h2></header>
 <p>Не только внутри <code>{ ... }</code> создается новый scope, но еще и внутри блока <code>( ... )</code>:</p>
 <pre><code>a = 42
@@ -626,7 +638,7 @@ a
 </code></pre>
 </section></div></div>
 
-    <div class="slide" id="slide-52"><div><section>
+    <div class="slide" id="slide-53"><div><section>
 <header><h2>Теперь точно всё</h2></header></section></div></div>
 
 
