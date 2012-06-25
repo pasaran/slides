@@ -9,8 +9,8 @@ slides
 
     git clone git://github.com/pasaran/slides.git
     cd slides
-    git submodules init
-    git submodules update
+    git submodule init
+    git submodule update
     make
     firefox yate/index.html
 
