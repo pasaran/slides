@@ -1,5 +1,5 @@
 all :
-	perl make.pl slides.md > index.html
+	./md2html yate/slides.md > yate/index.html
 
 .PHONY : all
 
