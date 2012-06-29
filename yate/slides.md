@@ -1,32 +1,47 @@
-Ещё один шаблонизатор
----------------------
+Зачем ещё один?
+---------------
 
-  * Это шаблонизатор
-  * Шаблонизатор общего назначения
+Есть же уже сотни js-ных шаблонизаторов.
+
+  * logicless
+  * Страшный синтаксис: `<p><%= project.description %></p>`
+  * Слишком много `html`-я или слишком мало `html`-я.
+  * Нет удобной работы с `html`-атрибутами
+  * Замаскированный `javascript`
+
+А как же `XSLT`?
+
+---
+
+`XSLT` в целом хороший, но со своими проблемами:
+
+  * `xml`-ный синтаксис
+  * Плохая поддержка в браузерах
+  * Трудно (или вовсе невозможно) расширять
+  * Не развивается
+
+Зато там есть декларативность, шаблоны, pattern matching, `xpath`, ...
+
+---
+
+Yate
+----
+
+  * Ещё один шаблонизатор
+  * Общего назначения
+  * Похожий на `XSLT`
   * В первую очередь для client side
   * Удобный и читаемый синтаксис
-  * Похожий на `XSLT`
-  * Безопасность
+  * Безопасный
 
 ---
 
 Шаблоны
 -------
 
-Аналог `xsl:template match="..."`:
+Типовой `xslt`-шный шаблон:
 
-    match .page title {
-        <h1>Hello, { .username }</h1>
-    }
-
----
-
-Шаблоны
--------
-
-То же самое в `XSLT`:
-
-    <xsl:template match="page mode="title">
+    <xsl:template match="page" mode="title">
         <h1>
             <xsl:text>Hello, </xsl:text>
             <xsl:value-of select="username"/>
@@ -35,12 +50,14 @@
 
 ---
 
-JPath
------
+Шаблоны
+-------
 
-  * Аналог `XPath` в `XSLT`.
-  * Более `js`-подобный синтаксис.
-  * Нет осей, кроме `self`, `child` и `parent`.
+    match .page title {
+        <h1>Hello, { .username }</h1>
+    }
+
+`.page`, `.username` — примеры `jpath`-ов.
 
 ---
 
@@ -197,16 +214,14 @@ JPath. Предикаты
 Выражения. XML-атрибуты
 -----------------------
 
-    match / {
-        attrs = (
-            @width = 42
-            @height = 24
-        )
+    attrs = (
+        @width = 42
+        @height = 24
+    )
 
-        <img src="logo.png">
-            attrs
-        </img>
-    }
+    <img src="logo.png">
+        attrs
+    </img>
 
 ---
 
@@ -248,20 +263,8 @@ JPath. Предикаты
         apply .page
     }
 
----
-
-Выражения. `apply`
-------------------
-
 Первый аргумент `apply` любой `nodeset`,
-не обязательно `jpath`:
-
-    match / {
-        items = .items.item
-        apply items
-        apply .title | .subtitle
-        apply items()
-    }
+не обязательно именно `jpath`.
 
 ---
 
@@ -300,14 +303,13 @@ JPath. Предикаты
 
 Аналог `xsl:variable`:
 
-    match / {
-        title = <h1>Hello, { .username }</h1>
-        hello = "Hello, { .username }"
-        count = 42
-        items = .items.item
-        isValid = .count > 5 && .title
-        class = @class = "hello"
-    }
+    title = <h1>Hello, { .username }</h1>
+    hello = "Hello, { .username }"
+    count = 42
+    items = .items.item
+    isValid = .count > 5 && .title
+
+    class = @class = "hello"
 
 ---
 
@@ -337,21 +339,6 @@ JPath. Предикаты
 
 В одном scope не могут быть определены
 две переменные с одинаковым именем.
-
----
-
-Определения. Переменные
------------------------
-
-В каждом блоке `{ ... }` и `( ... )` свой scope:
-
-    a = 42
-    a
-    if .username {
-        a = 24
-        a
-    }
-    a
 
 ---
 
@@ -416,17 +403,6 @@ JPath. Предикаты
 Определения. Ключи
 ------------------
 
-В `XSLT` ключ определяется так:
-
-    <xsl:key name="items" match="items/item" use="id"/>
-
-    <xsl:value-of select="key('items', 'first')/title"/>
-
----
-
-Определения. Ключи
-------------------
-
 Некий аналог `xsl:key`:
 
     key items( .items.item, .id ) {
@@ -457,8 +433,8 @@ JPath. Предикаты
 -----------------
 
     include "common.yate"
+
     match / {
-        //  include "common.yate"
         "Hello, { username }"
     }
 
@@ -516,7 +492,6 @@ JPath. Предикаты
         }
         "ids": [ 1, 2, 3 ]
     }
-
     apply tree
 
 ---
@@ -524,15 +499,14 @@ JPath. Предикаты
 Будущее. `JSON`
 ---------------
 
-    attrs = {
-        "class": "hello"
-        "params": {
-            "author-login": .username
-            "image-id": .id
-        }
-    }
     <div>
-        attrs
+        {
+            "class": "hello"
+            "params": {
+                "author-login": .username
+                "image-id": .id
+            }
+        }
     </div>
 
 ---
@@ -566,4 +540,7 @@ JPath. Предикаты
 
   * [git.io/yate](http://git.io/yate) — проект `yate` на github'е.
   * [git.io/nop](http://git.io/nop) — все мои проекты.
+
+Сергей Никитин  
+[nop@yandex-team.ru](mailto:nop@yandex-team.ru)
 

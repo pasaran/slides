@@ -14,10 +14,17 @@ my $html = <<HTML;
 <head>
     <title>Yate</title>
     <meta charset="utf-8"/>
+    <!--
     <meta name="viewport" content="width=1274, user-scalable=no"/>
+    -->
     <link rel="stylesheet" href="../shower/themes/ribbon/styles/style.css"/>
     <style>
-    .slide:after, .slide pre code:before {
+    .full .slide:after {
+        left: auto;
+        bottom: 1em;
+        right: 2em;
+    }
+    .slide pre code:before {
         content: '';
     }
     .slide section:before {
