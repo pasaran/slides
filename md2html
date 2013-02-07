@@ -6,13 +6,17 @@ my $filename = shift;
 
 my $md = `markdown_py $filename`;
 
+$md =~ s{<h1>(.*?)</h1>}{};
+
+my $title = $1;
+
 my @slides = split(/^<hr \/>$/sm, $md);
 
 my $html = <<HTML;
 <!doctype html>
 <html lang="en-us">
 <head>
-    <title>Yate</title>
+    <title>$title</title>
     <meta charset="utf-8"/>
     <!--
     <meta name="viewport" content="width=1274, user-scalable=no"/>
@@ -35,7 +39,7 @@ my $html = <<HTML;
 
 <body class="list">
     <header class="caption">
-        <h1>yet another template engine</h1>
+        <h1>$title</h1>
     </header>
 
 HTML
