@@ -183,3 +183,8 @@ yate secrets
 
   * Инклюды раскрываются по месту использования.
 
+`|` vs `||`
+-----------
+
+    title = img.title || img.fileName
+
