@@ -34,17 +34,28 @@ DSL
 
 ---
 
-Пример:
-
     {
-        //  Подключаем common.
         common: 'common.jsx',
+
+        auth: 'ya:auth()',
 
         data: {
             foo: 'http://www.data.com/?',
             bar: '{ config.dir }/bar.{ .id }.json'
         }
     }
+
+---
+
+Интерполяция в строках
+----------------------
+
+Во многих местах, где используются строки, в них возможна подстановка параметров и выражений.
+
+    'http://{ config.host }/foo/bar?id={ .id }'
+
+Внутри `{ ... }` --- jpath-выражение. Либо отложенное от одной из предопределенных
+переменных (`config`, `state`, `request`, ...), либо же от параметров блока.
 
 ---
 
@@ -80,7 +91,7 @@ DSL
 `file`
 ------
 
-Строка, заканчивающаяся на `.json` --- это `file`-блок.
+Строка, заканчивающаяся на `.json`, `.txt`, `.xml` --- это `file`-блок.
 
     'data.json'
     'data.{ .id }.json'
@@ -179,7 +190,9 @@ DSL
 
 Блок общего назначения. Тип будет определен автоматически:
 
-    de.block('http://foo.bar.com')
+    de.block('http://foo.bar.com', {
+        ...
+    })
 
 ---
 
@@ -247,7 +260,7 @@ options
 Во все `de.*()` вторым аргументом можно передать объект с дополнительными опциями.
 
 В частности, там можно указать поля: `guard`, `before`, `after`, `select`, `result`,
-`key`, `maxage`, `params`, `timeout`, `datatype`.
+`key`, `maxage`, `timeout`, `datatype`, `template`.
 
 ---
 
@@ -277,7 +290,7 @@ options.before и options.after
 ------------------------------
 
 Возможность совершить какое-нибудь действие (например, положить
-что-нибудь в стейт) до и после вызова блока.
+что-нибудь в стейт, выставить куку, ...) до и после вызова блока.
 
 В `before` приходит `params` и `context`, в `after` --- `result` и `context`.
 
@@ -335,27 +348,10 @@ options.key и options.maxage
 
 ---
 
-options.params
---------------
-
-По-дефолту в блок приходят параметры из реквеста.
-Иногда нужно изменить эти параметры на другие.
-
-    params: function(params) {
-        return {
-            id: params.id,
-            foo: 42
-        };
-    }
-
----
-
 options.timeout
 ---------------
 
-Таймаут блоков можно задать либо глобально в конфиге,
-либо по-блочно. Если таймаут не задан никак, то берется
-дефолтный --- 5 секунд.
+Прервать выполнение блока, если оно заняло больше указанного времени:
 
     timeout: 3000
 
@@ -375,11 +371,24 @@ http-ответы и содержимое файлов может содержа
 options.template
 ----------------
 
-Пока что нет, но будет что-то вроде:
-
-    template: 'page.yate'
+Наложить на результат шаблон из указанного файла:
 
     template: 'page.js'
+
+---
+
+options.template
+----------------
+
+    //  page.js
+    (function() {
+        var username = 'John';
+
+        return function(data) {
+            return 'Hello, ' +
+                (data.username || username);
+        }
+    })();
 
 ---
 
@@ -387,5 +396,28 @@ options.template
 -------------------
 
     descript --port 2000
+    descript --socket ./descript.sock
+
+        --rootdir ./jsx
+        --config ./config.js
+
+---
+
+JS API
+------
+
+    var de = require('descript');
+
+    de.Block.compile({
+        foo: 'http://www.data.com?'
+    })
+        .run({ id: 42 })
+            .then(function(result) {
+                console.log( result.object() );
+            });
+
+---
+
+    npm install descript
 
 
