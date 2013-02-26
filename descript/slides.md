@@ -392,6 +392,13 @@ options.template
 
 ---
 
+Установка
+---------
+
+    npm install descript
+
+---
+
 Приложение descript
 -------------------
 
@@ -415,9 +422,5 @@ JS API
             .then(function(result) {
                 console.log( result.object() );
             });
-
----
-
-    npm install descript
 
 
