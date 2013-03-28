@@ -1,14 +1,69 @@
 descript
 ========
 
-descript
---------
+  * [pasaran.github.com/slides/descript](http://pasaran.github.com/slides/descript) — слайды.
 
-Замена xscript'а, написанная на `node.js`.
+  * [git.io/descript](http://git.io/descript) — репозиторий на github'е.
+
+  * [git.io/nop](http://git.io/nop) — все мои проекты.
+
+Сергей Никитин  
+[nop@yandex-team.ru](mailto:nop@yandex-team.ru)
+
+---
+
+Коротко о главном
+-----------------
+
+Замена `xscript`-у, написанная на `node.js`.
 
   * Агрегация данных из разных источников в одно json-дерево.
 
   * Опциональная шаблонизация (включая "перблочную").
+
+  * JS API и отдельное приложение.
+
+---
+
+План доклада
+------------
+
+  * Долго рассказывать про `xscript`.
+
+  * Упоминуть, что `descript` это почти тоже самое.
+
+  * ???
+
+  * Profit
+
+---
+
+xscript
+-------
+
+  > Дальше не придумали, импровизируй.
+
+---
+
+xscript
+-------
+
+  * Аггрегация данных.
+
+  * Обычный xml плюс специальные "блоки".
+
+  * (А)синхронность.
+
+  * (Перблочная) шаблонизация.
+
+---
+
+descript
+--------
+
+Установка:
+
+    npm install descript
 
 ---
 
@@ -21,6 +76,47 @@ descript
   * js-библиотека, разбирающая этот DSL и исполняющая его.
 
   * Простое приложение, принимающее http-запросы и исполняющее их.
+
+---
+
+Приложение descript
+-------------------
+
+    descript --port 2000 --rootdir jsx
+    descript --socket descript.sock --rootdir jsx
+    descript --config config.js
+
+    http://127.0.0.1:2000/hello.jsx
+
+Будет исполнен файл `jsx/hello.jsx`.
+
+---
+
+    //  hello.jsx
+    de.block(
+        { username: 'nop' },
+        { template: 'hello.js' }
+    )
+
+    //  hello.js
+    function(data) {
+        return 'Hello, ' + data.username;
+    }
+
+---
+
+JS API
+------
+
+    var de = require('descript');
+
+    de.Block.compile({
+        data: 'http://www.data.com?'
+    })
+        .run({ id: 42 })
+            .then(function(result) {
+                console.log( result.object() );
+            });
 
 ---
 
@@ -41,7 +137,7 @@ DSL
 
         data: {
             foo: 'http://www.data.com/?',
-            bar: '{ config.dir }/bar.{ .id }.json'
+            bar: '{ config.static-dir }/{ .id }.json'
         }
     }
 
@@ -54,7 +150,7 @@ DSL
 
     'http://{ config.host }/foo/bar?id={ .id }'
 
-Внутри `{ ... }` --- jpath-выражение. Либо отложенное от одной из предопределенных
+Внутри `{ ... }` — jpath-выражение. Либо отложенное от одной из предопределенных
 переменных (`config`, `state`, `request`, ...), либо же от параметров блока.
 
 ---
@@ -91,7 +187,7 @@ DSL
 `file`
 ------
 
-Строка, заканчивающаяся на `.json`, `.txt`, `.xml` --- это `file`-блок.
+Строка, заканчивающаяся на `.json`, `.txt`, `.xml` — это `file`-блок.
 
     'data.json'
     'data.{ .id }.json'
@@ -105,7 +201,7 @@ DSL
 `include`
 ---------
 
-Строка, заканчивающаяся на `.jsx` --- это подключение другого файла.
+Строка, заканчивающаяся на `.jsx` — это подключение другого файла.
 
     'common.jsx'
     'page.{ .name }.jsx'
@@ -292,7 +388,7 @@ options.before и options.after
 Возможность совершить какое-нибудь действие (например, положить
 что-нибудь в стейт, выставить куку, ...) до и после вызова блока.
 
-В `before` приходит `params` и `context`, в `after` --- `result` и `context`.
+В `before` приходит `params` и `context`, в `after` — `result` и `context`.
 
 ---
 
@@ -359,12 +455,12 @@ options.timeout
 
 ---
 
-options.datatype
-----------------
+options.data_type
+-----------------
 
 http-ответы и содержимое файлов может содержать json или же просто текст.
 
-    datatype: 'json'
+    data_type: 'json'
 
 ---
 
@@ -373,54 +469,47 @@ options.template
 
 Наложить на результат шаблон из указанного файла:
 
-    template: 'page.js'
+    template: 'hello.js'
 
 ---
 
 options.template
 ----------------
 
-    //  page.js
+    //  hello.js
+    function(data) {
+        return 'Hello, ' + data.username;
+    }
+
+---
+
+options.template
+----------------
+
+    //  hello.js
     (function() {
         var username = 'John';
 
         return function(data) {
-            return 'Hello, ' +
-                (data.username || username);
+            return 'Hello, ' + (data.username || username);
         }
     })();
 
 ---
 
-Установка
----------
+options.template
+----------------
 
-    npm install descript
+Хочется уметь так:
+
+    template: 'hello.yate'
+
+Для `yate`, `mustache`, ...
+Плюс возможность написать свой модуль.
+
 
 ---
 
-Приложение descript
--------------------
+  * `jsx`-файлы
 
-    descript --port 2000
-    descript --socket ./descript.sock
-
-        --rootdir ./jsx
-        --config ./config.js
-
----
-
-JS API
-------
-
-    var de = require('descript');
-
-    de.Block.compile({
-        foo: 'http://www.data.com?'
-    })
-        .run({ id: 42 })
-            .then(function(result) {
-                console.log( result.object() );
-            });
-
-
+  * http-прокси.
