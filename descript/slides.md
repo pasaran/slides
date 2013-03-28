@@ -1,6 +1,9 @@
 descript
 ========
 
+descript
+--------
+
   * [pasaran.github.com/slides/descript](http://pasaran.github.com/slides/descript) — слайды.
 
   * [git.io/descript](http://git.io/descript) — репозиторий на github'е.
@@ -15,7 +18,7 @@ descript
 Коротко о главном
 -----------------
 
-Замена `xscript`-у, написанная на `node.js`.
+  * Замена `xscript`-у, написанная на `node.js`.
 
   * Агрегация данных из разных источников в одно json-дерево.
 
@@ -120,10 +123,10 @@ JS API
 
 ---
 
-DSL
----
+`.jsx`-файлы
+------------
 
-Представляет собой обычный js-объект, в котором специальным образом
+Внутри обычный javascript, в котором специальным образом
 размечены разные "блоки": `http`, `file` и т.д.
 
 Точно так же, как в `xscript`-е отдельные xml-теги имели специальное значение.
@@ -132,11 +135,12 @@ DSL
 
     {
         common: 'common.jsx',
-
         auth: 'ya:auth()',
-
         data: {
-            foo: 'http://www.data.com/?',
+            foo: [
+                'http://www.foo.com/?',
+                'http://www.bar.com/?
+            ],
             bar: '{ config.static-dir }/{ .id }.json'
         }
     }
@@ -175,10 +179,10 @@ DSL
 
 "Функциональная" форма:
 
-    de.http('http://{ config.host }?id={ .id }')
+    de.http('{ config.url }?id={ .id }')
 
 
-    de.http('http://{ config.host }?id={ .id }', {
+    de.http('{ config.url }?id={ .id }', {
         ...
     })
 
@@ -187,12 +191,12 @@ DSL
 `file`
 ------
 
-Строка, заканчивающаяся на `.json`, `.txt`, `.xml` — это `file`-блок.
+Строка, заканчивающаяся на `.json`, `.txt`, `.html`, `.xml` — это `file`-блок.
 
     'data.json'
     'data.{ .id }.json'
 
-    de.file('data.json', {
+    de.file('data.{ .ext }', {
         ...
     })
 
@@ -233,7 +237,7 @@ DSL
 
     'foo()'
 
-    de.call('mail:foo()', {
+    de.call('ya:auth()', {
         ...
     })
 
@@ -323,15 +327,14 @@ DSL
 Приоритеты
 ----------
 
-    {
-        a: de.object({
-            b: 'file.json' +10,
-            c: 'foo()'
-        }) +20,
-        d: de.array([
-            'bar()' +10, 'boo()' +30
-        ])
-    }
+    [
+        de.array([
+            'a()' +10, 'b()' +30
+        ]),
+        de.array([
+            'c()' +10, 'd()'
+        ]) +20
+    ]
 
 ---
 
@@ -355,8 +358,8 @@ options
 
 Во все `de.*()` вторым аргументом можно передать объект с дополнительными опциями.
 
-В частности, там можно указать поля: `guard`, `before`, `after`, `select`, `result`,
-`key`, `maxage`, `timeout`, `datatype`, `template`.
+В частности, там можно указать поля: `guard`, `params`, `before`, `after`, `select`, `result`,
+`key`, `maxage`, `timeout`, `template`, ...
 
 ---
 
@@ -382,13 +385,33 @@ options.guard
 
 ---
 
+options.params
+--------------
+
+    params: {
+        'id': '.id',
+        'version': 42
+    }
+
+---
+
+options.params
+--------------
+
+    params: function(params, context) {
+        return {
+            id: params.id,
+            version: 42
+        };
+    }
+
+---
+
 options.before и options.after
 ------------------------------
 
 Возможность совершить какое-нибудь действие (например, положить
 что-нибудь в стейт, выставить куку, ...) до и после вызова блока.
-
-В `before` приходит `params` и `context`, в `after` — `result` и `context`.
 
 ---
 
@@ -399,7 +422,7 @@ options.before и options.after
         context.state.foo = 42;
     }
 
-    after: function(result, context) {
+    after: function(result, context, params) {
         context.state.bar = result.bar;
     }
 
@@ -455,15 +478,6 @@ options.timeout
 
 ---
 
-options.data_type
------------------
-
-http-ответы и содержимое файлов может содержать json или же просто текст.
-
-    data_type: 'json'
-
----
-
 options.template
 ----------------
 
@@ -507,9 +521,28 @@ options.template
 Для `yate`, `mustache`, ...
 Плюс возможность написать свой модуль.
 
+---
+
+Что дальше
+----------
+
+  * Работающее JS API.
+
+  * Шаблонизация из коробки.
+
+  * Тесты!
 
 ---
 
-  * `jsx`-файлы
+Всё
+---
 
-  * http-прокси.
+  * [pasaran.github.com/slides/descript](http://pasaran.github.com/slides/descript) — слайды.
+
+  * [git.io/descript](http://git.io/descript) — репозиторий на github'е.
+
+  * [git.io/nop](http://git.io/nop) — все мои проекты.
+
+Сергей Никитин  
+[nop@yandex-team.ru](mailto:nop@yandex-team.ru)
+

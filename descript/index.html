@@ -28,6 +28,7 @@
     </header>
 
     <div class="slide" id="slide-1"><div><section>
+<header><h2>descript</h2></header>
 <ul>
 <li>
 <p><a href="http://pasaran.github.com/slides/descript">pasaran.github.com/slides/descript</a> — слайды.</p>
@@ -45,8 +46,10 @@
 
     <div class="slide" id="slide-2"><div><section>
 <header><h2>Коротко о главном</h2></header>
-<p>Замена <code>xscript</code>-у, написанная на <code>node.js</code>.</p>
 <ul>
+<li>
+<p>Замена <code>xscript</code>-у, написанная на <code>node.js</code>.</p>
+</li>
 <li>
 <p>Агрегация данных из разных источников в одно json-дерево.</p>
 </li>
@@ -166,8 +169,8 @@ de.Block.compile({
 </section></div></div>
 
     <div class="slide" id="slide-11"><div><section>
-<header><h2>DSL</h2></header>
-<p>Представляет собой обычный js-объект, в котором специальным образом
+<header><h2><code>.jsx</code>-файлы</h2></header>
+<p>Внутри обычный javascript, в котором специальным образом
 размечены разные "блоки": <code>http</code>, <code>file</code> и т.д.</p>
 <p>Точно так же, как в <code>xscript</code>-е отдельные xml-теги имели специальное значение.</p>
 </section></div></div>
@@ -175,11 +178,12 @@ de.Block.compile({
     <div class="slide" id="slide-12"><div><section>
 <pre><code>{
     common: 'common.jsx',
-
     auth: 'ya:auth()',
-
     data: {
-        foo: 'http://www.data.com/?',
+        foo: [
+            'http://www.foo.com/?',
+            'http://www.bar.com/?
+        ],
         bar: '{ config.static-dir }/{ .id }.json'
     }
 }
@@ -211,9 +215,9 @@ de.Block.compile({
     <div class="slide" id="slide-15"><div><section>
 <header><h2><code>http</code></h2></header>
 <p>"Функциональная" форма:</p>
-<pre><code>de.http('http://{ config.host }?id={ .id }')
+<pre><code>de.http('{ config.url }?id={ .id }')
 
-de.http('http://{ config.host }?id={ .id }', {
+de.http('{ config.url }?id={ .id }', {
     ...
 })
 </code></pre>
@@ -221,11 +225,11 @@ de.http('http://{ config.host }?id={ .id }', {
 
     <div class="slide" id="slide-16"><div><section>
 <header><h2><code>file</code></h2></header>
-<p>Строка, заканчивающаяся на <code>.json</code>, <code>.txt</code>, <code>.xml</code> — это <code>file</code>-блок.</p>
+<p>Строка, заканчивающаяся на <code>.json</code>, <code>.txt</code>, <code>.html</code>, <code>.xml</code> — это <code>file</code>-блок.</p>
 <pre><code>'data.json'
 'data.{ .id }.json'
 
-de.file('data.json', {
+de.file('data.{ .ext }', {
     ...
 })
 </code></pre>
@@ -260,7 +264,7 @@ de.include('common.jsx', {
 На самом деле, это просто возможность создавать шоткаты для громоздких конструкций.</p>
 <pre><code>'foo()'
 
-de.call('mail:foo()', {
+de.call('ya:auth()', {
     ...
 })
 </code></pre>
@@ -338,15 +342,14 @@ de.http('http://foo.bar.com') +40
 
     <div class="slide" id="slide-26"><div><section>
 <header><h2>Приоритеты</h2></header>
-<pre><code>{
-    a: de.object({
-        b: 'file.json' +10,
-        c: 'foo()'
-    }) +20,
-    d: de.array([
-        'bar()' +10, 'boo()' +30
-    ])
-}
+<pre><code>[
+    de.array([
+        'a()' +10, 'b()' +30
+    ]),
+    de.array([
+        'c()' +10, 'd()'
+    ]) +20
+]
 </code></pre>
 </section></div></div>
 
@@ -366,8 +369,8 @@ de.http('http://foo.bar.com') +40
     <div class="slide" id="slide-28"><div><section>
 <header><h2>options</h2></header>
 <p>Во все <code>de.*()</code> вторым аргументом можно передать объект с дополнительными опциями.</p>
-<p>В частности, там можно указать поля: <code>guard</code>, <code>before</code>, <code>after</code>, <code>select</code>, <code>result</code>,
-<code>key</code>, <code>maxage</code>, <code>timeout</code>, <code>datatype</code>, <code>template</code>.</p>
+<p>В частности, там можно указать поля: <code>guard</code>, <code>params</code>, <code>before</code>, <code>after</code>, <code>select</code>, <code>result</code>,
+<code>key</code>, <code>maxage</code>, <code>timeout</code>, <code>template</code>, ...</p>
 </section></div></div>
 
     <div class="slide" id="slide-29"><div><section>
@@ -388,25 +391,44 @@ guard: function(params, context) {
 </section></div></div>
 
     <div class="slide" id="slide-31"><div><section>
-<header><h2>options.before и options.after</h2></header>
-<p>Возможность совершить какое-нибудь действие (например, положить
-что-нибудь в стейт, выставить куку, ...) до и после вызова блока.</p>
-<p>В <code>before</code> приходит <code>params</code> и <code>context</code>, в <code>after</code> — <code>result</code> и <code>context</code>.</p>
+<header><h2>options.params</h2></header>
+<pre><code>params: {
+    'id': '.id',
+    'version': 42
+}
+</code></pre>
 </section></div></div>
 
     <div class="slide" id="slide-32"><div><section>
-<header><h2>options.before и options.after</h2></header>
-<pre><code>before: function(params, context) {
-    context.state.foo = 42;
-}
-
-after: function(result, context) {
-    context.state.bar = result.bar;
+<header><h2>options.params</h2></header>
+<pre><code>params: function(params, context) {
+    return {
+        id: params.id,
+        version: 42
+    };
 }
 </code></pre>
 </section></div></div>
 
     <div class="slide" id="slide-33"><div><section>
+<header><h2>options.before и options.after</h2></header>
+<p>Возможность совершить какое-нибудь действие (например, положить
+что-нибудь в стейт, выставить куку, ...) до и после вызова блока.</p>
+</section></div></div>
+
+    <div class="slide" id="slide-34"><div><section>
+<header><h2>options.before и options.after</h2></header>
+<pre><code>before: function(params, context) {
+    context.state.foo = 42;
+}
+
+after: function(result, context, params) {
+    context.state.bar = result.bar;
+}
+</code></pre>
+</section></div></div>
+
+    <div class="slide" id="slide-35"><div><section>
 <header><h2>options.select</h2></header>
 <p>Достает из результата блока значения jpath'ов
 и складывает в стейт под соответствующими именами.</p>
@@ -417,7 +439,7 @@ after: function(result, context) {
 </code></pre>
 </section></div></div>
 
-    <div class="slide" id="slide-34"><div><section>
+    <div class="slide" id="slide-36"><div><section>
 <header><h2>options.result</h2></header>
 <pre><code>result: '.foo.bar'
 
@@ -428,7 +450,7 @@ result: {
 </code></pre>
 </section></div></div>
 
-    <div class="slide" id="slide-35"><div><section>
+    <div class="slide" id="slide-37"><div><section>
 <header><h2>options.key и options.maxage</h2></header>
 <p>Закэшировать блок на заданное время:</p>
 <pre><code>key: '{ .id }-{ .album-id }',
@@ -440,7 +462,7 @@ key: function(params, context) {
 </code></pre>
 </section></div></div>
 
-    <div class="slide" id="slide-36"><div><section>
+    <div class="slide" id="slide-38"><div><section>
 <header><h2>options.timeout</h2></header>
 <p>Прервать выполнение блока, если оно заняло больше указанного времени:</p>
 <pre><code>timeout: 3000
@@ -448,21 +470,14 @@ key: function(params, context) {
 <p>Задается в миллисекундах.</p>
 </section></div></div>
 
-    <div class="slide" id="slide-37"><div><section>
-<header><h2>options.data_type</h2></header>
-<p>http-ответы и содержимое файлов может содержать json или же просто текст.</p>
-<pre><code>data_type: 'json'
-</code></pre>
-</section></div></div>
-
-    <div class="slide" id="slide-38"><div><section>
+    <div class="slide" id="slide-39"><div><section>
 <header><h2>options.template</h2></header>
 <p>Наложить на результат шаблон из указанного файла:</p>
 <pre><code>template: 'hello.js'
 </code></pre>
 </section></div></div>
 
-    <div class="slide" id="slide-39"><div><section>
+    <div class="slide" id="slide-40"><div><section>
 <header><h2>options.template</h2></header>
 <pre><code>//  hello.js
 function(data) {
@@ -471,7 +486,7 @@ function(data) {
 </code></pre>
 </section></div></div>
 
-    <div class="slide" id="slide-40"><div><section>
+    <div class="slide" id="slide-41"><div><section>
 <header><h2>options.template</h2></header>
 <pre><code>//  hello.js
 (function() {
@@ -484,7 +499,7 @@ function(data) {
 </code></pre>
 </section></div></div>
 
-    <div class="slide" id="slide-41"><div><section>
+    <div class="slide" id="slide-42"><div><section>
 <header><h2>options.template</h2></header>
 <p>Хочется уметь так:</p>
 <pre><code>template: 'hello.yate'
@@ -493,15 +508,36 @@ function(data) {
 Плюс возможность написать свой модуль.</p>
 </section></div></div>
 
-    <div class="slide" id="slide-42"><div><section>
+    <div class="slide" id="slide-43"><div><section>
+<header><h2>Что дальше</h2></header>
 <ul>
 <li>
-<p><code>jsx</code>-файлы</p>
+<p>Работающее JS API.</p>
 </li>
 <li>
-<p>http-прокси.</p>
+<p>Шаблонизация из коробки.</p>
 </li>
-</ul></section></div></div>
+<li>
+<p>Тесты!</p>
+</li>
+</ul>
+</section></div></div>
+
+    <div class="slide" id="slide-44"><div><section>
+<header><h2>Всё</h2></header>
+<ul>
+<li>
+<p><a href="http://pasaran.github.com/slides/descript">pasaran.github.com/slides/descript</a> — слайды.</p>
+</li>
+<li>
+<p><a href="http://git.io/descript">git.io/descript</a> — репозиторий на github'е.</p>
+</li>
+<li>
+<p><a href="http://git.io/nop">git.io/nop</a> — все мои проекты.</p>
+</li>
+</ul>
+<p>Сергей Никитин<br />
+<a href="mailto:nop@yandex-team.ru">nop@yandex-team.ru</a></p></section></div></div>
 
 
     <script src="../shower/scripts/script.js"></script>
