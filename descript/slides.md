@@ -18,20 +18,16 @@ descript
 Коротко о главном
 -----------------
 
-  * Замена `xscript`-у, написанная на `node.js`.
+Замена `xscript`-а, написанная на `node.js`.
 
-  * Агрегация данных из разных источников в одно json-дерево.
-
-  * Опциональная шаблонизация (включая "перблочную").
-
-  * JS API и отдельное приложение.
+Агрегация данных из разных источников в одно json-дерево.
 
 ---
 
 План доклада
 ------------
 
-  * Долго рассказывать про `xscript`.
+  * Долго и нудно рассказывать про `xscript`.
 
   * Упоминуть, что `descript` это почти тоже самое.
 
@@ -51,11 +47,13 @@ xscript
 xscript
 -------
 
-  * Аггрегация данных.
+  * Агрегация данных.
 
   * Обычный xml плюс специальные "блоки".
 
   * (А)синхронность.
+
+  * "Общение" между блоками.
 
   * (Перблочная) шаблонизация.
 
@@ -74,7 +72,7 @@ descript
 
   * DSL для описания источников данных и того, как их нужно
     скомпоновать в результирующее дерево
-    (аналог xml-файлов для `xscript`-а).
+    (аналог xml-файлов в `xscript`-е).
 
   * js-библиотека, разбирающая этот DSL и исполняющая его.
 
@@ -95,27 +93,12 @@ descript
 
 ---
 
-    //  hello.jsx
-    de.block(
-        { username: 'nop' },
-        { template: 'hello.js' }
-    )
-
-    //  hello.js
-    function(data) {
-        return 'Hello, ' + data.username;
-    }
-
----
-
 JS API
 ------
 
     var de = require('descript');
 
-    de.Block.compile({
-        data: 'http://www.data.com?'
-    })
+    de.Block.compile('hello.jsx')
         .run({ id: 42 })
             .then(function(result) {
                 console.log( result.object() );
@@ -139,9 +122,23 @@ JS API
         data: {
             foo: [
                 'http://www.foo.com/?',
-                'http://www.bar.com/?
+                'http://www.bar.com/?'
             ],
-            bar: '{ config.static-dir }/{ .id }.json'
+            bar: '{ config.static }/{ .id }.json'
+        }
+    }
+
+---
+
+    {
+        common: de.include('common.jsx'),
+        auth: de.call('ya:auth()'),
+        data: {
+            foo: [
+                de.http('http://www.foo.com/?'),
+                de.http('http://www.bar.com/?')
+            ],
+            bar: de.file('{ config.static }/{ .id }.json')
         }
     }
 
