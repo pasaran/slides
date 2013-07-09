@@ -500,10 +500,266 @@ timer.unref();
 
     <div class="slide" id="slide-33"><div><section>
 
+<header><h2>Harmony</h2></header>
+
+<pre><code>node --v8-options | grep harmony
+</code></pre>
+
+<ul>
+<li>Generators, iterators.</li>
+<li>Symbols.</li>
+<li>Observables.</li>
+<li>...</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-34"><div><section>
+
+<header><h2>Harmony</h2></header>
+
+<pre><code>#!/usr/bin/env node --harmony_generators
+    --harmony_iteration
+    --harmony_symbols
+    --harmony_observation
+
+chmod +x test.js
+
+./test.js
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-35"><div><section>
+
+<header><h2>Harmony. Generators</h2></header>
+
+<pre><code>function* foo() {
+    yield 1;
+    yield 2;
+    yield 3;
+}
+
+var iter = foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-36"><div><section>
+
+<header><h2>Harmony. Iterators</h2></header>
+
+<pre><code>iter.next(); // { value: 1, done: false }
+iter.next(); // { value: 2, done: false }
+iter.next(); // { value: 3, done: false }
+iter.next(); // { value: undefined, done: true }
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-37"><div><section>
+
+<header><h2>Harmony. Iterators</h2></header>
+
+<pre><code>for (var value of iter) {
+    console.log(value);
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-38"><div><section>
+
+<header><h2>Harmony. Generators</h2></header>
+
+<pre><code>function* bar() {
+    yield* foo();
+    yield 4;
+    yield 5;
+}
+
+for ( var value of bar() ) {
+    console.log(value);
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-39"><div><section>
+
+<header><h2>Harmony. Generators</h2></header>
+
+<pre><code>function *numbers() {
+    for (var i = 0; ; i++) {
+        yield i;
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-40"><div><section>
+
+<header><h2>Harmony. Generators</h2></header>
+
+<pre><code>var i = 0;
+for ( var value of numbers() ) {
+    if (i++ &gt; 10) { break; }
+    console.log(value);
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-41"><div><section>
+
+<header><h2>Harmony. Generators</h2></header>
+
+<pre><code>async(function* () {
+    console.log('Hello');
+    yield sleep(1000);
+    console.log('World');
+    yield sleep(1000);
+    console.log('Done');
+});
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-42"><div><section>
+
+<header><h2>Harmony. Generators</h2></header>
+
+<pre><code>function sleep(timeout) {
+    var promise = new no.Promise();
+
+    setTimeout(function() {
+        promise.resolve();
+    }, timeout);
+
+    return promise;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-43"><div><section>
+
+<header><h2>Harmony. Generators</h2></header>
+
+<pre><code>function async(gen) {
+    var iter = gen();
+    (function next() {
+        var r = iter.next();
+        if (!r.done) {
+            r.value.then(next);
+        }
+    })();
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-44"><div><section>
+
+<header><h2>Harmony. Generators</h2></header>
+
+<pre><code>async(function* () {
+    var a = yield request('http://www.yandex.ru');
+    var b = yield request('http://www.google.com');
+    console.log(a, b);
+});
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-45"><div><section>
+
+<header><h2>Harmony. Symbols</h2></header>
+
+<pre><code>function Foo(data) {
+    //  Приватно! Страшная тайна!
+    this._data = data;
+}
+Foo.prototype.getData = function() {
+    return this._data;
+};
+
+console.log( ( new Foo(42) )._data );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-46"><div><section>
+
+<header><h2>Harmony. Symbols</h2></header>
+
+<pre><code>var Foo;
+(function() {
+    var key = /* new */ Symbol('data');
+    Foo = function(data) {
+        this[key] = data;
+    };
+    Foo.prototype.getData = function() {
+        return this[key];
+    };
+});
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-47"><div><section>
+
+<header><h2>Harmony. Observable</h2></header>
+
+<pre><code>var o = {};
+Object.observe(o, function(changes) {
+    console.log(changes);
+});
+
+o.foo = 42;
+o.foo = 24;
+delete o.foo;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-48"><div><section>
+
+<header><h2>Harmony. Observable</h2></header>
+
+<pre><code>[ { type: 'new', object: {},
+        name: 'foo' },
+  { type: 'updated', object: {},
+        name: 'foo', oldValue: 42 },
+  { type: 'deleted', object: {},
+        name: 'foo', oldValue: 24 } ]
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-49"><div><section>
+
+<header><h2>Harmony. Observable</h2></header>
+
+<pre><code>//  Не рекурсивно.
+
+o.foo = {};
+o.foo.bar = 42;
+o.foo.quu = 24;
+
+setTimeout(function() {
+    o.foo.zoo = 66;
+});
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-50"><div><section>
+
 <ul>
 <li><p>VM.</p></li>
 <li><p>Простой профайлинг и оптимизация.</p></li>
-<li><p>Harmony. Generators.</p></li>
 <li><p>Отладка.</p></li>
 </ul>
 </section></div></div>

@@ -369,11 +369,213 @@
 
 ---
 
+## Harmony
+
+    node --v8-options | grep harmony
+
+  * Generators, iterators.
+  * Symbols.
+  * Observables.
+  * ...
+
+---
+
+## Harmony
+
+    #!/usr/bin/env node --harmony_generators
+        --harmony_iteration
+        --harmony_symbols
+        --harmony_observation
+
+    chmod +x test.js
+
+    ./test.js
+
+---
+
+## Harmony. Generators
+
+    function* foo() {
+        yield 1;
+        yield 2;
+        yield 3;
+    }
+
+    var iter = foo();
+
+---
+
+## Harmony. Iterators
+
+    iter.next(); // { value: 1, done: false }
+    iter.next(); // { value: 2, done: false }
+    iter.next(); // { value: 3, done: false }
+    iter.next(); // { value: undefined, done: true }
+
+---
+
+## Harmony. Iterators
+
+    for (var value of iter) {
+        console.log(value);
+    }
+
+---
+
+## Harmony. Generators
+
+    function* bar() {
+        yield* foo();
+        yield 4;
+        yield 5;
+    }
+
+    for ( var value of bar() ) {
+        console.log(value);
+    }
+
+---
+
+## Harmony. Generators
+
+    function *numbers() {
+        for (var i = 0; ; i++) {
+            yield i;
+        }
+    }
+
+---
+
+## Harmony. Generators
+
+    var i = 0;
+    for ( var value of numbers() ) {
+        if (i++ > 10) { break; }
+        console.log(value);
+    }
+
+---
+
+## Harmony. Generators
+
+    async(function* () {
+        console.log('Hello');
+        yield sleep(1000);
+        console.log('World');
+        yield sleep(1000);
+        console.log('Done');
+    });
+
+---
+
+## Harmony. Generators
+
+    function sleep(timeout) {
+        var promise = new no.Promise();
+
+        setTimeout(function() {
+            promise.resolve();
+        }, timeout);
+
+        return promise;
+    }
+
+---
+
+## Harmony. Generators
+
+    function async(gen) {
+        var iter = gen();
+        (function next() {
+            var r = iter.next();
+            if (!r.done) {
+                r.value.then(next);
+            }
+        })();
+    }
+
+---
+
+## Harmony. Generators
+
+    async(function* () {
+        var a = yield request('http://www.yandex.ru');
+        var b = yield request('http://www.google.com');
+        console.log(a, b);
+    });
+
+---
+
+## Harmony. Symbols
+
+    function Foo(data) {
+        //  Приватно! Страшная тайна!
+        this._data = data;
+    }
+    Foo.prototype.getData = function() {
+        return this._data;
+    };
+
+    console.log( ( new Foo(42) )._data );
+
+---
+
+## Harmony. Symbols
+
+    var Foo;
+    (function() {
+        var key = /* new */ Symbol('data');
+        Foo = function(data) {
+            this[key] = data;
+        };
+        Foo.prototype.getData = function() {
+            return this[key];
+        };
+    });
+
+---
+
+## Harmony. Observable
+
+    var o = {};
+    Object.observe(o, function(changes) {
+        console.log(changes);
+    });
+
+    o.foo = 42;
+    o.foo = 24;
+    delete o.foo;
+
+---
+
+## Harmony. Observable
+
+    [ { type: 'new', object: {},
+            name: 'foo' },
+      { type: 'updated', object: {},
+            name: 'foo', oldValue: 42 },
+      { type: 'deleted', object: {},
+            name: 'foo', oldValue: 24 } ]
+
+---
+
+## Harmony. Observable
+
+    //  Не рекурсивно.
+
+    o.foo = {};
+    o.foo.bar = 42;
+    o.foo.quu = 24;
+
+    setTimeout(function() {
+        o.foo.zoo = 66;
+    });
+
+---
+
   * VM.
 
   * Простой профайлинг и оптимизация.
-
-  * Harmony. Generators.
 
   * Отладка.
 
