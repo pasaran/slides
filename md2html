@@ -4,7 +4,7 @@ use warnings;
 
 my $filename = shift;
 
-my $md = `markdown_py $filename`;
+my $md = `markdown $filename`;
 
 $md =~ s{<h1>(.*?)</h1>}{};
 

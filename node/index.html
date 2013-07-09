@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <title>Node.js</title>
+    <meta charset="utf-8"/>
+    <!--
+    <meta name="viewport" content="width=1274, user-scalable=no"/>
+    -->
+    <link rel="stylesheet" href="../shower/themes/ribbon/styles/style.css"/>
+    <style>
+    .full .slide:after {
+        left: auto;
+        bottom: 1em;
+        right: 2em;
+    }
+    .slide pre code:before {
+        content: '';
+    }
+    .slide section:before {
+        background: none;
+    }
+    </style>
+</head>
+
+<body class="list">
+    <header class="caption">
+        <h1>Node.js</h1>
+    </header>
+
+    <div class="slide" id="slide-1"><div><section>
+
+<header><h2>Сборка</h2></header>
+
+<pre><code>git clone git@github.com:joyent/node.git
+cd node
+git checkout v0.11.3
+./configure --prefix=`echo $HOME`/local/node
+make -j2
+make install
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-2"><div><section>
+
+<header><h2>Сборка</h2></header>
+
+<pre><code>export PATH=~/local/node/bin:$PATH
+
+which node
+node --version
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-3"><div><section>
+
+<header><h2>Сборка</h2></header>
+
+<pre><code>cd deps/v8
+make dependencies
+make native
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-4"><div><section>
+
+<header><h2>Стандартные модули и классы</h2></header>
+
+<p>В файлах <code>lib/*.js</code> находятся все стандартные модули.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-5"><div><section>
+
+<header><h2>EventEmitter</h2></header>
+
+<pre><code>var EventEmitter = require('events').EventEmitter;
+
+var o = new EventEmitter();
+o.on('foo', function() {
+    ...
+});
+o.emit('foo');
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-6"><div><section>
+
+<header><h2>EventEmitter</h2></header>
+
+<pre><code>var o = extend( {}, EventEmitter.prototype );
+o.on('foo', function() {
+    ...
+});
+o.emit('foo');
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-7"><div><section>
+
+<header><h2>EventEmitter</h2></header>
+
+<pre><code>var o = new EventEmitter();
+/*
+o.on('error', function() {
+    ...
+});
+*/
+o.emit('error', 'Error message');
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-8"><div><section>
+
+<header><h2>Buffer</h2></header>
+
+<p>Объект для хранения "сырых" данных:</p>
+
+<ul>
+<li>Чтение/запись файлов.</li>
+<li>Получение/отправка данных по http.</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-9"><div><section>
+
+<header><h2>Buffer</h2></header>
+
+<pre><code>fs.readFile('foo.txt', function(content) {
+    //  content — это Buffer.
+});
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-10"><div><section>
+
+<header><h2>Buffer</h2></header>
+
+<p>Преобразования <code>Buffer &lt;-&gt; String</code> не бесплатные:</p>
+
+<pre><code>var str = fs.readFileSync('foo.txt', 'utf-8');
+fs.writeFileSync('bar.txt', str, 'utf-8');
+
+var buf = fs.readFileSync('foo.txt');
+fs.writeFileSync('bar.txt', buf);
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-11"><div><section>
+
+<header><h2>Buffer</h2></header>
+
+<pre><code>http.request(options, function(res) {
+    var result = '';
+    res.on('data', function (chunk) {
+        result += chunk;
+    }).on('end', function() {
+        ...
+    });
+});
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-12"><div><section>
+
+<header><h2>Buffer</h2></header>
+
+<pre><code>http.request(options, function(res) {
+    var chunks = [], length = 0;
+    res.on('data', function (chunk) {
+        chunks.push(chunk);
+        length += chunk.length;
+    }).on('end', function() {
+        var result = Buffer.concat(chunks, length);
+    });
+});
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-13"><div><section>
+
+<header><h2>Stream</h2></header>
+
+<p>Работа с поточными данными:</p>
+
+<ul>
+<li>Работа с <code>http</code>.</li>
+<li>Стандартный ввод-вывод: <code>process.stdin</code>, <code>process.stdout</code>.</li>
+<li>gzip-ование.</li>
+<li>...</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-14"><div><section>
+
+<header><h2>Stream</h2></header>
+
+<p>Похоже на unix-овые пайпы:</p>
+
+<pre><code>process.stdin.pipe(process.stdout);
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-15"><div><section>
+
+<header><h2>Stream</h2></header>
+
+<p>Чтение из потока:</p>
+
+<pre><code>rs.on('data', function(chunk) {
+    ...
+});
+rs.on('end', function() {
+    ...
+});
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-16"><div><section>
+
+<header><h2>Stream</h2></header>
+
+<p>Запись в поток:</p>
+
+<pre><code>ws.write(chunk);
+ws.write();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-17"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<p>Классические модули предполагают, что они независимы друг от друга.
+И, если модулю нужен другой модуль, он использует <code>require()</code>.
+Но иногда получаются циклические ссылки.</p>
+
+<p>Например, есть <code>parser.js</code> и <code>ast.js</code>.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-18"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>var AST = require('./ast.js');
+
+Parser.prototype.parse = function(...) {
+    ...
+    return new AST(...);
+};
+
+module.exports = Parser;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-19"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>var Parser = require('./parser.js');
+
+AST.include.prototype.init = function() {
+    var ast = ( new Parser() ).parse(this.filename);
+    ...
+};
+
+module.exports = AST;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-20"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<p>Общий модуль, экспортирующий неймспейс.</p>
+
+<pre><code>//  no.base.js
+
+var no = {};
+
+module.exports = no;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-21"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>//  no.promise.js
+
+var no = no || require('./no.base.js');
+
+no.Promise = function() {
+    ...
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-22"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>//  index.js
+
+var no = require('./no.base.js');
+
+require('./no.promise.js');
+require('./no.events.js');
+...
+
+module.exports = no;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-23"><div><section>
+
+<header><h2>Cluster</h2></header>
+
+<pre><code>if (cluster.isMaster) {
+    for (var i = 0; i &lt; numCPUs; i++) {
+        cluster.fork();
+    }
+} else {
+    http.createServer(function(req, res) {
+        res.end('Hello');
+    }).listen(8000);
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-24"><div><section>
+
+<header><h2>Error handling</h2></header>
+
+<pre><code>try {
+    setTimeout(function() {
+        throw 'Foo';
+    });
+} catch (e) {
+    console.log('error');
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-25"><div><section>
+
+<header><h2>Error handling</h2></header>
+
+<pre><code>process.on('uncaughtException', function(e) {
+    ...
+});
+</code></pre>
+
+<blockquote>
+  <p>Don't use it, use domains instead. If you do use it,
+restart your application after every unhandled exception!</p>
+</blockquote>
+
+</section></div></div>
+
+    <div class="slide" id="slide-26"><div><section>
+
+<header><h2>Error handling. Domains</h2></header>
+
+<pre><code>var d = require('domain').create();
+d.on('error', function(err) {
+    console.log('error', err.message);
+});
+d.run(function() {
+    require('http').createServer(function(req, res) {
+        handleRequest(req, res);
+    }).listen(8000);
+});
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-27"><div><section>
+
+<header><h2>Domains + Cluster</h2></header>
+
+<p>Правильная схема такая:</p>
+
+<ul>
+<li>Используем <code>cluster</code>.</li>
+<li>Если в воркере случается ошибка, то:
+<ul>
+<li>Ловим ошибку в домене.</li>
+<li>Отключаем воркер.</li>
+<li>Ждем, пока все запросы этого воркера закончатся.</li>
+<li>Убиваем воркер.</li>
+</ul></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-28"><div><section>
+
+<header><h2>Domains + Cluster</h2></header>
+
+<pre><code>if (cluster.isMaster) {
+    ...
+
+    cluster.on('disconnect', function(worker) {
+        cluster.fork();
+    });
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-29"><div><section>
+
+<header><h2>Domains + Cluster</h2></header>
+
+<pre><code>var server = http.createServer(function(req, res) {
+    var d = domain.create();
+    d.on('error', function(err) {
+        setTimeout(function() { process.exit(1); }, 30000)
+            .unref();
+        server.close();
+        cluster.worker.disconnect();
+        res.statusCode = 500;
+        res.end('Error');
+    });
+    ...
+</code></pre>
+
+<header><h2>Domains + Cluster</h2></header>
+
+<pre><code>    ...
+    d.add(req);
+    d.add(res);
+    d.run(function() {
+        handleRequest(req, res);
+    });
+});
+server.listen(8000);
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-30"><div><section>
+
+<header><h2>Domains + Cluster</h2></header>
+
+<p><a href="http://nodejs.org/api/domain.html#domain_warning_don_t_ignore_errors">Подробный пример</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-31"><div><section>
+
+<header><h2><code>ref()</code> и <code>unref()</code></h2></header>
+
+<p>До какого момента работает нодовское приложение?</p>
+
+<pre><code>var timer = setTimeout(function() {
+    ...
+}, 10000);
+
+timer.unref();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-32"><div><section>
+
+<header><h2><code>setTimeout</code> vs <code>setImmediate</code> vs <code>process.nextTick</code></h2></header>
+
+<ul>
+<li>Отпустить тред и затем как можно быстрее исполнить код: <code>process.nextTick</code>.</li>
+<li>Разбить длинную операцию на интервалы, чтобы не фризить основной тред: <code>setImmediate</code>.</li>
+<li>Сделать что-то через N ms: <code>setTimeout</code>.</li>
+<li><code>setTimeout(callback, 0)</code> — не используется в ноде никогда.</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-33"><div><section>
+
+<ul>
+<li><p>VM.</p></li>
+<li><p>Простой профайлинг и оптимизация.</p></li>
+<li><p>Harmony. Generators.</p></li>
+<li><p>Отладка.</p></li>
+</ul>
+</section></div></div>
+
+
+    <script src="../shower/scripts/script.js"></script>
+</body>
+</html>

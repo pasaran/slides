@@ -28,8 +28,11 @@
     </header>
 
     <div class="slide" id="slide-1"><div><section>
+
 <header><h2>Зачем ещё один?</h2></header>
+
 <p>Есть же уже сотни js-ных шаблонизаторов.</p>
+
 <ul>
 <li>logicless</li>
 <li>Страшный синтаксис: <code>&lt;p&gt;&lt;%= project.description %&gt;&lt;/p&gt;</code></li>
@@ -37,11 +40,15 @@
 <li>Нет удобной работы с <code>html</code>-атрибутами</li>
 <li>Замаскированный <code>javascript</code></li>
 </ul>
+
 <p>А как же <code>XSLT</code>?</p>
+
 </section></div></div>
 
     <div class="slide" id="slide-2"><div><section>
+
 <p><code>XSLT</code> в целом хороший, но со своими проблемами:</p>
+
 <ul>
 <li><code>xml</code>-ный синтаксис</li>
 <li><code>xml</code>-ные данные (DOM API)</li>
@@ -49,11 +56,15 @@
 <li>Трудно (или вовсе невозможно) расширять</li>
 <li>Не развивается</li>
 </ul>
+
 <p>Зато там есть декларативность, шаблоны, pattern matching, <code>xpath</code>, ...</p>
+
 </section></div></div>
 
     <div class="slide" id="slide-3"><div><section>
+
 <header><h2>Yate</h2></header>
+
 <ul>
 <li>Ещё один шаблонизатор</li>
 <li>Общего назначения</li>
@@ -62,11 +73,15 @@
 <li>Удобный и читаемый синтаксис</li>
 <li>Безопасный</li>
 </ul>
+
 </section></div></div>
 
     <div class="slide" id="slide-4"><div><section>
+
 <header><h2>Шаблоны</h2></header>
+
 <p>Типовой <code>xslt</code>-шный шаблон:</p>
+
 <pre><code>&lt;xsl:template match="page" mode="title"&gt;
     &lt;h1&gt;
         &lt;xsl:text&gt;Hello, &lt;/xsl:text&gt;
@@ -74,19 +89,26 @@
     &lt;/h1&gt;
 &lt;/xsl:template&gt;
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-5"><div><section>
+
 <header><h2>Шаблоны</h2></header>
+
 <pre><code>match .page title {
     &lt;h1&gt;Hello, { .username }&lt;/h1&gt;
 }
 </code></pre>
+
 <p><code>.page</code>, <code>.username</code> — примеры <code>jpath</code>-ов.</p>
+
 </section></div></div>
 
     <div class="slide" id="slide-6"><div><section>
+
 <header><h2>JPath. Примеры</h2></header>
+
 <pre><code>.foo                        foo
 .foo.bar                    foo/bar
 .                           .
@@ -95,10 +117,13 @@
 ...                         ../..
 ...foo.bar                  ../../foo/bar
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-7"><div><section>
+
 <header><h2>JPath. Предикаты</h2></header>
+
 <pre><code>.item[ index() &lt; 3 ]        item[ position() &amp;lt; 4 ]
 .item[ .count || .title ]   item[ count or title ]
 .item[ .selected ]          item[ selected ]
@@ -106,10 +131,13 @@
 .item[ !.selected ]         item[ not(selected) ]
 .*[ name() == 'item' ]      *[ name() = 'item' ]
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-8"><div><section>
+
 <header><h2>Шаблоны. Выражения</h2></header>
+
 <ul>
 <li><code>xml</code>-строки</li>
 <li>Текстовые строки</li>
@@ -117,10 +145,13 @@
 <li><code>xml</code>-атрибуты</li>
 <li><code>if</code>, <code>for</code>, <code>apply</code></li>
 </ul>
+
 </section></div></div>
 
     <div class="slide" id="slide-9"><div><section>
+
 <header><h2>Выражения. XML-строки</h2></header>
+
 <pre><code>match / {
     &lt;h1&gt;Hello, { .username }&lt;/h1&gt;
     &lt;div class="content" id="id-{ .id }"&gt;
@@ -128,34 +159,47 @@
     &lt;/div&gt;
 }
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-10"><div><section>
+
 <header><h2>Выражения. Текстовые строки</h2></header>
+
 <p>Аналог <code>xsl:text</code> с интерполяцией:</p>
+
 <pre><code>match / {
     "Hello"
     "Hello, { .username }"
 }
 </code></pre>
+
 <p>Одинарные кавычки и двойные — одно и то же.</p>
+
 </section></div></div>
 
     <div class="slide" id="slide-11"><div><section>
+
 <header><h2>Выражения. Значения</h2></header>
+
 <p>Аналог <code>xsl:value-of</code>:</p>
+
 <pre><code>match / {
     &lt;div class="content"&gt;
         .content
     &lt;/div&gt;
 }
 </code></pre>
+
 <p>Это может быть <code>jpath</code>, значение переменной,
 и вообще произвольное инлайновое выражение.</p>
+
 </section></div></div>
 
     <div class="slide" id="slide-12"><div><section>
+
 <header><h2>Выражения. Значения</h2></header>
+
 <pre><code>answer = 42
 
 match / {
@@ -165,11 +209,15 @@ match / {
     getTitle()
 }
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-13"><div><section>
+
 <header><h2>Выражения. XML-атрибуты</h2></header>
+
 <p>Неполный аналог <code>xsl:attribute</code>:</p>
+
 <pre><code>match / {
     &lt;div&gt;
         @class = "hello"
@@ -177,10 +225,13 @@ match / {
     &lt;/div&gt;
 }
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-14"><div><section>
+
 <header><h2>Выражения. XML-атрибуты</h2></header>
+
 <pre><code>match / {
     &lt;div class="hello"&gt;
         if .title {
@@ -189,10 +240,13 @@ match / {
     &lt;/div&gt;
 }
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-15"><div><section>
+
 <header><h2>Выражения. XML-атрибуты</h2></header>
+
 <pre><code>match / {
     &lt;div&gt;
         apply . class
@@ -203,10 +257,13 @@ match / class {
     @class = "hello"
 }
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-16"><div><section>
+
 <header><h2>Выражения. XML-атрибуты</h2></header>
+
 <pre><code>match / {
     &lt;div class="hello"&gt;
         if .username {
@@ -216,11 +273,15 @@ match / class {
     &lt;/div&gt;
 }
 </code></pre>
+
 <p>Временный синтаксис.</p>
+
 </section></div></div>
 
     <div class="slide" id="slide-17"><div><section>
+
 <header><h2>Выражения. XML-атрибуты</h2></header>
+
 <pre><code>attrs = (
     @width = 42
     @height = 24
@@ -230,11 +291,15 @@ match / class {
     attrs
 &lt;/img&gt;
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-18"><div><section>
+
 <header><h2>Выражения. <code>if</code></h2></header>
+
 <p>Аналог <code>xsl:if</code> и <code>xsl:choose</code>:</p>
+
 <pre><code>&lt;span class="count"&gt;
     if .count &gt; 5 {
         .count
@@ -243,34 +308,47 @@ match / class {
     }
 &lt;/span&gt;
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-19"><div><section>
+
 <header><h2>Выражения. <code>for</code></h2></header>
+
 <p>Аналог <code>xsl:for-each</code>:</p>
+
 <pre><code>&lt;ul&gt;
     for .items.item {
         &lt;li&gt;{ .title }&lt;/li&gt;
     }
 &lt;/ul&gt;
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-20"><div><section>
+
 <header><h2>Выражения. <code>apply</code></h2></header>
+
 <p>Аналог <code>xsl:apply-templates</code>:</p>
+
 <pre><code>match / {
     apply .page title
     apply .page
 }
 </code></pre>
+
 <p>Первый аргумент <code>apply</code> любой <code>nodeset</code>,
 не обязательно именно <code>jpath</code>.</p>
+
 </section></div></div>
 
     <div class="slide" id="slide-21"><div><section>
+
 <header><h2>Выражения. <code>apply</code></h2></header>
+
 <p>Можно передавать параметры:</p>
+
 <pre><code>match / {
     apply .page title ( .title )
 }
@@ -279,11 +357,15 @@ match .page title ( title = "Hello" ) {
     &lt;h1&gt;{ title }&lt;/h1&gt;
 }
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-22"><div><section>
+
 <header><h2>Выражения</h2></header>
+
 <p><code>if</code>, <code>for</code>, <code>apply</code> — выражения.</p>
+
 <pre><code>title = if .title {
     .title
 } else {
@@ -292,11 +374,15 @@ match .page title ( title = "Hello" ) {
 
 &lt;h1&gt;{ title }&lt;/h1&gt;
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-23"><div><section>
+
 <header><h2>Определения. Переменные</h2></header>
+
 <p>Аналог <code>xsl:variable</code>:</p>
+
 <pre><code>title = &lt;h1&gt;Hello, { .username }&lt;/h1&gt;
 hello = "Hello, { .username }"
 count = 42
@@ -305,10 +391,13 @@ isValid = .count &gt; 5 &amp;&amp; .title
 
 class = @class = "hello"
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-24"><div><section>
+
 <header><h2>Определения. Переменные</h2></header>
+
 <pre><code>content = (
     &lt;h1&gt;Hello, { .username }&lt;/h1&gt;
     &lt;ul&gt;
@@ -318,33 +407,46 @@ class = @class = "hello"
     &lt;/ul&gt;
 )
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-25"><div><section>
+
 <header><h2>Определения. Переменные</h2></header>
+
 <p>Переменные — <strong>неизменяемы</strong>:</p>
+
 <pre><code>match / {
     a = 42
     a = "Hello" // Ошибка!
 }
 </code></pre>
+
 <p>В одном scope не могут быть определены
 две переменные с одинаковым именем.</p>
+
 </section></div></div>
 
     <div class="slide" id="slide-26"><div><section>
+
 <header><h2>Определения. Функции</h2></header>
+
 <p>Аналог одновременно <code>xsl:template name="..."</code> и <code>func:function</code>:</p>
+
 <pre><code>func add(a, b) {
     a + b
 }
 add(42, 24)
 </code></pre>
+
 <p>Тело функции является её возвращаемым значением.</p>
+
 </section></div></div>
 
     <div class="slide" id="slide-27"><div><section>
+
 <header><h2>Определения. Функции</h2></header>
+
 <pre><code>func title(title = "Hello") {
     &lt;h1&gt;{ title }&lt;/h1&gt;
 }
@@ -354,11 +456,15 @@ match / {
     title()
 }
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-28"><div><section>
+
 <header><h2>Определения. Функции</h2></header>
+
 <p>Функция может возвращать не только <code>xml</code>:</p>
+
 <pre><code>func items() {
     .items.item
 }
@@ -367,11 +473,15 @@ func isValid() {
     .count &gt; 5 &amp;&amp; .title
 }
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-29"><div><section>
+
 <header><h2>Определения. Функции</h2></header>
+
 <p>Вложенные функции:</p>
+
 <pre><code>match / {
     fact(4)
 
@@ -380,23 +490,31 @@ func isValid() {
     }
 }
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-30"><div><section>
+
 <header><h2>Определения. Ключи</h2></header>
+
 <p>Некий аналог <code>xsl:key</code>:</p>
+
 <pre><code>key items( .items.item, .id ) {
     .
 }
 
 items("first").title
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-31"><div><section>
+
 <header><h2>Определения. Ключи</h2></header>
+
 <p>Ключ может возвращать не только соответствующую ноду,
 но и произвольное выражение вычисленное по этой ноде:</p>
+
 <pre><code>key labels( .labels.label, .id ) {
     &lt;div class="label"&gt;
         &lt;a href="/label/{ .id }"&gt;{ .title }&lt;/a&gt;
@@ -405,44 +523,60 @@ items("first").title
 
 labels("42")
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-32"><div><section>
+
 <header><h2>Разное. <code>include</code></h2></header>
+
 <pre><code>include "common.yate"
 
 match / {
     "Hello, { username }"
 }
 </code></pre>
+
 <p>и в <code>common.yate</code>:</p>
+
 <pre><code>username = "nop"
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-33"><div><section>
+
 <header><h2>Разное. <code>external</code></h2></header>
+
 <p>Можно подключать внешние функции, реализованные отдельно
 на обычном <code>javascript</code>:</p>
+
 <pre><code>external nodeset reverse(nodeset)
 
 match / {
     apply reverse(.items.item)
 }
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-34"><div><section>
+
 <header><h2>Разное. <code>external</code></h2></header>
+
 <p>В отдельно подключаемом js-файле:</p>
+
 <pre><code>Yater.externals.reverse = function(....., nodeset) {
     return nodeset.reverse();
 };
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-35"><div><section>
+
 <header><h2>Будущее. <code>elem</code> и <code>attr</code></h2></header>
+
 <pre><code>elem = "div"
 attr = "class"
 
@@ -451,10 +585,13 @@ attr = "class"
     "Hello"
 &lt;/&gt;
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-36"><div><section>
+
 <header><h2>Будущее. <code>JSON</code></h2></header>
+
 <pre><code>tree = {
     "title": "Hello, { .username }"
     if .total &gt; 5 {
@@ -464,10 +601,13 @@ attr = "class"
 }
 apply tree
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-37"><div><section>
+
 <header><h2>Будущее. <code>JSON</code></h2></header>
+
 <pre><code>&lt;div&gt;
     {
         "class": "hello"
@@ -478,37 +618,50 @@ apply tree
     }
 &lt;/div&gt;
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-38"><div><section>
+
 <header><h2>Будущее. <code>JSON</code></h2></header>
+
 <p>И на выходе получится такой <code>html</code>:</p>
+
 <pre><code>&lt;div class='hello'
     params='{ "author-login": "nop", "image-id": 42 }'&gt;
 &lt;/div&gt;
 </code></pre>
+
 </section></div></div>
 
     <div class="slide" id="slide-39"><div><section>
+
 <header><h2>Будущее. Модули</h2></header>
+
 <p>Нужна возможность разбивать код шаблонов на модули.</p>
+
 <ul>
 <li>Возможность загрузить один модуль и потом подгрузить другой,
-    использующий первый.</li>
+использующий первый.</li>
 <li><code>module "name"</code>.</li>
 <li><code>import "name"</code>.</li>
 <li><code>apply-imports</code>.</li>
 </ul>
+
 </section></div></div>
 
     <div class="slide" id="slide-40"><div><section>
+
 <header><h2>Всё</h2></header>
+
 <ul>
 <li><a href="http://git.io/yate">git.io/yate</a> — проект <code>yate</code> на github'е.</li>
 <li><a href="http://git.io/nop">git.io/nop</a> — все мои проекты.</li>
 </ul>
-<p>Сергей Никитин<br />
-<a href="mailto:nop@yandex-team.ru">nop@yandex-team.ru</a></p></section></div></div>
+
+<p>Сергей Никитин <br />
+<a href="mailto:nop@yandex-team.ru">nop@yandex-team.ru</a></p>
+</section></div></div>
 
 
     <script src="../shower/scripts/script.js"></script>
