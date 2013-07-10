@@ -647,7 +647,10 @@
 
 ## Профайлинг
 
-    > node --prof --trace_opt --trace_deopt --trace_inlining foo.js
+    > node --prof
+        --trace_opt
+        --trace_deopt
+        --trace_inlining foo.js
 
 ---
 
