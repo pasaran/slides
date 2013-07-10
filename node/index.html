@@ -500,6 +500,97 @@ timer.unref();
 
     <div class="slide" id="slide-33"><div><section>
 
+<header><h2>VM</h2></header>
+
+<p>Ко всем существующим способам eval'ить код, нода добавляет еще один:</p>
+
+<pre><code>var vm = require('vm');
+
+vm.runInThisContext('foo = 42;');
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-34"><div><section>
+
+<header><h2>VM</h2></header>
+
+<pre><code>vm.runInThisContext(code)
+vm.runInNewContext(code, sandbox)
+vm.createContext(sandbox)
+vm.runInContext(code, context)
+
+vm.createScript(code)
+script.runInThisContext()
+script.runInNewContext(sandbox)
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-35"><div><section>
+
+<header><h2>VM</h2></header>
+
+<p><code>vm.runInThisContext(code)</code> — это глобальный <code>eval</code>.</p>
+
+<ul>
+<li>Код не имеет доступа к локальному scope.</li>
+<li>Но имеет доступ к глобальному объекту (на чтение и запись) —
+<code>global</code>, <code>process</code>, ...</li>
+</ul>
+
+<p>Так запускать можно только проверенный код.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-36"><div><section>
+
+<header><h2>VM</h2></header>
+
+<p>Непроверенный код нужно запускать в отдельном контексте.</p>
+
+<pre><code>vm.runInNewContext( code, { foo: 42 } );
+
+var context = vm.createContext( { foo: 42 } );
+vm.runInContext(code, context);
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-37"><div><section>
+
+<header><h2>VM</h2></header>
+
+<p>В новом контексте все глобальные объекты свои:</p>
+
+<pre><code>//  Не будет работать.
+array instanceof Array
+
+//  Будет работать.
+Array.isArray(array)
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-38"><div><section>
+
+<header><h2>VM</h2></header>
+
+<pre><code>var js = 'foo = 42;'
+vm.runInNewContext( js, sandbox );
+//  sandbox.foo === 42
+
+vm.runInNewContext(
+    '(function() { "use strict"; return ( '
+        + js + ' ) })()',
+    sandbox
+);
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-39"><div><section>
+
 <header><h2>Harmony</h2></header>
 
 <pre><code>node --v8-options | grep harmony
@@ -514,7 +605,7 @@ timer.unref();
 
 </section></div></div>
 
-    <div class="slide" id="slide-34"><div><section>
+    <div class="slide" id="slide-40"><div><section>
 
 <header><h2>Harmony</h2></header>
 
@@ -530,7 +621,7 @@ chmod +x test.js
 
 </section></div></div>
 
-    <div class="slide" id="slide-35"><div><section>
+    <div class="slide" id="slide-41"><div><section>
 
 <header><h2>Harmony. Generators</h2></header>
 
@@ -545,7 +636,7 @@ var iter = foo();
 
 </section></div></div>
 
-    <div class="slide" id="slide-36"><div><section>
+    <div class="slide" id="slide-42"><div><section>
 
 <header><h2>Harmony. Iterators</h2></header>
 
@@ -557,7 +648,7 @@ iter.next(); // { value: undefined, done: true }
 
 </section></div></div>
 
-    <div class="slide" id="slide-37"><div><section>
+    <div class="slide" id="slide-43"><div><section>
 
 <header><h2>Harmony. Iterators</h2></header>
 
@@ -568,7 +659,7 @@ iter.next(); // { value: undefined, done: true }
 
 </section></div></div>
 
-    <div class="slide" id="slide-38"><div><section>
+    <div class="slide" id="slide-44"><div><section>
 
 <header><h2>Harmony. Generators</h2></header>
 
@@ -585,7 +676,7 @@ for ( var value of bar() ) {
 
 </section></div></div>
 
-    <div class="slide" id="slide-39"><div><section>
+    <div class="slide" id="slide-45"><div><section>
 
 <header><h2>Harmony. Generators</h2></header>
 
@@ -598,7 +689,7 @@ for ( var value of bar() ) {
 
 </section></div></div>
 
-    <div class="slide" id="slide-40"><div><section>
+    <div class="slide" id="slide-46"><div><section>
 
 <header><h2>Harmony. Generators</h2></header>
 
@@ -611,7 +702,7 @@ for ( var value of numbers() ) {
 
 </section></div></div>
 
-    <div class="slide" id="slide-41"><div><section>
+    <div class="slide" id="slide-47"><div><section>
 
 <header><h2>Harmony. Generators</h2></header>
 
@@ -626,7 +717,20 @@ for ( var value of numbers() ) {
 
 </section></div></div>
 
-    <div class="slide" id="slide-42"><div><section>
+    <div class="slide" id="slide-48"><div><section>
+
+<header><h2>Harmony. Generators</h2></header>
+
+<pre><code>async(function* () {
+    var a = yield request('http://www.yandex.ru');
+    var b = yield request('http://www.google.com');
+    console.log(a, b);
+});
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-49"><div><section>
 
 <header><h2>Harmony. Generators</h2></header>
 
@@ -643,7 +747,7 @@ for ( var value of numbers() ) {
 
 </section></div></div>
 
-    <div class="slide" id="slide-43"><div><section>
+    <div class="slide" id="slide-50"><div><section>
 
 <header><h2>Harmony. Generators</h2></header>
 
@@ -660,20 +764,7 @@ for ( var value of numbers() ) {
 
 </section></div></div>
 
-    <div class="slide" id="slide-44"><div><section>
-
-<header><h2>Harmony. Generators</h2></header>
-
-<pre><code>async(function* () {
-    var a = yield request('http://www.yandex.ru');
-    var b = yield request('http://www.google.com');
-    console.log(a, b);
-});
-</code></pre>
-
-</section></div></div>
-
-    <div class="slide" id="slide-45"><div><section>
+    <div class="slide" id="slide-51"><div><section>
 
 <header><h2>Harmony. Symbols</h2></header>
 
@@ -690,7 +781,7 @@ console.log( ( new Foo(42) )._data );
 
 </section></div></div>
 
-    <div class="slide" id="slide-46"><div><section>
+    <div class="slide" id="slide-52"><div><section>
 
 <header><h2>Harmony. Symbols</h2></header>
 
@@ -708,7 +799,7 @@ console.log( ( new Foo(42) )._data );
 
 </section></div></div>
 
-    <div class="slide" id="slide-47"><div><section>
+    <div class="slide" id="slide-53"><div><section>
 
 <header><h2>Harmony. Observable</h2></header>
 
@@ -724,7 +815,7 @@ delete o.foo;
 
 </section></div></div>
 
-    <div class="slide" id="slide-48"><div><section>
+    <div class="slide" id="slide-54"><div><section>
 
 <header><h2>Harmony. Observable</h2></header>
 
@@ -733,12 +824,12 @@ delete o.foo;
   { type: 'updated', object: {},
         name: 'foo', oldValue: 42 },
   { type: 'deleted', object: {},
-        name: 'foo', oldValue: 24 } ]
+       name: 'foo', oldValue: 24 } ]
 </code></pre>
 
 </section></div></div>
 
-    <div class="slide" id="slide-49"><div><section>
+    <div class="slide" id="slide-55"><div><section>
 
 <header><h2>Harmony. Observable</h2></header>
 
@@ -755,13 +846,76 @@ setTimeout(function() {
 
 </section></div></div>
 
-    <div class="slide" id="slide-50"><div><section>
+    <div class="slide" id="slide-56"><div><section>
 
-<ul>
-<li><p>VM.</p></li>
-<li><p>Простой профайлинг и оптимизация.</p></li>
-<li><p>Отладка.</p></li>
-</ul>
+<header><h2>Профайлинг</h2></header>
+
+<pre><code>&gt; node --prof --trace_opt --trace_deopt --trace_inlining foo.js
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-57"><div><section>
+
+<header><h2>Профайлинг</h2></header>
+
+<pre><code>&gt; node --prof foo.js
+
+cd reps/node/deps/v8
+./tools/mac-tick-processor .../v8.log
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-58"><div><section>
+
+<header><h2>Профайлинг</h2></header>
+
+<pre><code>&gt; node --trace_deopt foo.js
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-59"><div><section>
+
+<header><h2>Профайлинг</h2></header>
+
+<pre><code>function foo() {
+    return arguments[1];
+}
+
+for (var i = 0; i &lt; N; i++) {
+    foo(i);
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-60"><div><section>
+
+<header><h2>Профайлинг</h2></header>
+
+<pre><code>&gt; node --trace__inlining foo.js
+
+Inlined add1 called from .
+Did not inline add2 called from  (target text too big).
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-61"><div><section>
+
+<header><h2>Профайлинг</h2></header>
+
+<pre><code>function add1(x, y) {
+    return x + y;
+}
+
+function add2(x, y) {
+    /* ...... */
+    return x + y;
+}
+</code></pre>
 </section></div></div>
 
 

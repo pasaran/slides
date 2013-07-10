@@ -369,6 +369,78 @@
 
 ---
 
+## VM
+
+Ко всем существующим способам eval'ить код, нода добавляет еще один:
+
+    var vm = require('vm');
+
+    vm.runInThisContext('foo = 42;');
+
+---
+
+## VM
+
+    vm.runInThisContext(code)
+    vm.runInNewContext(code, sandbox)
+    vm.createContext(sandbox)
+    vm.runInContext(code, context)
+
+    vm.createScript(code)
+    script.runInThisContext()
+    script.runInNewContext(sandbox)
+
+---
+
+## VM
+
+`vm.runInThisContext(code)` — это глобальный `eval`.
+
+  * Код не имеет доступа к локальному scope.
+  * Но имеет доступ к глобальному объекту (на чтение и запись) —
+    `global`, `process`, ...
+
+Так запускать можно только проверенный код.
+
+---
+
+## VM
+
+Непроверенный код нужно запускать в отдельном контексте.
+
+    vm.runInNewContext( code, { foo: 42 } );
+
+    var context = vm.createContext( { foo: 42 } );
+    vm.runInContext(code, context);
+
+---
+
+## VM
+
+В новом контексте все глобальные объекты свои:
+
+    //  Не будет работать.
+    array instanceof Array
+
+    //  Будет работать.
+    Array.isArray(array)
+
+---
+
+## VM
+
+    var js = 'foo = 42;'
+    vm.runInNewContext( js, sandbox );
+    //  sandbox.foo === 42
+
+    vm.runInNewContext(
+        '(function() { "use strict"; return ( '
+            + js + ' ) })()',
+        sandbox
+    );
+
+---
+
 ## Harmony
 
     node --v8-options | grep harmony
@@ -470,6 +542,16 @@
 
 ## Harmony. Generators
 
+    async(function* () {
+        var a = yield request('http://www.yandex.ru');
+        var b = yield request('http://www.google.com');
+        console.log(a, b);
+    });
+
+---
+
+## Harmony. Generators
+
     function sleep(timeout) {
         var promise = new no.Promise();
 
@@ -493,16 +575,6 @@
             }
         })();
     }
-
----
-
-## Harmony. Generators
-
-    async(function* () {
-        var a = yield request('http://www.yandex.ru');
-        var b = yield request('http://www.google.com');
-        console.log(a, b);
-    });
 
 ---
 
@@ -555,7 +627,7 @@
       { type: 'updated', object: {},
             name: 'foo', oldValue: 42 },
       { type: 'deleted', object: {},
-            name: 'foo', oldValue: 24 } ]
+           name: 'foo', oldValue: 24 } ]
 
 ---
 
@@ -573,9 +645,56 @@
 
 ---
 
-  * VM.
+## Профайлинг
 
-  * Простой профайлинг и оптимизация.
+    > node --prof --trace_opt --trace_deopt --trace_inlining foo.js
 
-  * Отладка.
+---
+
+## Профайлинг
+
+    > node --prof foo.js
+
+    cd reps/node/deps/v8
+    ./tools/mac-tick-processor .../v8.log
+
+---
+
+## Профайлинг
+
+    > node --trace_deopt foo.js
+
+---
+
+## Профайлинг
+
+    function foo() {
+        return arguments[1];
+    }
+
+    for (var i = 0; i < N; i++) {
+        foo(i);
+    }
+
+---
+
+## Профайлинг
+
+    > node --trace__inlining foo.js
+
+    Inlined add1 called from .
+    Did not inline add2 called from  (target text too big).
+
+---
+
+## Профайлинг
+
+    function add1(x, y) {
+        return x + y;
+    }
+
+    function add2(x, y) {
+        /* ...... */
+        return x + y;
+    }
 
