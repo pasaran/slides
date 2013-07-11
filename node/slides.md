@@ -161,81 +161,7 @@
 Запись в поток:
 
     ws.write(chunk);
-    ws.write();
-
----
-
-## Modules
-
-Классические модули предполагают, что они независимы друг от друга.
-И, если модулю нужен другой модуль, он использует `require()`.
-Но иногда получаются циклические ссылки.
-
-Например, есть `parser.js` и `ast.js`.
-
----
-
-## Modules
-
-    var AST = require('./ast.js');
-
-    Parser.prototype.parse = function(...) {
-        ...
-        return new AST(...);
-    };
-
-    module.exports = Parser;
-
----
-
-## Modules
-
-    var Parser = require('./parser.js');
-
-    AST.include.prototype.init = function() {
-        var ast = ( new Parser() ).parse(this.filename);
-        ...
-    };
-
-    module.exports = AST;
-
----
-
-## Modules
-
-Общий модуль, экспортирующий неймспейс.
-
-    //  no.base.js
-
-    var no = {};
-
-    module.exports = no;
-
----
-
-## Modules
-
-    //  no.promise.js
-
-    var no = no || require('./no.base.js');
-
-    no.Promise = function() {
-        ...
-    };
-
----
-
-## Modules
-
-    //  index.js
-
-    var no = require('./no.base.js');
-
-    require('./no.promise.js');
-    require('./no.events.js');
-    ...
-
-    module.exports = no;
+    ws.end();
 
 ---
 
@@ -441,6 +367,84 @@
 
 ---
 
+## Modules
+
+Классические модули предполагают, что они независимы друг от друга.
+И, если модулю нужен другой модуль, он использует `require()`.
+Но иногда получаются циклические ссылки.
+
+Например, есть `parser.js` и `ast.js`.
+
+---
+
+## Modules
+
+    var AST = require('./ast.js');
+
+    Parser.prototype.parse = function(...) {
+        ...
+        return new AST(...);
+    };
+
+    module.exports = Parser;
+
+---
+
+## Modules
+
+    var Parser = require('./parser.js');
+
+    AST.include.prototype.init = function() {
+        var ast = ( new Parser() ).parse(this.filename);
+        ...
+    };
+
+    module.exports = AST;
+
+---
+
+## Modules
+
+Общий модуль, экспортирующий неймспейс.
+
+    //  no.base.js
+    var no = {};
+
+    no.de = (typeof window === 'undefined');
+    if ( no.de ) {
+        module.exports = no;
+    }
+
+---
+
+## Modules
+
+    //  no.promise.js
+    var no = no || require('./no.base.js');
+    if  ( no.de ) {
+        require('./no.events.js');
+    }
+
+    no.Promise = function() {
+        ...
+    };
+
+---
+
+## Modules
+
+    //  index.js
+
+    var no = require('./no.base.js');
+
+    require('./no.promise.js');
+    require('./no.events.js');
+    ...
+
+    module.exports = no;
+
+---
+
 ## Harmony
 
     node --v8-options | grep harmony
@@ -510,7 +514,7 @@
 
 ## Harmony. Generators
 
-    function *numbers() {
+    function* numbers() {
         for (var i = 0; ; i++) {
             yield i;
         }
@@ -647,6 +651,8 @@
 
 ## Профайлинг
 
+    > node --v8-options
+
     > node --prof
         --trace_opt
         --trace_deopt
@@ -665,7 +671,7 @@
 
 ## Профайлинг
 
-    > node --trace_deopt foo.js
+    > node --trace_opt --trace_deopt foo.js
 
 ---
 

@@ -236,103 +236,12 @@ rs.on('end', function() {
 <p>Запись в поток:</p>
 
 <pre><code>ws.write(chunk);
-ws.write();
+ws.end();
 </code></pre>
 
 </section></div></div>
 
     <div class="slide" id="slide-17"><div><section>
-
-<header><h2>Modules</h2></header>
-
-<p>Классические модули предполагают, что они независимы друг от друга.
-И, если модулю нужен другой модуль, он использует <code>require()</code>.
-Но иногда получаются циклические ссылки.</p>
-
-<p>Например, есть <code>parser.js</code> и <code>ast.js</code>.</p>
-
-</section></div></div>
-
-    <div class="slide" id="slide-18"><div><section>
-
-<header><h2>Modules</h2></header>
-
-<pre><code>var AST = require('./ast.js');
-
-Parser.prototype.parse = function(...) {
-    ...
-    return new AST(...);
-};
-
-module.exports = Parser;
-</code></pre>
-
-</section></div></div>
-
-    <div class="slide" id="slide-19"><div><section>
-
-<header><h2>Modules</h2></header>
-
-<pre><code>var Parser = require('./parser.js');
-
-AST.include.prototype.init = function() {
-    var ast = ( new Parser() ).parse(this.filename);
-    ...
-};
-
-module.exports = AST;
-</code></pre>
-
-</section></div></div>
-
-    <div class="slide" id="slide-20"><div><section>
-
-<header><h2>Modules</h2></header>
-
-<p>Общий модуль, экспортирующий неймспейс.</p>
-
-<pre><code>//  no.base.js
-
-var no = {};
-
-module.exports = no;
-</code></pre>
-
-</section></div></div>
-
-    <div class="slide" id="slide-21"><div><section>
-
-<header><h2>Modules</h2></header>
-
-<pre><code>//  no.promise.js
-
-var no = no || require('./no.base.js');
-
-no.Promise = function() {
-    ...
-};
-</code></pre>
-
-</section></div></div>
-
-    <div class="slide" id="slide-22"><div><section>
-
-<header><h2>Modules</h2></header>
-
-<pre><code>//  index.js
-
-var no = require('./no.base.js');
-
-require('./no.promise.js');
-require('./no.events.js');
-...
-
-module.exports = no;
-</code></pre>
-
-</section></div></div>
-
-    <div class="slide" id="slide-23"><div><section>
 
 <header><h2>Cluster</h2></header>
 
@@ -349,7 +258,7 @@ module.exports = no;
 
 </section></div></div>
 
-    <div class="slide" id="slide-24"><div><section>
+    <div class="slide" id="slide-18"><div><section>
 
 <header><h2>Error handling</h2></header>
 
@@ -364,7 +273,7 @@ module.exports = no;
 
 </section></div></div>
 
-    <div class="slide" id="slide-25"><div><section>
+    <div class="slide" id="slide-19"><div><section>
 
 <header><h2>Error handling</h2></header>
 
@@ -380,7 +289,7 @@ restart your application after every unhandled exception!</p>
 
 </section></div></div>
 
-    <div class="slide" id="slide-26"><div><section>
+    <div class="slide" id="slide-20"><div><section>
 
 <header><h2>Error handling. Domains</h2></header>
 
@@ -397,7 +306,7 @@ d.run(function() {
 
 </section></div></div>
 
-    <div class="slide" id="slide-27"><div><section>
+    <div class="slide" id="slide-21"><div><section>
 
 <header><h2>Domains + Cluster</h2></header>
 
@@ -416,7 +325,7 @@ d.run(function() {
 
 </section></div></div>
 
-    <div class="slide" id="slide-28"><div><section>
+    <div class="slide" id="slide-22"><div><section>
 
 <header><h2>Domains + Cluster</h2></header>
 
@@ -431,7 +340,7 @@ d.run(function() {
 
 </section></div></div>
 
-    <div class="slide" id="slide-29"><div><section>
+    <div class="slide" id="slide-23"><div><section>
 
 <header><h2>Domains + Cluster</h2></header>
 
@@ -462,7 +371,7 @@ server.listen(8000);
 
 </section></div></div>
 
-    <div class="slide" id="slide-30"><div><section>
+    <div class="slide" id="slide-24"><div><section>
 
 <header><h2>Domains + Cluster</h2></header>
 
@@ -470,7 +379,7 @@ server.listen(8000);
 
 </section></div></div>
 
-    <div class="slide" id="slide-31"><div><section>
+    <div class="slide" id="slide-25"><div><section>
 
 <header><h2><code>ref()</code> и <code>unref()</code></h2></header>
 
@@ -485,7 +394,7 @@ timer.unref();
 
 </section></div></div>
 
-    <div class="slide" id="slide-32"><div><section>
+    <div class="slide" id="slide-26"><div><section>
 
 <header><h2><code>setTimeout</code> vs <code>setImmediate</code> vs <code>process.nextTick</code></h2></header>
 
@@ -498,7 +407,7 @@ timer.unref();
 
 </section></div></div>
 
-    <div class="slide" id="slide-33"><div><section>
+    <div class="slide" id="slide-27"><div><section>
 
 <header><h2>VM</h2></header>
 
@@ -511,7 +420,7 @@ vm.runInThisContext('foo = 42;');
 
 </section></div></div>
 
-    <div class="slide" id="slide-34"><div><section>
+    <div class="slide" id="slide-28"><div><section>
 
 <header><h2>VM</h2></header>
 
@@ -527,7 +436,7 @@ script.runInNewContext(sandbox)
 
 </section></div></div>
 
-    <div class="slide" id="slide-35"><div><section>
+    <div class="slide" id="slide-29"><div><section>
 
 <header><h2>VM</h2></header>
 
@@ -543,7 +452,7 @@ script.runInNewContext(sandbox)
 
 </section></div></div>
 
-    <div class="slide" id="slide-36"><div><section>
+    <div class="slide" id="slide-30"><div><section>
 
 <header><h2>VM</h2></header>
 
@@ -557,7 +466,7 @@ vm.runInContext(code, context);
 
 </section></div></div>
 
-    <div class="slide" id="slide-37"><div><section>
+    <div class="slide" id="slide-31"><div><section>
 
 <header><h2>VM</h2></header>
 
@@ -572,7 +481,7 @@ Array.isArray(array)
 
 </section></div></div>
 
-    <div class="slide" id="slide-38"><div><section>
+    <div class="slide" id="slide-32"><div><section>
 
 <header><h2>VM</h2></header>
 
@@ -585,6 +494,101 @@ vm.runInNewContext(
         + js + ' ) })()',
     sandbox
 );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-33"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<p>Классические модули предполагают, что они независимы друг от друга.
+И, если модулю нужен другой модуль, он использует <code>require()</code>.
+Но иногда получаются циклические ссылки.</p>
+
+<p>Например, есть <code>parser.js</code> и <code>ast.js</code>.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-34"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>var AST = require('./ast.js');
+
+Parser.prototype.parse = function(...) {
+    ...
+    return new AST(...);
+};
+
+module.exports = Parser;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-35"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>var Parser = require('./parser.js');
+
+AST.include.prototype.init = function() {
+    var ast = ( new Parser() ).parse(this.filename);
+    ...
+};
+
+module.exports = AST;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-36"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<p>Общий модуль, экспортирующий неймспейс.</p>
+
+<pre><code>//  no.base.js
+var no = {};
+
+no.de = (typeof window === 'undefined');
+if ( no.de ) {
+    module.exports = no;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-37"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>//  no.promise.js
+var no = no || require('./no.base.js');
+if  ( no.de ) {
+    require('./no.events.js');
+}
+
+no.Promise = function() {
+    ...
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-38"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>//  index.js
+
+var no = require('./no.base.js');
+
+require('./no.promise.js');
+require('./no.events.js');
+...
+
+module.exports = no;
 </code></pre>
 
 </section></div></div>
@@ -680,7 +684,7 @@ for ( var value of bar() ) {
 
 <header><h2>Harmony. Generators</h2></header>
 
-<pre><code>function *numbers() {
+<pre><code>function* numbers() {
     for (var i = 0; ; i++) {
         yield i;
     }
@@ -850,7 +854,9 @@ setTimeout(function() {
 
 <header><h2>Профайлинг</h2></header>
 
-<pre><code>&gt; node --prof
+<pre><code>&gt; node --v8-options
+
+&gt; node --prof
     --trace_opt
     --trace_deopt
     --trace_inlining foo.js
@@ -874,7 +880,7 @@ cd reps/node/deps/v8
 
 <header><h2>Профайлинг</h2></header>
 
-<pre><code>&gt; node --trace_deopt foo.js
+<pre><code>&gt; node --trace_opt --trace_deopt foo.js
 </code></pre>
 
 </section></div></div>
