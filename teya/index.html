@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <title>teya</title>
+    <meta charset="utf-8"/>
+    <!--
+    <meta name="viewport" content="width=1274, user-scalable=no"/>
+    -->
+    <link rel="stylesheet" href="../shower/themes/ribbon/styles/style.css"/>
+    <style>
+    .full .slide:after {
+        left: auto;
+        bottom: 1em;
+        right: 2em;
+    }
+    .slide pre code:before {
+        content: '';
+    }
+    .slide section:before {
+        background: none;
+    }
+    </style>
+</head>
+
+<body class="list">
+    <header class="caption">
+        <h1>teya</h1>
+    </header>
+
+    <div class="slide" id="slide-1"><div><section>
+
+<header><h2>Почему pattern matching это не очень хорошо</h2></header>
+
+<ul>
+<li><p>Медленнее, чем.</p></li>
+<li><p>Приходится "портить" данные.</p></li>
+<li><p>Сложно оптимизировать (вызовы шаблонов, удаление неиспользуемого кода,
+передача параметров, сборка только нужного и т.д.).</p></li>
+<li><p>Сложно сочетается с другими фичами (json -> json).</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-2"><div><section>
+
+<header><h2>Почему вообще мы так любим pattern matching?</h2></header>
+
+<ul>
+<li><p>По историческим причинам. Из-за широкого распространения
+<code>XSLT</code> в Яндексе (во всем, конечно, виноват Бацек).</p></li>
+<li><p>В <code>XSLT</code> мы его используем из-за технических ограничений.
+Даже там, где это не нужно.</p></li>
+<li><p><code>yate</code> — это <code>XSLT</code> в другом синтаксисе, так что и там тоже самое.</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-3"><div><section>
+
+<pre><code>&lt;ul&gt;
+    &lt;li&gt;First&lt;/li&gt;
+    &lt;li&gt;Second&lt;/li&gt;
+    &lt;li&gt;Third&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-4"><div><section>
+
+<pre><code>page: {
+    list: {
+        item: [
+            'First',
+            'Second',
+            'Third'
+        ]
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-5"><div><section>
+
+<pre><code>match .page
+    apply .list
+
+match .list
+    &lt;ul&gt;
+        apply .item
+
+match .item
+    &lt;li&gt;{ . }&lt;/li&gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-6"><div><section>
+
+<pre><code>page: {
+    //  list: {
+    item: [
+        'First',
+        'Second',
+        'Third'
+    ]
+    //  }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-7"><div><section>
+
+<header><h2>Относительные jpath'ы</h2></header>
+
+<ul>
+<li><p>Мы не можем использовать абсолютные jpath'ы.</p></li>
+<li><p>Но чтобы использовать относительные jpath'ы,
+нам нужно менять контекст для каждого шаблона.</p></li>
+<li><p>Единственный (почти) способ поменять контекст в <code>XSLT</code> —
+это <code>&lt;apply-templates&gt;</code>.</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-8"><div><section>
+
+<header><h2>Альтернативы</h2></header>
+
+<ul>
+<li><p><code>for</code>.</p></li>
+<li><p>Именованные шаблоны, при вызове которых можно сменить контекст.
+(ни в <code>XSLT</code>, ни в <code>yate</code> такой возможности нет).</p></li>
+<li><p>Передавать контекст в качестве параметра.</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-9"><div><section>
+
+<pre><code>func page()
+    for .list list()
+
+func list()
+    &lt;ul&gt;
+        for .item item()
+
+func item()
+    &lt;li&gt;{ . }&lt;/li&gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-10"><div><section>
+
+<pre><code>match .item
+    ...
+
+match .item[ .selected ]
+    ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-11"><div><section>
+
+<pre><code>match .item
+    if .selected
+        ...
+    else
+        ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-12"><div><section>
+
+<pre><code>func page( ctx )
+    list( ctx.list )
+
+func list( ctx )
+    &lt;ul&gt;
+        for ctx.item item( . )
+
+func item( ctx )
+    &lt;li&gt;{ ctx }&lt;/li&gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-13"><div><section>
+
+<p>В итоге мы используем pattern matching там, где это вовсе не нужно.</p>
+
+<p>Вот если бы мы могли менять контекст при вызове функции
+и писать функции с предикатами...</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-14"><div><section>
+
+<header><h2>А где нужно?</h2></header>
+
+<ul>
+<li><p>Обработка UGC-контента: письма в Почте, посты в Ярушке.</p></li>
+<li><p>Когда не все знаем про входные данные. Например, список писем,
+в котором могут быть и <code>&lt;message&gt;</code> и <code>&lt;thread&gt;</code>.
+(в JSON такая ситуация почти исчезла).</p></li>
+<li><p>Когда мы не знаем точно, что должно получиться на выходе.
+Например, по урлу мы строим динамически дерево блоков для этой страницы.</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-15"><div><section>
+
+<header><h2>А где не нужно?</h2></header>
+
+<ul>
+<li><p>Там, где мы точно знаем структуру входных данных.</p></li>
+<li><p>И где мы знаем, что мы хотим получить на выходе.</p></li>
+</ul>
+
+<p>Т.е. примерно в 95% случаев.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-16"><div><section>
+
+<pre><code>match .page
+    //  Это не вызов шаблона!
+    apply .list
+
+match .list
+    &lt;ul&gt;
+        apply .item
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-17"><div><section>
+
+<header><h2>"Сверху-вниз" vs "снизу-вверх"</h2></header>
+
+<pre><code>match .list
+    &lt;ul&gt;
+        apply .item
+</code></pre>
+
+<p>Шаблон — это код (в данном случае).
+Он знает, как выводить свой контент,
+откуда его брать и т.д.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-18"><div><section>
+
+<pre><code>list: {
+    item: [ 'First', 'Second', Third' ]
+}
+
+menu: {
+    menu-item: [
+        { title: 'First' },
+        { title: 'Second' },
+        ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-19"><div><section>
+
+<header><h2>Шаблон с дыркой</h2></header>
+
+<p>Большая часть шаблонов (контролов, компонентов, ...) — это кусок html'я
+с дыркой для html-контента:</p>
+
+<pre><code>&lt;ul&gt;
+    &lt;!-- дырка для контента --&gt;
+&lt;/ul&gt;
+</code></pre>
+
+<p>Шаблон-враппер.
+Шаблон ничего не знает и не должен знать про свой контент.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-20"><div><section>
+
+<header><h2>Шаблон с несколькими дырками</h2></header>
+
+<pre><code>&lt;div class="page"&gt;
+    &lt;div class="left"&gt;
+        &lt;!-- дырка для контента 1 --&gt;
+    &lt;/div&gt;
+    &lt;div class="right"&gt;
+        &lt;!-- дырка для контента 2 --&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-21"><div><section>
+
+<header><h2>Передаем контекст параметром</h2></header>
+
+<ul>
+<li><p>Работает и в <code>XSLT</code>, и в <code>yate</code>.</p></li>
+<li><p>В <code>XSLT</code> не использовалось из-за очень громоздкого синтаксиса.</p></li>
+<li><p>Трудности с переопределением шаблонов.</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-22"><div><section>
+
+<pre><code>func list( content )
+    &lt;ul&gt;{ content }&lt;/ul&gt;
+
+func item( content )
+    &lt;li&gt;{ content }&lt;/li&gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-23"><div><section>
+
+<pre><code>content = (
+    item( 'First' )
+    item( 'Second' )
+    item( 'Third' )
+)
+
+list( content )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-24"><div><section>
+
+<pre><code>content = for .item
+    item( . )
+
+list( content )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-25"><div><section>
+
+<header><h2>Передаем контент параметром</h2></header>
+
+<ul>
+<li><p>Чем хорош этот вариант? Всем :)</p></li>
+<li><p>Если мы хотим получить кнопку (список, дропдаун, ...),
+то мы просто вызываем нужный шаблон. Нет оверхеда на pattern matching.</p></li>
+<li><p>Нет двухпроходности и лишних итераций.</p></li>
+<li><p>Шаблон ничего не знает про то, что в нем содержится.
+Что передали — то и вывели.</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-26"><div><section>
+
+<p>В <code>yate</code> вполне можно использовать передачу контента параметром,
+но синтаксис немного корявый.</p>
+
+<p>Нужно поправить.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-27"><div><section>
+
+<pre><code>list
+    UL ...
+
+item
+    LI ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-28"><div><section>
+
+<pre><code>list
+    item "First"
+    item "Second"
+    item "Third"
+
+list
+    for .item
+        item .
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-29"><div><section>
+
+<pre><code>button
+    BUTTON.button @type "button" ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-30"><div><section>
+
+<pre><code>button "Ok"
+
+button
+    icon "ok"
+    "Ok"
+
+button
+    "Ok"
+    icon "ok"
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-31"><div><section>
+
+<pre><code>button
+    @id "ok-button"
+    //  @class "{ @class } big-button"
+    @data {
+        block: "button"
+        params: {
+            id: 42
+        }
+    }
+    "Ok"
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-32"><div><section>
+
+<pre><code>button ( attrs attrs )
+    BUTTON.button
+        attrs
+        DIV.wrapper ...
+
+button
+    attrs:
+        @id "ok-button"
+    "Ok"
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-33"><div><section>
+
+<pre><code>dropdown
+    item link href: "/first" "First"
+    item link href: "/second" "Second"
+    divider
+    item link href: "/third" "Third"
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-34"><div><section>
+
+<pre><code>dropdown
+    item
+        link
+            href: "/first"
+            "First"
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-35"><div><section>
+
+<pre><code>dropdown
+    UL.dropdown-menu ...
+
+item
+    LI ...
+
+link ( href = "#" )
+    A @href href ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-36"><div><section>
+
+<pre><code>&lt;button type="button" class="btn btn-default
+    dropdown-toggle"
+    data-toggle="dropdown"&gt;
+    Dropdown
+    &lt;span class="caret"&gt;&lt;/span&gt;
+&lt;/button&gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-37"><div><section>
+
+<pre><code>button ( role = "default" )
+    BUTTON.btn.btn-{ role } @type "button" ...
+
+caret
+    SPAN.caret
+
+dropdown-toggle
+    @class "{ @class } dropdown-toggler"
+    @data-toggle "dropdown"
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-38"><div><section>
+
+<pre><code>button
+    dropdown-toggle
+    "Dropdown "
+    caret
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-39"><div><section>
+
+<header><h2>Шаблоны</h2></header>
+
+<ul>
+<li><p>Каждый шаблон — это функция.</p></li>
+<li><p>У шаблона есть параметры: явные и неявные (включая контекст).
+Всегда есть параметр <code>...</code> (с типом <code>xml</code>), означающий контент.</p></li>
+<li><p>Как и в <code>yate</code>, есть контекст, в котором вычисляются относительные
+jpath'ы (можно поменять при вызове).</p></li>
+<li><p>Модификаторы.</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-40"><div><section>
+
+<header><h2>Именованные параметры</h2></header>
+
+<p>В <code>yate</code> параметры позиционные.
+А будут именованные, как в <code>XSLT</code>.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-41"><div><section>
+
+<header><h2>be(m)-ориентированность</h2></header>
+
+<ul>
+<li><p>Блоки — это и есть шаблоны.</p></li>
+<li><p>Элементы — блоки внутри других блоков.</p></li>
+<li><p>Модификаторы?</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-42"><div><section>
+
+<pre><code>list
+
+item
+
+dropdown
+
+//  item уже занят!
+item
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-43"><div><section>
+
+<pre><code>list
+
+list-item
+
+dropdown
+
+dropdown-item
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-44"><div><section>
+
+<pre><code>list
+
+list item
+
+dropdown
+
+dropdown item
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-45"><div><section>
+
+<pre><code>dropdown
+    item "First"
+    item "Second"
+    item "Third"
+
+list
+    item "First"
+    item "Second"
+    item "Third"
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-46"><div><section>
+
+<pre><code>link
+
+item link
+
+drodown item link
+
+dropdown link
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-47"><div><section>
+
+<pre><code>content =
+    //  Что это за `item`?
+    item "First"
+    item "Second"
+    item "Third"
+
+list
+    content
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-48"><div><section>
+
+<pre><code>content =
+    list.item "First"
+    list.item "Second"
+    list.item "Third"
+
+list
+    content
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-49"><div><section>
+
+<pre><code>&lt;ul class="list" data-nb="list"&gt;
+    &lt;li class="list_item"&gt;First&lt;/li&gt;
+    &lt;li class="list_item list_item__selected"&gt;Second&lt;/li&gt;
+    &lt;li class="list_item"&gt;Third&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-50"><div><section>
+
+<pre><code>list
+    UL.list ...
+
+list item
+    LI.list_item
+        //  А что делать с модификаторами?!
+        if #selected
+            @class "{ @class } list_item__selected"
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-51"><div><section>
+
+<pre><code>list
+    UL() ...
+
+list item
+    LI() ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-52"><div><section>
+
+<pre><code>list
+    item #selected "First"
+
+&lt;ul class="list" data-nb="list"&gt;
+    &lt;li class="list_item list_item__selected"&gt;First&lt;/li&gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-53"><div><section>
+
+<header><h2>Остаточный pattern matching</h2></header>
+
+<pre><code>item [ #selected ]
+
+item [ .selected ]
+
+item ( bool selected ) [ selected ]
+
+item
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-54"><div><section>
+
+<pre><code>post
+    head -&gt; .head
+    subhead -&gt; .subhead
+
+post head
+    H1 .
+
+post subhead
+    H2 .
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-55"><div><section>
+
+<header><h2>Function overloading</h2></header>
+
+<pre><code>link ( node n )
+    A @href n.href
+        n.text
+
+link ( href, text )
+    A @href href
+        text
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-56"><div><section>
+
+<header><h2>Управляющие конструкции</h2></header>
+
+<ul>
+<li><code>for</code>, <code>if</code></li>
+<li><code>for-in</code></li>
+<li><code>with</code></li>
+<li><code>when</code> (<code>switch</code>)</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-57"><div><section>
+
+<pre><code>with .post
+    A @href "/post/{ .id }"
+        head -&gt; .head
+    html .content
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-58"><div><section>
+
+<pre><code>for key, value in object
+    "{ key }: { value }"
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-59"><div><section>
+
+<header><h2>Фильтры</h2></header>
+
+<pre><code>page
+    :markdown
+        # Hello, { .username }
+
+          * First
+          * Second
+          * Third
+</code></pre>
+
+<p><code>:text</code>, <code>:html</code>, <code>:markdown</code>, <code>:jade</code>, ...</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-60"><div><section>
+
+<header><h2>JSON -> JSON</h2></header>
+
+<pre><code>data
+    {
+        id: 42
+        if .foo
+            foo: .foo
+        items: [
+            for .item item
+        ]
+    }
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-61"><div><section>
+
+<header><h2>Mutable vs immutable</h2></header>
+
+<pre><code>o = {}
+o.id = 42
+
+a = []
+push a, 42
+//  a.push 42
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-62"><div><section>
+
+<header><h2>Всё</h2></header>
+
+<ul>
+<li><a href="http://git.io/teya">git.io/teya</a> — проект <code>teya</code> на github'е.</li>
+<li><a href="http://git.io/nop">git.io/nop</a> — все мои проекты.</li>
+</ul>
+
+<p>Сергей Никитин <br />
+<a href="mailto:nop@yandex-team.ru">nop@yandex-team.ru</a></p>
+</section></div></div>
+
+
+    <script src="../shower/scripts/script.js"></script>
+</body>
+</html>
