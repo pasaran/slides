@@ -1,6 +1,6 @@
 [submodule "core"]
 	path = core
-	url = git@github.com:shower/core.git
+	url = https://github.com/shower/core.git
 [submodule "ribbon"]
 	path = ribbon
-	url = git@github.com:shower/ribbon.git
+	url = https://github.com/shower/ribbon.git
