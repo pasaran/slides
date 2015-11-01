@@ -21,19 +21,31 @@ my $html = <<HTML;
     <!--
     <meta name="viewport" content="width=1274, user-scalable=no"/>
     -->
-    <link rel="stylesheet" href="../shower/themes/ribbon/styles/style.css"/>
+    <link rel="stylesheet" href="../ribbon/styles/screen.css"/>
     <style>
-    .full .slide:after {
-        left: auto;
-        bottom: 1em;
-        right: 2em;
+    .slide p {
+        margin-bottom: 25px;
+    }
+    .slide pre {
+        margin-bottom: 25px;
+    }
+    .slide>div {
+        padding-top: 60px;
+    }
+    .slide:after {
+        display: none;
+    }
+    .slide pre code {
+        -line-height: 1.7;
     }
     .slide pre code:before {
         content: '';
     }
+    /*
     .slide section:before {
-        background: none;
+        display: none;
     }
+    */
     </style>
 </head>
 
@@ -56,7 +68,7 @@ HTML
 
 $html .= <<HTML;
 
-    <script src="../shower/scripts/script.js"></script>
+    <script src="../core/shower.js"></script>
 </body>
 </html>
 HTML
