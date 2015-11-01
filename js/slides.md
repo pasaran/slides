@@ -11,7 +11,7 @@
 
 ---
 
-## `Number`
+## Number
 
     var a = 42;
     var b = -3.1415;
@@ -21,7 +21,7 @@
 
 ---
 
-## `Number`
+## Number
 
   * IEEE 754
   * 64-bit float
@@ -31,7 +31,7 @@
 
 ---
 
-## `Number`
+## Number
 
     Infinity, +Infinity, -Infinity
     +0, -0
@@ -43,7 +43,7 @@
 
 ---
 
-## `Boolean`
+## Boolean
 
   * `true`
   * `false`
@@ -52,7 +52,7 @@
 
 ---
 
-## `String`
+## String
 
     var a = "Hello";
     var b = 'World';
@@ -60,7 +60,7 @@
 
 ---
 
-## `String`
+## String
 
     //  Плохо.
     var d = 'Hello, \
@@ -72,7 +72,7 @@
 
 ---
 
-## `String`
+## String
 
     var a = 'Hello';
 
@@ -85,7 +85,7 @@
 
 ---
 
-## `null` и `undefined`
+## null и undefined
 
     var x = null;
 
@@ -98,7 +98,7 @@
 
 ---
 
-## `null` и `undefined`
+## null и undefined
 
     null == undefined
     null !== undefined
@@ -127,7 +127,7 @@
 
 ---
 
-## `==` vs `===`
+## == vs ===
 
     0 === ''                    //  false
     0 == ''                     //  true
@@ -188,7 +188,7 @@
 
 ---
 
-## `Object`
+## Object
 
     var o = {
         foo: 42,
@@ -203,7 +203,7 @@
 
 ---
 
-## `Object`
+## Object
 
     o.foo
     o[ ' ' ]
@@ -216,7 +216,7 @@
 
 ---
 
-## `Object`
+## Object
 
     var o = { foo: 42 };
     o.foo = undefined;
@@ -230,7 +230,7 @@
 
 ---
 
-## `Object`
+## Object
 
 Итерация по объекту:
 
@@ -240,7 +240,7 @@
 
 ---
 
-## `Object`
+## Object
 
 Есть определенный порядок ключей при итерации.
 
@@ -252,7 +252,7 @@
 
 ---
 
-## `Object`
+## Object
 
 Но числовые ключи сортируются специально.
 
@@ -266,7 +266,7 @@
 
 ---
 
-## `Object`
+## Object
 
     var a = { foo: 42 };
     var b = a;
@@ -277,7 +277,7 @@
 
 ---
 
-## `Object`
+## Object
 
     var a = { foo: 42 };
     var b = { foo: 42 };
@@ -286,7 +286,7 @@
 
 ---
 
-## `Array`
+## Array
 
     var a = [ 1, 2, 3 ];
     var b = [ 1, 2, 3, ];
@@ -297,7 +297,7 @@
 
 ---
 
-## `Array`
+## Array
 
     var a = [ 1, 2, 3 ];
     a.length                    //  3
@@ -311,7 +311,7 @@
 
 ---
 
-## `Array`
+## Array
 
     var a = [];
     a[ 1000 ] = 1;
@@ -323,7 +323,7 @@
 
 ---
 
-## `Array`
+## Array
 
     var a = [ 1, 2, 3 ];
     a.length                    //  3
@@ -333,7 +333,7 @@
 
 ---
 
-## `Array`
+## Array
 
     for ( var x in a ) {
         console.log( x, a[ x ] );
@@ -347,7 +347,7 @@
 
 ---
 
-## `Array`
+## Array
 
     var o = {
         0: 1,
@@ -359,7 +359,7 @@
 
 ---
 
-## `Array`
+## Array
 
     var a = [ 1, 2, 3 ];
     delete a[ 1 ];
@@ -370,7 +370,7 @@
 
 ---
 
-## `Array`
+## Array
 
     var a = [ 1, 2 ];
     a.push( 3 );
@@ -384,7 +384,7 @@
 
 ---
 
-## `Array`
+## Array
 
 Другие полезные методы массива:
 
@@ -398,7 +398,7 @@
 
 ---
 
-## `Function`
+## Function
 
     function add( a, b ) {
         return a + b;
@@ -406,7 +406,7 @@
 
 ---
 
-## `Function`
+## Function
 
     var add = function( a, b ) {
         return a + b;
@@ -431,7 +431,7 @@
 
 ---
 
-## Где кто. `Number`
+## Где кто. Number
 
     typeof x === 'number'
 
@@ -441,7 +441,7 @@
 
 ---
 
-## Где кто. `String`, `Boolean`, `Function`
+## Где кто. String, Boolean, Function
 
     typeof x === 'string'
     typeof x === 'boolean'
@@ -449,7 +449,7 @@
 
 ---
 
-## Где кто. `null` и `undefined`
+## Где кто. null и undefined
 
     x === null
     x === undefined
@@ -467,7 +467,7 @@
 
 ---
 
-## Где кто. `Array`
+## Где кто. Array
 
     Array.isArray( x )
 
@@ -475,7 +475,7 @@
 
 ---
 
-## Где кто. `Object`
+## Где кто. Object
 
     typeof x === 'object'
 
@@ -501,7 +501,7 @@
 
 ---
 
-## Где кто. `Foo`
+## Где кто. Foo
 
     x instanceof Foo
 
@@ -540,7 +540,7 @@
 
 ---
 
-## Приведение типов. `String`
+## Приведение типов. String
 
     x.toString()
     String( x )
@@ -554,7 +554,7 @@
 
 ---
 
-## Приведение типов. `String`
+## Приведение типов. String
 
     var x = { foo: 42 };
 
@@ -563,7 +563,7 @@
 
 ---
 
-## Приведение типов. `Boolean`
+## Приведение типов. Boolean
 
     Boolean( x )
     !!x
@@ -572,7 +572,7 @@
 
 ---
 
-## Приведение типов. `Number`
+## Приведение типов. Number
 
     Number( x )
     +x

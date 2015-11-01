@@ -56,7 +56,7 @@
 
     <div class="slide" id="slide-2"><div><section>
 
-<header><h2><code>Number</code></h2></header>
+<header><h2>Number</h2></header>
 
 <pre><code>var a = 42;
 var b = -3.1415;
@@ -69,7 +69,7 @@ var e = 077;
 
     <div class="slide" id="slide-3"><div><section>
 
-<header><h2><code>Number</code></h2></header>
+<header><h2>Number</h2></header>
 
 <ul>
 <li>IEEE 754</li>
@@ -83,7 +83,7 @@ var e = 077;
 
     <div class="slide" id="slide-4"><div><section>
 
-<header><h2><code>Number</code></h2></header>
+<header><h2>Number</h2></header>
 
 <pre><code>Infinity, +Infinity, -Infinity
 +0, -0
@@ -98,7 +98,7 @@ NaN !== NaN
 
     <div class="slide" id="slide-5"><div><section>
 
-<header><h2><code>Boolean</code></h2></header>
+<header><h2>Boolean</h2></header>
 
 <ul>
 <li><code>true</code></li>
@@ -111,7 +111,7 @@ NaN !== NaN
 
     <div class="slide" id="slide-6"><div><section>
 
-<header><h2><code>String</code></h2></header>
+<header><h2>String</h2></header>
 
 <pre><code>var a = "Hello";
 var b = 'World';
@@ -122,7 +122,7 @@ var c = '\n\\\'\"';
 
     <div class="slide" id="slide-7"><div><section>
 
-<header><h2><code>String</code></h2></header>
+<header><h2>String</h2></header>
 
 <pre><code>//  Плохо.
 var d = 'Hello, \
@@ -137,7 +137,7 @@ var e = 'Hello, ' +
 
     <div class="slide" id="slide-8"><div><section>
 
-<header><h2><code>String</code></h2></header>
+<header><h2>String</h2></header>
 
 <pre><code>var a = 'Hello';
 
@@ -153,7 +153,7 @@ a.slice( 2, 4 )             //  'll'
 
     <div class="slide" id="slide-9"><div><section>
 
-<header><h2><code>null</code> и <code>undefined</code></h2></header>
+<header><h2>null и undefined</h2></header>
 
 <pre><code>var x = null;
 
@@ -169,7 +169,7 @@ var z = undefined;
 
     <div class="slide" id="slide-10"><div><section>
 
-<header><h2><code>null</code> и <code>undefined</code></h2></header>
+<header><h2>null и undefined</h2></header>
 
 <pre><code>null == undefined
 null !== undefined
@@ -207,7 +207,7 @@ NaN
 
     <div class="slide" id="slide-13"><div><section>
 
-<header><h2><code>==</code> vs <code>===</code></h2></header>
+<header><h2>== vs ===</h2></header>
 
 <pre><code>0 === ''                    //  false
 0 == ''                     //  true
@@ -285,7 +285,7 @@ new Number( x )
 
     <div class="slide" id="slide-18"><div><section>
 
-<header><h2><code>Object</code></h2></header>
+<header><h2>Object</h2></header>
 
 <pre><code>var o = {
     foo: 42,
@@ -303,7 +303,7 @@ var empty = {};
 
     <div class="slide" id="slide-19"><div><section>
 
-<header><h2><code>Object</code></h2></header>
+<header><h2>Object</h2></header>
 
 <pre><code>o.foo
 o[ ' ' ]
@@ -319,7 +319,7 @@ o.foo = 'Hello';
 
     <div class="slide" id="slide-20"><div><section>
 
-<header><h2><code>Object</code></h2></header>
+<header><h2>Object</h2></header>
 
 <pre><code>var o = { foo: 42 };
 o.foo = undefined;
@@ -336,7 +336,7 @@ o.foo                       //  undefined
 
     <div class="slide" id="slide-21"><div><section>
 
-<header><h2><code>Object</code></h2></header>
+<header><h2>Object</h2></header>
 
 <p>Итерация по объекту:</p>
 
@@ -349,7 +349,7 @@ o.foo                       //  undefined
 
     <div class="slide" id="slide-22"><div><section>
 
-<header><h2><code>Object</code></h2></header>
+<header><h2>Object</h2></header>
 
 <p>Есть определенный порядок ключей при итерации.</p>
 
@@ -364,7 +364,7 @@ b.foo: 24;
 
     <div class="slide" id="slide-23"><div><section>
 
-<header><h2><code>Object</code></h2></header>
+<header><h2>Object</h2></header>
 
 <p>Но числовые ключи сортируются специально.</p>
 
@@ -381,7 +381,7 @@ b.foo: 24;
 
     <div class="slide" id="slide-24"><div><section>
 
-<header><h2><code>Object</code></h2></header>
+<header><h2>Object</h2></header>
 
 <pre><code>var a = { foo: 42 };
 var b = a;
@@ -395,7 +395,7 @@ a === b                     //  true
 
     <div class="slide" id="slide-25"><div><section>
 
-<header><h2><code>Object</code></h2></header>
+<header><h2>Object</h2></header>
 
 <pre><code>var a = { foo: 42 };
 var b = { foo: 42 };
@@ -407,7 +407,7 @@ a === b                     //  false
 
     <div class="slide" id="slide-26"><div><section>
 
-<header><h2><code>Array</code></h2></header>
+<header><h2>Array</h2></header>
 
 <pre><code>var a = [ 1, 2, 3 ];
 var b = [ 1, 2, 3, ];
@@ -421,7 +421,7 @@ var empty = [];
 
     <div class="slide" id="slide-27"><div><section>
 
-<header><h2><code>Array</code></h2></header>
+<header><h2>Array</h2></header>
 
 <pre><code>var a = [ 1, 2, 3 ];
 a.length                    //  3
@@ -438,7 +438,7 @@ a[ 4 ]                      //  undefined
 
     <div class="slide" id="slide-28"><div><section>
 
-<header><h2><code>Array</code></h2></header>
+<header><h2>Array</h2></header>
 
 <pre><code>var a = [];
 a[ 1000 ] = 1;
@@ -453,7 +453,7 @@ a.length                    //  2001
 
     <div class="slide" id="slide-29"><div><section>
 
-<header><h2><code>Array</code></h2></header>
+<header><h2>Array</h2></header>
 
 <pre><code>var a = [ 1, 2, 3 ];
 a.length                    //  3
@@ -466,7 +466,7 @@ a.length                    //  3
 
     <div class="slide" id="slide-30"><div><section>
 
-<header><h2><code>Array</code></h2></header>
+<header><h2>Array</h2></header>
 
 <pre><code>for ( var x in a ) {
     console.log( x, a[ x ] );
@@ -483,7 +483,7 @@ a.forEach( console.log );
 
     <div class="slide" id="slide-31"><div><section>
 
-<header><h2><code>Array</code></h2></header>
+<header><h2>Array</h2></header>
 
 <pre><code>var o = {
     0: 1,
@@ -498,7 +498,7 @@ o.length                    //  undefined
 
     <div class="slide" id="slide-32"><div><section>
 
-<header><h2><code>Array</code></h2></header>
+<header><h2>Array</h2></header>
 
 <pre><code>var a = [ 1, 2, 3 ];
 delete a[ 1 ];
@@ -512,7 +512,7 @@ a.length                    //  3
 
     <div class="slide" id="slide-33"><div><section>
 
-<header><h2><code>Array</code></h2></header>
+<header><h2>Array</h2></header>
 
 <pre><code>var a = [ 1, 2 ];
 a.push( 3 );
@@ -529,7 +529,7 @@ a.unshift()                 //  6
 
     <div class="slide" id="slide-34"><div><section>
 
-<header><h2><code>Array</code></h2></header>
+<header><h2>Array</h2></header>
 
 <p>Другие полезные методы массива:</p>
 
@@ -546,7 +546,7 @@ map
 
     <div class="slide" id="slide-35"><div><section>
 
-<header><h2><code>Function</code></h2></header>
+<header><h2>Function</h2></header>
 
 <pre><code>function add( a, b ) {
     return a + b;
@@ -557,7 +557,7 @@ map
 
     <div class="slide" id="slide-36"><div><section>
 
-<header><h2><code>Function</code></h2></header>
+<header><h2>Function</h2></header>
 
 <pre><code>var add = function( a, b ) {
     return a + b;
@@ -588,7 +588,7 @@ Object.prototype.toString.call
 
     <div class="slide" id="slide-38"><div><section>
 
-<header><h2>Где кто. <code>Number</code></h2></header>
+<header><h2>Где кто. Number</h2></header>
 
 <pre><code>typeof x === 'number'
 </code></pre>
@@ -602,7 +602,7 @@ Object.prototype.toString.call
 
     <div class="slide" id="slide-39"><div><section>
 
-<header><h2>Где кто. <code>String</code>, <code>Boolean</code>, <code>Function</code></h2></header>
+<header><h2>Где кто. String, Boolean, Function</h2></header>
 
 <pre><code>typeof x === 'string'
 typeof x === 'boolean'
@@ -613,7 +613,7 @@ typeof x === 'function'
 
     <div class="slide" id="slide-40"><div><section>
 
-<header><h2>Где кто. <code>null</code> и <code>undefined</code></h2></header>
+<header><h2>Где кто. null и undefined</h2></header>
 
 <pre><code>x === null
 x === undefined
@@ -638,7 +638,7 @@ typeof null === 'object'
 
     <div class="slide" id="slide-42"><div><section>
 
-<header><h2>Где кто. <code>Array</code></h2></header>
+<header><h2>Где кто. Array</h2></header>
 
 <pre><code>Array.isArray( x )
 </code></pre>
@@ -649,7 +649,7 @@ typeof null === 'object'
 
     <div class="slide" id="slide-43"><div><section>
 
-<header><h2>Где кто. <code>Object</code></h2></header>
+<header><h2>Где кто. Object</h2></header>
 
 <pre><code>typeof x === 'object'
 </code></pre>
@@ -682,7 +682,7 @@ typeof /foo/ === 'object'
 
     <div class="slide" id="slide-45"><div><section>
 
-<header><h2>Где кто. <code>Foo</code></h2></header>
+<header><h2>Где кто. Foo</h2></header>
 
 <pre><code>x instanceof Foo
 </code></pre>
@@ -734,7 +734,7 @@ foo[ x ]
 
     <div class="slide" id="slide-49"><div><section>
 
-<header><h2>Приведение типов. <code>String</code></h2></header>
+<header><h2>Приведение типов. String</h2></header>
 
 <pre><code>x.toString()
 String( x )
@@ -751,7 +751,7 @@ var y = { toString: function() { return 'Fooooo!' } };
 
     <div class="slide" id="slide-50"><div><section>
 
-<header><h2>Приведение типов. <code>String</code></h2></header>
+<header><h2>Приведение типов. String</h2></header>
 
 <pre><code>var x = { foo: 42 };
 
@@ -763,7 +763,7 @@ JSON.stringify( x )         //  '{"foo":42}'
 
     <div class="slide" id="slide-51"><div><section>
 
-<header><h2>Приведение типов. <code>Boolean</code></h2></header>
+<header><h2>Приведение типов. Boolean</h2></header>
 
 <pre><code>Boolean( x )
 !!x
@@ -775,7 +775,7 @@ x
 
     <div class="slide" id="slide-52"><div><section>
 
-<header><h2>Приведение типов. <code>Number</code></h2></header>
+<header><h2>Приведение типов. Number</h2></header>
 
 <pre><code>Number( x )
 +x
