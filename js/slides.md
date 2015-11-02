@@ -1,5 +1,15 @@
 # Core JavaScript
 
+## Книги
+
+*David Flanagan*  
+JavaScript: The Definitive Guide
+
+*Douglas Crockford*  
+JavaScript: The Good Parts
+
+---
+
 ## Типы данных
 
   * `Number`
@@ -611,4 +621,429 @@
 
     JSON.parse( x )
     JSON.stringify( x )
+
+    x.toJSON()
+
+---
+
+## Определение переменных
+
+    var a = 42;
+    var b;
+    var c;
+
+---
+
+## Определение переменных
+
+    var a = 42, b, c;
+
+    var a = 42,
+        b,
+        c;
+
+---
+
+## Определение переменных
+
+    var a = 42;
+    //  var b = 24;
+    var c = a + b;
+
+---
+
+## Определение переменных
+
+    var a;
+    typeof a === 'undefined'    //  true
+    a === undefined             //  true
+
+    typeof b === 'undefined'    //  true
+    b === undefined             //  ReferenceError:
+                                //      b is not defined
+
+---
+
+## Определение переменных
+
+    var a = 42;
+    b = 24;
+    var c = a + b;
+
+    global.b                    //  24
+
+---
+
+## Function
+
+    function add( a, b ) {
+        return a + b;
+    }
+
+    var c = add( 2, 3 );
+
+---
+
+## Function
+
+    function foo( x ) {
+        if ( !x ) {
+            return;
+        }
+
+        return x + 1;
+    }
+
+---
+
+## Function
+
+    function doFoo() {
+        doBar();
+    }
+
+    var result = doFoo();       //  undefined
+
+    doFoo();
+
+---
+
+## Function
+
+    function foo() {
+        return
+        {
+            foo: 42
+        };
+    }
+
+---
+
+## Function
+
+Hoisting:
+
+    var c = add( 2, 3 );
+
+    function add( a, b ) {
+        return a + b;
+    }
+
+---
+
+## Function
+
+    function foo( x ) {
+        if ( x ) bar( x - 1 );
+    }
+    function bar( x ) {
+        if ( x ) foo( x - 1 );
+    }
+
+    foo( 10 );
+
+---
+
+## Scope
+
+    function foo() {
+        var a = 42;
+
+        console.log( a );
+    }
+
+    foo();
+    console.log( a );           //  ReferenceError
+
+---
+
+## Scope
+
+    var a = 42;
+
+    function foo() {
+        console.log( a );       //  42
+    }
+
+    foo();
+    console.log( a );           //  42
+
+---
+
+## Scope
+
+    function foo() {
+        var a = 42;
+    }
+    function bar() {
+        console.log( a );       //  ReferenceError
+    }
+
+    foo();
+    bar();
+
+---
+
+## Scope
+
+    var a = 42;
+
+    function foo() {
+        console.log( a );       //  42
+        a = 24;
+    }
+
+    foo();
+    console.log( a );           //  24
+
+---
+
+## Scope
+
+    var a = 42;
+
+    function foo() {
+        var a = 24;
+        console.log( a );       //  24
+    }
+
+    foo();
+    console.log( a );           //  42
+
+---
+
+##  Scope
+
+    var a = 42;
+
+    function foo( a ) {
+        console.log( a );       //  24
+    }
+
+    foo( 24 );
+    console.log( a );           //  42
+
+---
+
+## Scope
+
+    var a = 42;
+    function foo() {
+        var a = 24;
+        function bar() {
+            var a = 66;
+        }
+    }
+
+    foo();
+
+---
+
+## Scope
+
+    var a = 42;
+    function foo( a ) {
+        console.log( a );       //  24
+        var a = 66;
+        console.log( a );       //  66
+    }
+
+    foo( 24 );
+    console.log( a );           //  42
+
+---
+
+## Scope
+
+    var a = 42;
+    function foo() {
+        var a = 24;
+        function bar() {
+            var a = 66;
+        }
+    }
+
+    foo();
+
+## Hoisting
+
+    console.log( a );           //  undefined
+
+    var a;
+
+---
+
+## Hoisting
+
+    console.log( a );           //  undefined
+
+    var a = 42;
+
+---
+
+## Hoisting
+
+    var a;
+
+    console.log( a );           //  undefined
+
+    a = 42;
+
+    console.log( a );           //  42
+
+---
+
+## Hoisting
+
+    var a = 42;
+    console.log( a );           //  42
+    var a = 24;
+    console.log( a );           //  24
+    var a;
+    console.log( a );           //  24
+    a = 66;
+    console.log( a );           //  66
+
+---
+
+## Hoisting
+
+    function foo() {
+        return 42;
+    }
+
+    var bar = function() {
+        return 24;
+    };
+
+---
+
+## Hoisting
+
+    bar();                      //  TypeError:
+                                //      bar is not a function
+
+    var bar = function() {
+        return 24;
+    }
+
+    bar();
+
+---
+
+## Scope
+
+    var a = 42;
+    if ( a ) {
+        var b = 24;
+    }
+
+    var c = a + b;
+
+---
+
+## Scope
+
+    var a = 42;
+    var b;
+    if ( a ) {
+        b = 24;
+    }
+
+    var c = a + b;
+
+---
+
+## Scope
+
+    for ( var i = 0; i < 10; i++ ) {
+        doFoo();
+    }
+
+    var j = i;
+
+---
+
+## Scope
+
+    var i;
+    for ( i = 0; i < 10; i++ ) {
+        doFoo();
+    }
+
+    var j = i;
+
+---
+
+##  Closures
+
+    var a = 42;
+    function foo() {
+        return a;
+    }
+
+    foo()                       //  42
+    a = 24;
+    foo()                       //  24
+
+---
+
+##  Closures
+
+    var inc = ( function() {
+        var n = 0;
+        return function() {
+            return n++;
+        }
+    } )();
+
+    inc()                       //  0
+    inc()                       //  1
+
+---
+
+## Closures
+
+    for ( var i = 1; i <= 10; i++ ) {
+        setTimeout( function() {
+            console.log( i );
+        }, i * 1000 );
+    }
+
+---
+
+## Closures
+
+    for ( var i = 1; i <= 10; i++ ) {
+        setTimeout( function() {
+            console.log( i );
+        }, i * 1000 );
+    }
+
+    console.log( i );
+
+---
+
+## Closures
+
+    for ( var i = 1; i <= 10; i++ ) {
+        ( function() {
+            var j = i;
+            setTimeout( function() {
+                console.log( j );
+            }, i * 1000 );
+        } )();
+    }
+
+---
+
+## Closures
+
+    for ( var i = 1; i <= 10; i++ ) {
+        ( function( i ) {
+            setTimeout( function() {
+                console.log( i );
+            }, i * 1000 );
+        } )( i );
+    }
 
