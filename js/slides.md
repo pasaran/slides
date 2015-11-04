@@ -257,8 +257,8 @@ JavaScript: The Good Parts
     var a = { foo: 42, bar: 24 };
 
     var b = {};
-    b.foo: 42;
-    b.foo: 24;
+    b.foo = 42;
+    b.foo = 24;
 
 ---
 
@@ -568,7 +568,7 @@ JavaScript: The Good Parts
 
     var x = { foo: 42 };
 
-    String( x )                 //  '[object Object']
+    String( x )                 //  '[object Object]'
     JSON.stringify( x )         //  '{"foo":42}'
 
 ---
@@ -1046,4 +1046,674 @@ Hoisting:
             }, i * 1000 );
         } )( i );
     }
+
+---
+
+## Function
+
+Четыре способа вызвать функцию:
+
+  * Как функцию
+  * Как метод
+  * `call`, `apply`
+  * Как конструктор
+
+---
+
+## Function
+
+    function sum( a, b ) {
+        return a + b;
+    }
+
+    var c = sum( 2, 3 );
+
+---
+
+## Function
+
+    sum( 1 )                    //  NaN
+    //  a === 1, b === undefined
+
+---
+
+## Function
+
+    function sum( a, b ) {
+        b = b || 0;
+        //  b = ( b === undefined ) ? 0 : b;
+
+        return a + b;
+    }
+
+    sum( 1 )                    //  1
+
+---
+
+## || и &&
+
+    var a = b || c || d;
+
+---
+
+## || и &&
+
+    var a;
+    if ( b ) {
+        a = b;
+    } else if ( c ) {
+        a = c;
+    } else {
+        a = d;
+    }
+
+---
+
+## || и &&
+
+    var a = b && c && d;
+
+---
+
+## || и &&
+
+    var a;
+    if ( !b ) {
+        a = b;
+    } else if ( !c ) {
+        a = c;
+    } else {
+        a = d;
+    }
+
+---
+
+## || и &&
+
+    //  var a = o.foo.bar;
+    var a = o && o.foo && o.foo.bar;
+
+---
+
+## && vs if
+
+    foo() && bar();
+
+    if ( foo() ) {
+        bar();
+    }
+
+---
+
+## Function
+
+    sum( 1, 2, 3, 4, 5 )        //  3
+    //  a === 1, b === 2
+
+---
+
+## Function
+
+    function sum() {
+        var r = 0;
+        for ( var i = 0; i < arguments.length; i++ ) {
+            r += arguments[ i ];
+        }
+        return r;
+    }
+
+    sum( 1, 2, 3, 4, 5 )        //  15
+
+---
+
+## Function
+
+    function sum( a, b ) {
+        console.log( a, arguments[ 0 ] );
+        console.log( b, arguments[ 1 ] );
+        console.log( arguments[ 2 ] );
+        console.log( arguments[ 3 ] );
+    }
+
+    sum( 1, 2, 3 );
+
+---
+
+## Function
+
+    function foo( a ) {
+        console.log( a );       //  42
+        arguments[ 0 ] = 24;
+        console.log( a );       //  24
+    }
+
+    foo( 42);
+
+---
+
+## Function
+
+    function sum() {
+        var args = Array.prototype.slice.call( arguments );
+        //  var args = [].slice.call( arguments );
+
+        //  var args = [].slice.call( arguments, 1 );
+        ...
+    }
+
+---
+
+## Methods
+
+    var o = {
+        foo: 42,
+        get_foo: function() {
+            return this.foo;
+        }
+    };
+
+    o.get_foo()                 //  42
+
+---
+
+##  Methods
+
+    var o = {
+        set_foo: function( foo ) { this.foo = foo; },
+        get_foo: function() { return this.foo; }
+    };
+
+    o.set_foo( 42 );
+    o.get_foo()                 //  42
+
+    o.foo = 42;
+
+---
+
+##  Methods
+
+    var o = {
+        _foo: 0,
+        set_foo: function( foo ) { this._foo = foo; },
+        get_foo: function() { return this._foo; }
+    };
+
+    //  Плохо!
+    o._foo = 42;
+
+---
+
+## Methods
+
+    var objs = [];
+    for ( var i = 0; i < 10; i++ ) {
+        objs[ i ] = {
+            foo: i,
+            get_foo: function() {
+                return this.foo;
+            }
+        };
+    }
+
+---
+
+## Methods
+
+    var o = {
+        foo: 42,
+        get_foo: function() { return this.foo; }
+    };
+
+    o.get_foo()                 //  42
+
+    var get_foo = o.get_foo;
+    get_foo()                   //  undefined
+
+---
+
+## Methods
+
+    var get_foo = function() { return this.foo; };
+
+    var a = { foo: 42, get_foo: get_foo };
+    var b = { foo: 24, get_foo: get_foo };
+
+    a.get_foo();                //  42
+    b.get_foo();                //  24
+    get_foo();                  //  undefined
+
+---
+
+## Methods
+
+    var o = {
+        foo: {
+            foo: { foo: 42, get_foo: get_foo },
+            get_foo: get_foo
+        },
+        get_foo: get_foo
+    };
+
+    o.get_foo(), o.foo.get_foo(), o.foo.foo.get_foo()
+
+---
+
+## call
+
+    function get_foo() { return this.foo; }
+    function set_foo( foo ) { this.foo = foo; }
+
+    var o = { foo: 42 };
+    get_foo.call( o )           //  42
+    set_foo.call( o, 24 );
+    o.foo                       //  24
+    get_foo.call( o )           //  24
+
+---
+
+##  apply
+
+    function sum() {
+        var r = 0;
+        for ( var i = 0; i < arguments.length; i++ )
+            r += arguments[ i ];
+        return r;
+    }
+    var numbers = [ 1, 2, 3, 4, 5 ];
+    //  sum( [ 1, 2, 3, 4, 5 ] );
+    sum.apply( null, numbers );
+
+---
+
+## apply
+
+    function proxy_to_foo() {
+        switch ( arguments.length ) {
+            case 0: foo(); break;
+            case 1: foo( arguments[0] ); break;
+            case 2: foo( arguments[0], arguments[1] ); break;
+            default: foo.apply( null, arguments );
+        }
+    }
+
+---
+
+## apply
+
+    function proxy_to_foo() {
+        ...
+        switch ( arguments.length ) {
+            case 0: foo.call( that ); break;
+            case 1: foo.call( that,  arguments[0] ); break;
+            ...
+            default: foo.apply( that, arguments );
+        }
+    }
+
+---
+
+## bind
+
+    function get_foo() { return this.foo; }
+    var my_get_foo = get_foo.bind( { foo: 42 } );
+
+    get_foo()                   //  undefined
+    my_get_foo()                //  42
+    my_get_foo.call( { foo: 24 } )
+                                //  42
+    get_foo === my_get_foo      //  false
+    get_foo()                   //  undefined
+
+---
+
+## bind
+
+    Foo.prototype.do_request = function() {
+        $.ajax( this.url, ( function( result ) {
+            this.result = result;
+        } ).bind( this ) );
+    };
+
+---
+
+## bind
+
+    Foo.prototype.do_request = function() {
+        var that = this;
+        $.ajax( this.url, function( result ) {
+            that.result = result;
+        } );
+    };
+
+---
+
+## prototype
+
+    var a = { foo: 42 };
+
+    a.foo                       //  42
+    a.bar                       //  undefined
+    a.toString                  //  [Function: toString]
+
+---
+
+## prototype
+
+    var a = { foo: 42 };
+
+    a.foo                       //  42
+    a.bar                       //  undefined
+
+    var b = { bar: 24 };
+    a.__proto__ = b;
+    a.bar                       //  24
+
+---
+
+## prototype
+
+    a                   b
+    -------------       -------------
+    foo: 42             bar: 24
+    __proto__
+
+---
+
+## prototype
+
+    'foo' in a                  //  true
+    'bar' in a                  //  true
+
+    a.hasOwnProperty( 'foo' )   //  true
+    a.hasOwnProperty( 'bar' )   //  false
+
+---
+
+## prototype
+
+    b.bar = 66;
+    a.bar                       //  66
+
+---
+
+## prototype
+
+    a                   b
+    -------------       -------------
+    foo: 42             bar: 66
+    __proto__
+
+---
+
+## prototype
+
+    a.bar = 39;
+
+    a.bar                       //  39
+    b.bar                       //  66
+    a.hasOwnProperty( 'bar' )   //  true
+
+---
+
+## prototype
+
+    a                   b
+    -------------       -------------
+    foo: 42             bar: 66
+    bar: 39
+    __proto__
+
+---
+
+## prototype
+
+    delete a.bar;
+    a.bar                       //  66
+    a.hasOwnProperty( 'bar' )   //  false
+
+---
+
+## prototype
+
+    var c = { quu: 88; }
+    b.__proto__ = c;
+
+    b.quu                       //  88
+    a.quu                       //  88
+
+---
+
+## prototype
+
+    a                   b                   c
+    -------------       -------------       -------------
+    foo: 42             bar: 66             quu: 88
+    __proto__           __proto__
+
+---
+
+## Object.prototype
+
+    c.__proto__ === Object.prototype
+
+    typeof Object               //  'function'
+    Object.prototype
+
+    c.toString === Object.prototype.toString
+
+    Object.prototype.__proto__ === null
+
+---
+
+## Object.prototype
+
+    var a = {};
+
+    Object.prototype.foo = 42;
+
+    a.bar                       //  42
+    var b = {};
+    b.bar                       //  42
+
+---
+
+## new Foo
+
+    function Foo( foo ) {
+        this.foo = foo;
+    }
+    Foo.prototype.get_foo = function() {
+        return this.foo;
+    };
+    var foo = new Foo( 42 );
+    foo instanceof Foo          //  true
+
+---
+
+## new Foo
+
+    var foo = {};
+    foo.__proto__ = Foo.prototype;
+    Foo.call( foo, 42 );
+
+    foo instanceof Foo          //  true
+
+---
+
+## instanceof
+
+    function instance_of( obj, ctor ) {
+        while ( obj ) {
+            if ( obj.__proto__ === ctor ) {
+                return true;
+            }
+            obj = obj.__proto__;
+        }
+        return false;
+    }
+
+---
+
+    new Foo             Foo.prototype       Object.prototype
+    -------------       -------------       -------------
+    foo: 42             get_foo()           __proto__
+    __proto__           __proto__
+
+    Foo                 Function.prototype
+    -------------       -------------
+    prototype           call()
+    __proto__           __proto__
+
+---
+
+## Inheritance
+
+    function Foo1( foo ) { this.set_foo( foo ); }
+
+    Foo1.prototype.get_foo = function() {
+        return this.foo;
+    };
+    Foo1.prototype.set_foo = function( foo ) {
+        this.foo = foo;
+    };
+
+---
+
+## Inheritance
+
+    function Foo2( foo ) { this.set_foo( foo ); }
+    //  Foo2.prototype = new Foo1();
+    Foo2.prototype.inc_foo = function() {
+        this.foo++;
+    };
+    Foo2.prototype.set_foo = function( foo ) {
+        if ( foo < 0 ) { throw Error(); }
+        this.foo = foo;
+    };
+
+---
+
+## Inheritance
+
+    var foo2 = new Foo2( 42 );
+    foo2.get_foo
+
+---
+
+## Inheritance
+
+    Foo2.prototype = { __proto__: Foo1.prototype };
+
+    Foo2.prototype = Object.create( Foo1.prototype );
+
+---
+
+## Inheritance
+
+    function Foo2( foo ) { Foo1.call( this, foo ); }
+    ...
+    Foo2.prototype.set_foo = function( foo ) {
+        if ( foo < 0 ) { throw Error(); }
+        Foo1.prototype.set_foo.call( this, foo );
+    };
+
+---
+
+## inherit
+
+    function inherit( ctor, base ) {
+        var F = function() {};
+        F.prototype = base.prototype;
+        var proto = ctor.prototype = new F();
+        proto.super_ = base.prototype;
+        proto.constructor = ctor;
+        return ctor;
+    }
+
+---
+
+## inherit
+
+    function Foo2( foo ) {
+        this.super_.constructor.call( this, foo );
+    }
+    inherit( Foo2, Foo1 );
+    ...
+    Foo2.prototype.set_foo = function( foo ) {
+        if ( foo < 0 ) { throw Error(); }
+        this.super_.set_foo.call( this, foo );
+    };
+
+---
+
+## inherit
+
+    Function Foo1( foo ) { this._init( foo ); }
+    Foo1.prototype._init = function( foo ) {
+        this.foo = foo;
+    };
+
+    Function Foo2( foo ) { this._init( foo ); }
+    inherit( Foo2, Foo1 );
+
+---
+
+## Статические методы
+
+    function Foo( foo ) { this._init( foo ); }
+
+    Foo.create = function( foo ) {
+        return new Foo( foo );
+    };
+
+---
+
+## try / catch / throw
+
+    var object;
+    try {
+        object = JSON.parse( string );
+    } catch ( e ) {
+        //  Ошибка!
+        //  object = {};
+    }
+
+---
+
+## try / catch / throw
+
+    try {
+        $.ajax( url, function( string ) {
+            var object = JSON.parse( string );
+        } );
+    } catch ( e ) {
+        //  Ничего!
+    }
+
+---
+
+## nextTick
+
+    var done = false;
+    setTimeout( function() {
+        done = true;
+    }, 1000 );
+
+    while ( !done ) {
+        do_something();
+    }
+
+---
+
+## nextTick
+
+    <html>
+    <body>
+    <script>
+        var foo = 42;
+        do_something();
+        function do_something() { do_something_else(); }
+        $.ajax( url, function( result ) { ... } );
+        ...
+    </script>
 

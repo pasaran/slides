@@ -368,8 +368,8 @@ o.foo                       //  undefined
 <pre><code>var a = { foo: 42, bar: 24 };
 
 var b = {};
-b.foo: 42;
-b.foo: 24;
+b.foo = 42;
+b.foo = 24;
 </code></pre>
 
 </section></div></div>
@@ -767,7 +767,7 @@ var y = { toString: function() { return 'Fooooo!' } };
 
 <pre><code>var x = { foo: 42 };
 
-String( x )                 //  '[object Object']
+String( x )                 //  '[object Object]'
 JSON.stringify( x )         //  '{"foo":42}'
 </code></pre>
 
@@ -1367,6 +1367,854 @@ console.log( i );
         }, i * 1000 );
     } )( i );
 }
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-92"><div><section>
+
+<header><h2>Function</h2></header>
+
+<p>Четыре способа вызвать функцию:</p>
+
+<ul>
+<li>Как функцию</li>
+<li>Как метод</li>
+<li><code>call</code>, <code>apply</code></li>
+<li>Как конструктор</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-93"><div><section>
+
+<header><h2>Function</h2></header>
+
+<pre><code>function sum( a, b ) {
+    return a + b;
+}
+
+var c = sum( 2, 3 );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-94"><div><section>
+
+<header><h2>Function</h2></header>
+
+<pre><code>sum( 1 )                    //  NaN
+//  a === 1, b === undefined
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-95"><div><section>
+
+<header><h2>Function</h2></header>
+
+<pre><code>function sum( a, b ) {
+    b = b || 0;
+    //  b = ( b === undefined ) ? 0 : b;
+
+    return a + b;
+}
+
+sum( 1 )                    //  1
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-96"><div><section>
+
+<header><h2>|| и &amp;&amp;</h2></header>
+
+<pre><code>var a = b || c || d;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-97"><div><section>
+
+<header><h2>|| и &amp;&amp;</h2></header>
+
+<pre><code>var a;
+if ( b ) {
+    a = b;
+} else if ( c ) {
+    a = c;
+} else {
+    a = d;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-98"><div><section>
+
+<header><h2>|| и &amp;&amp;</h2></header>
+
+<pre><code>var a = b &amp;&amp; c &amp;&amp; d;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-99"><div><section>
+
+<header><h2>|| и &amp;&amp;</h2></header>
+
+<pre><code>var a;
+if ( !b ) {
+    a = b;
+} else if ( !c ) {
+    a = c;
+} else {
+    a = d;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-100"><div><section>
+
+<header><h2>|| и &amp;&amp;</h2></header>
+
+<pre><code>//  var a = o.foo.bar;
+var a = o &amp;&amp; o.foo &amp;&amp; o.foo.bar;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-101"><div><section>
+
+<header><h2>&amp;&amp; vs if</h2></header>
+
+<pre><code>foo() &amp;&amp; bar();
+
+if ( foo() ) {
+    bar();
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-102"><div><section>
+
+<header><h2>Function</h2></header>
+
+<pre><code>sum( 1, 2, 3, 4, 5 )        //  3
+//  a === 1, b === 2
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-103"><div><section>
+
+<header><h2>Function</h2></header>
+
+<pre><code>function sum() {
+    var r = 0;
+    for ( var i = 0; i &lt; arguments.length; i++ ) {
+        r += arguments[ i ];
+    }
+    return r;
+}
+
+sum( 1, 2, 3, 4, 5 )        //  15
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-104"><div><section>
+
+<header><h2>Function</h2></header>
+
+<pre><code>function sum( a, b ) {
+    console.log( a, arguments[ 0 ] );
+    console.log( b, arguments[ 1 ] );
+    console.log( arguments[ 2 ] );
+    console.log( arguments[ 3 ] );
+}
+
+sum( 1, 2, 3 );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-105"><div><section>
+
+<header><h2>Function</h2></header>
+
+<pre><code>function foo( a ) {
+    console.log( a );       //  42
+    arguments[ 0 ] = 24;
+    console.log( a );       //  24
+}
+
+foo( 42);
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-106"><div><section>
+
+<header><h2>Function</h2></header>
+
+<pre><code>function sum() {
+    var args = Array.prototype.slice.call( arguments );
+    //  var args = [].slice.call( arguments );
+
+    //  var args = [].slice.call( arguments, 1 );
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-107"><div><section>
+
+<header><h2>Methods</h2></header>
+
+<pre><code>var o = {
+    foo: 42,
+    get_foo: function() {
+        return this.foo;
+    }
+};
+
+o.get_foo()                 //  42
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-108"><div><section>
+
+<header><h2>Methods</h2></header>
+
+<pre><code>var o = {
+    set_foo: function( foo ) { this.foo = foo; },
+    get_foo: function() { return this.foo; }
+};
+
+o.set_foo( 42 );
+o.get_foo()                 //  42
+
+o.foo = 42;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-109"><div><section>
+
+<header><h2>Methods</h2></header>
+
+<pre><code>var o = {
+    _foo: 0,
+    set_foo: function( foo ) { this._foo = foo; },
+    get_foo: function() { return this._foo; }
+};
+
+//  Плохо!
+o._foo = 42;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-110"><div><section>
+
+<header><h2>Methods</h2></header>
+
+<pre><code>var objs = [];
+for ( var i = 0; i &lt; 10; i++ ) {
+    objs[ i ] = {
+        foo: i,
+        get_foo: function() {
+            return this.foo;
+        }
+    };
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-111"><div><section>
+
+<header><h2>Methods</h2></header>
+
+<pre><code>var o = {
+    foo: 42,
+    get_foo: function() { return this.foo; }
+};
+
+o.get_foo()                 //  42
+
+var get_foo = o.get_foo;
+get_foo()                   //  undefined
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-112"><div><section>
+
+<header><h2>Methods</h2></header>
+
+<pre><code>var get_foo = function() { return this.foo; };
+
+var a = { foo: 42, get_foo: get_foo };
+var b = { foo: 24, get_foo: get_foo };
+
+a.get_foo();                //  42
+b.get_foo();                //  24
+get_foo();                  //  undefined
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-113"><div><section>
+
+<header><h2>Methods</h2></header>
+
+<pre><code>var o = {
+    foo: {
+        foo: { foo: 42, get_foo: get_foo },
+        get_foo: get_foo
+    },
+    get_foo: get_foo
+};
+
+o.get_foo(), o.foo.get_foo(), o.foo.foo.get_foo()
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-114"><div><section>
+
+<header><h2>call</h2></header>
+
+<pre><code>function get_foo() { return this.foo; }
+function set_foo( foo ) { this.foo = foo; }
+
+var o = { foo: 42 };
+get_foo.call( o )           //  42
+set_foo.call( o, 24 );
+o.foo                       //  24
+get_foo.call( o )           //  24
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-115"><div><section>
+
+<header><h2>apply</h2></header>
+
+<pre><code>function sum() {
+    var r = 0;
+    for ( var i = 0; i &lt; arguments.length; i++ )
+        r += arguments[ i ];
+    return r;
+}
+var numbers = [ 1, 2, 3, 4, 5 ];
+//  sum( [ 1, 2, 3, 4, 5 ] );
+sum.apply( null, numbers );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-116"><div><section>
+
+<header><h2>apply</h2></header>
+
+<pre><code>function proxy_to_foo() {
+    switch ( arguments.length ) {
+        case 0: foo(); break;
+        case 1: foo( arguments[0] ); break;
+        case 2: foo( arguments[0], arguments[1] ); break;
+        default: foo.apply( null, arguments );
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-117"><div><section>
+
+<header><h2>apply</h2></header>
+
+<pre><code>function proxy_to_foo() {
+    ...
+    switch ( arguments.length ) {
+        case 0: foo.call( that ); break;
+        case 1: foo.call( that,  arguments[0] ); break;
+        ...
+        default: foo.apply( that, arguments );
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-118"><div><section>
+
+<header><h2>bind</h2></header>
+
+<pre><code>function get_foo() { return this.foo; }
+var my_get_foo = get_foo.bind( { foo: 42 } );
+
+get_foo()                   //  undefined
+my_get_foo()                //  42
+my_get_foo.call( { foo: 24 } )
+                            //  42
+get_foo === my_get_foo      //  false
+get_foo()                   //  undefined
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-119"><div><section>
+
+<header><h2>bind</h2></header>
+
+<pre><code>Foo.prototype.do_request = function() {
+    $.ajax( this.url, ( function( result ) {
+        this.result = result;
+    } ).bind( this ) );
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-120"><div><section>
+
+<header><h2>bind</h2></header>
+
+<pre><code>Foo.prototype.do_request = function() {
+    var that = this;
+    $.ajax( this.url, function( result ) {
+        that.result = result;
+    } );
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-121"><div><section>
+
+<header><h2>prototype</h2></header>
+
+<pre><code>var a = { foo: 42 };
+
+a.foo                       //  42
+a.bar                       //  undefined
+a.toString                  //  [Function: toString]
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-122"><div><section>
+
+<header><h2>prototype</h2></header>
+
+<pre><code>var a = { foo: 42 };
+
+a.foo                       //  42
+a.bar                       //  undefined
+
+var b = { bar: 24 };
+a.__proto__ = b;
+a.bar                       //  24
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-123"><div><section>
+
+<header><h2>prototype</h2></header>
+
+<pre><code>a                   b
+-------------       -------------
+foo: 42             bar: 24
+__proto__
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-124"><div><section>
+
+<header><h2>prototype</h2></header>
+
+<pre><code>'foo' in a                  //  true
+'bar' in a                  //  true
+
+a.hasOwnProperty( 'foo' )   //  true
+a.hasOwnProperty( 'bar' )   //  false
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-125"><div><section>
+
+<header><h2>prototype</h2></header>
+
+<pre><code>b.bar = 66;
+a.bar                       //  66
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-126"><div><section>
+
+<header><h2>prototype</h2></header>
+
+<pre><code>a                   b
+-------------       -------------
+foo: 42             bar: 66
+__proto__
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-127"><div><section>
+
+<header><h2>prototype</h2></header>
+
+<pre><code>a.bar = 39;
+
+a.bar                       //  39
+b.bar                       //  66
+a.hasOwnProperty( 'bar' )   //  true
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-128"><div><section>
+
+<header><h2>prototype</h2></header>
+
+<pre><code>a                   b
+-------------       -------------
+foo: 42             bar: 66
+bar: 39
+__proto__
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-129"><div><section>
+
+<header><h2>prototype</h2></header>
+
+<pre><code>delete a.bar;
+a.bar                       //  66
+a.hasOwnProperty( 'bar' )   //  false
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-130"><div><section>
+
+<header><h2>prototype</h2></header>
+
+<pre><code>var c = { quu: 88; }
+b.__proto__ = c;
+
+b.quu                       //  88
+a.quu                       //  88
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-131"><div><section>
+
+<header><h2>prototype</h2></header>
+
+<pre><code>a                   b                   c
+-------------       -------------       -------------
+foo: 42             bar: 66             quu: 88
+__proto__           __proto__
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-132"><div><section>
+
+<header><h2>Object.prototype</h2></header>
+
+<pre><code>c.__proto__ === Object.prototype
+
+typeof Object               //  'function'
+Object.prototype
+
+c.toString === Object.prototype.toString
+
+Object.prototype.__proto__ === null
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-133"><div><section>
+
+<header><h2>Object.prototype</h2></header>
+
+<pre><code>var a = {};
+
+Object.prototype.foo = 42;
+
+a.bar                       //  42
+var b = {};
+b.bar                       //  42
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-134"><div><section>
+
+<header><h2>new Foo</h2></header>
+
+<pre><code>function Foo( foo ) {
+    this.foo = foo;
+}
+Foo.prototype.get_foo = function() {
+    return this.foo;
+};
+var foo = new Foo( 42 );
+foo instanceof Foo          //  true
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-135"><div><section>
+
+<header><h2>new Foo</h2></header>
+
+<pre><code>var foo = {};
+foo.__proto__ = Foo.prototype;
+Foo.call( foo, 42 );
+
+foo instanceof Foo          //  true
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-136"><div><section>
+
+<header><h2>instanceof</h2></header>
+
+<pre><code>function instance_of( obj, ctor ) {
+    while ( obj ) {
+        if ( obj.__proto__ === ctor ) {
+            return true;
+        }
+        obj = obj.__proto__;
+    }
+    return false;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-137"><div><section>
+
+<pre><code>new Foo             Foo.prototype       Object.prototype
+-------------       -------------       -------------
+foo: 42             get_foo()           __proto__
+__proto__           __proto__
+
+Foo                 Function.prototype
+-------------       -------------
+prototype           call()
+__proto__           __proto__
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-138"><div><section>
+
+<header><h2>Inheritance</h2></header>
+
+<pre><code>function Foo1( foo ) { this.set_foo( foo ); }
+
+Foo1.prototype.get_foo = function() {
+    return this.foo;
+};
+Foo1.prototype.set_foo = function( foo ) {
+    this.foo = foo;
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-139"><div><section>
+
+<header><h2>Inheritance</h2></header>
+
+<pre><code>function Foo2( foo ) { this.set_foo( foo ); }
+//  Foo2.prototype = new Foo1();
+Foo2.prototype.inc_foo = function() {
+    this.foo++;
+};
+Foo2.prototype.set_foo = function( foo ) {
+    if ( foo &lt; 0 ) { throw Error(); }
+    this.foo = foo;
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-140"><div><section>
+
+<header><h2>Inheritance</h2></header>
+
+<pre><code>var foo2 = new Foo2( 42 );
+foo2.get_foo
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-141"><div><section>
+
+<header><h2>Inheritance</h2></header>
+
+<pre><code>Foo2.prototype = { __proto__: Foo1.prototype };
+
+Foo2.prototype = Object.create( Foo1.prototype );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-142"><div><section>
+
+<header><h2>Inheritance</h2></header>
+
+<pre><code>function Foo2( foo ) { Foo1.call( this, foo ); }
+...
+Foo2.prototype.set_foo = function( foo ) {
+    if ( foo &lt; 0 ) { throw Error(); }
+    Foo1.prototype.set_foo.call( this, foo );
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-143"><div><section>
+
+<header><h2>inherit</h2></header>
+
+<pre><code>function inherit( ctor, base ) {
+    var F = function() {};
+    F.prototype = base.prototype;
+    var proto = ctor.prototype = new F();
+    proto.super_ = base.prototype;
+    proto.constructor = ctor;
+    return ctor;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-144"><div><section>
+
+<header><h2>inherit</h2></header>
+
+<pre><code>function Foo2( foo ) {
+    this.super_.constructor.call( this, foo );
+}
+inherit( Foo2, Foo1 );
+...
+Foo2.prototype.set_foo = function( foo ) {
+    if ( foo &lt; 0 ) { throw Error(); }
+    this.super_.set_foo.call( this, foo );
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-145"><div><section>
+
+<header><h2>inherit</h2></header>
+
+<pre><code>Function Foo1( foo ) { this._init( foo ); }
+Foo1.prototype._init = function( foo ) {
+    this.foo = foo;
+};
+
+Function Foo2( foo ) { this._init( foo ); }
+inherit( Foo2, Foo1 );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-146"><div><section>
+
+<header><h2>Статические методы</h2></header>
+
+<pre><code>function Foo( foo ) { this._init( foo ); }
+
+Foo.create = function( foo ) {
+    return new Foo( foo );
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-147"><div><section>
+
+<header><h2>try / catch / throw</h2></header>
+
+<pre><code>var object;
+try {
+    object = JSON.parse( string );
+} catch ( e ) {
+    //  Ошибка!
+    //  object = {};
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-148"><div><section>
+
+<header><h2>try / catch / throw</h2></header>
+
+<pre><code>try {
+    $.ajax( url, function( string ) {
+        var object = JSON.parse( string );
+    } );
+} catch ( e ) {
+    //  Ничего!
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-149"><div><section>
+
+<header><h2>nextTick</h2></header>
+
+<pre><code>var done = false;
+setTimeout( function() {
+    done = true;
+}, 1000 );
+
+while ( !done ) {
+    do_something();
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-150"><div><section>
+
+<header><h2>nextTick</h2></header>
+
+<pre><code>&lt;html&gt;
+&lt;body&gt;
+&lt;script&gt;
+    var foo = 42;
+    do_something();
+    function do_something() { do_something_else(); }
+    $.ajax( url, function( result ) { ... } );
+    ...
+&lt;/script&gt;
 </code></pre>
 </section></div></div>
 
