@@ -1203,6 +1203,33 @@ Hoisting:
 
 ---
 
+## Function
+
+    var o = { foo: 42 };
+
+    function foo( o ) {
+        o.bar = 24;
+    }
+
+    foo( o );
+    o.bar                       //  24
+
+---
+
+## Function
+
+    var o = { foo: 42 };
+
+    function foo( o ) {
+        o = { bar: 24 };
+    }
+
+    foo( o );
+    o.foo                       //  24
+    o.bar                       //  undefined
+
+---
+
 ## Methods
 
     var o = {
@@ -1658,13 +1685,112 @@ Hoisting:
 
 ---
 
-## Статические методы
+## Function as namespace
 
-    function Foo( foo ) { this._init( foo ); }
+    var Foo = function( foo ) { this._init( foo ); };
 
     Foo.create = function( foo ) {
         return new Foo( foo );
     };
+
+    Foo.Bar = function( bar ) { this._init( bar ); };
+
+---
+
+## Functional programming
+
+    var a = [ 10, 1, 22, 5 ];
+    a.sort()                    //  [ 1, 10, 22, 5 ]
+
+    a.sort( function( a, b ) {  //  [ 1, 5, 10, 22 ]
+        return a - b;
+    } );
+    a.sort( ( a, b ) => a - b );
+
+---
+
+## Functional programming
+
+    var a = [ 1, 2, 3, 4, 5 ];
+
+    a.map( x => x * x )         //  [ 1, 4, 9, 16, 25 ]
+    a.reduce( ( a, b ) => a + b )   //  15
+
+---
+
+## forEach vs for
+
+    for ( var i = 0, l = array.length; i < l; i++ ) {
+        var item = array[ i ];
+        do_something( item );
+    }
+
+    array.forEach( function( item, i ) {
+        do_something( item, i );
+    } );
+
+---
+
+## reduce vs for
+
+    // lowercase headers names
+    this.options.headers = (options && options.headers) ?
+            Object.keys(this.options.headers).reduce(
+                function(headers, headerName) {
+                    headers[headerName.toLowerCase()] =
+                        options.headers[headerName];
+                    return headers;
+                }, {}) :
+            {};
+
+---
+
+## reduce vs for
+
+    this.options.headers = {};
+    if ( options && options.headers ) {
+        for ( var headerName in options.headers ) {
+            this.options.headers[ headerName.toLowerCase() ] =
+                options.headers[ headerName ];
+        }
+    }
+
+---
+
+## Functional programming
+
+    setTimeout( function() {
+        ...
+    }, 1000 );
+
+    $.ajax( url, function( result ) {
+        ...
+    } );
+
+---
+
+## curry
+
+    var add = ( a, b ) => a + b;
+
+    add2 = function( b ) {
+        return 2 + b;
+    };
+    add2( 3 )                   //  5
+
+---
+
+## curry
+
+    function curry( f ) {
+        return function( a ) {
+            return function( b ) {
+                return f( a, b );
+            }
+        }
+    }
+
+    curry( add )( 2 )( 3 );
 
 ---
 
