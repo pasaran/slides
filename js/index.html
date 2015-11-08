@@ -2372,6 +2372,761 @@ while ( !done ) {
     ...
 &lt;/script&gt;
 </code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-161"><div><section>
+
+<header><h2>Node.js</h2></header>
+
+<ul>
+<li>V8</li>
+<li>libuv</li>
+<li>Немного javascript'а.</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-162"><div><section>
+
+<header><h2>Run</h2></header>
+
+<p>test.js:</p>
+
+<pre><code>console.log( 'Hello' );
+</code></pre>
+
+<p>Запускаем:</p>
+
+<pre><code>&gt; node test.js
+Hello
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-163"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>//  foo.js
+
+var foo = 42;
+
+module.exports.get_foo = function() {
+    return foo;
+};
+
+module.exports.bar = 24;
+</code></pre>
+
+<p>--</p>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>//  bar.js
+
+var foo = require( './foo.js' ).get_foo;
+var bar = require( './foo.js' ).bar;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-164"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>var foo = require( './foo.js' );
+foo.get_foo()               //  42
+
+require( './foo.js' ).bar   //  24
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-165"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>var foo = 42;
+
+module.exports = {
+    get_foo: function() { return foo; },
+    bar: 24
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-166"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>var ns = {};
+
+ns.foo = 42;
+ns.bar = function() { ... };
+
+module.exports = ns;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-167"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>module.exports = function() {
+    return 42;
+};
+
+//  module.exports = 42;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-168"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>function Foo() {};
+
+Foo.prototype.get_foo = function() { return this.foo; }
+
+module.exports = Foo;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-169"><div><section>
+
+<header><h2>Modules</h2></header>
+
+<pre><code>//  random.js
+module.exports = Math.random();
+
+//  main.js
+var a = require( './random.js' );
+var b = require( './random.js' );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-170"><div><section>
+
+<header><h2>require</h2></header>
+
+<pre><code>var fs = require( 'fs' );
+var no = require( 'nommon' );
+var config = require( '/etc/autoru/resources.json' );
+var foo = require( '/usr/lib/foo/foo.js' );
+var bar = require( '../bar/bar.js' );
+//  var quu = require( 'quu.js' );
+var quu = require( './quu.js' );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-171"><div><section>
+
+<header><h2>npm</h2></header>
+
+<pre><code>npm install nommon
+npm install -g nommon
+
+node_modules/nommon/lib/...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-172"><div><section>
+
+<header><h2>nop's modules</h2></header>
+
+<pre><code>//  no.js
+var no = {};
+
+module.exports = no;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-173"><div><section>
+
+<header><h2>nop's modules</h2></header>
+
+<pre><code>//  no.events.js
+var no = require( './no.js' );
+
+no.events = {};
+no.events.on = function() { ... };
+
+module.exports = no;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-174"><div><section>
+
+<header><h2>nop's modules</h2></header>
+
+<pre><code>//  index.js
+var no = require( './no.js' );
+
+require( './no.events.js' );
+require( './no.promise.js' );
+...
+
+module.exports = no;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-175"><div><section>
+
+<header><h2>nop's modules</h2></header>
+
+<pre><code>//  no.foo.js
+var no = require( './no.js' );
+no.foo = {};
+...
+no.foo.get = function() {
+    var bar = no.bar.get();
+    ...
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-176"><div><section>
+
+<header><h2>nop's modules</h2></header>
+
+<pre><code>//  no.bar.js
+var no = require( './no.js' );
+no.bar = {};
+...
+no.bar.set = function() {
+    no.foo.set();
+    ...
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-177"><div><section>
+
+<header><h2>nop's modules</h2></header>
+
+<pre><code>//  main.js
+
+require( './no.foo.js' );
+require( './no.bar.js' );
+
+...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-178"><div><section>
+
+<header><h2>Core modules</h2></header>
+
+<pre><code>fs              crypto
+http            cluster
+https           events
+path            querystring
+url
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-179"><div><section>
+
+<header><h2>fs</h2></header>
+
+<pre><code>var fs_ = require( 'fs' );
+
+fs_.readFile( 'foo.txt', 'utf-8', function( err, data ) {
+    if ( err ) {
+        throw err;
+    }
+    console.log( data );
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-180"><div><section>
+
+<header><h2>fs</h2></header>
+
+<pre><code>try {
+    var data = fs_.readFileSync( 'foo.txt', 'utf-8' );
+} catch ( e ) {
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-181"><div><section>
+
+<header><h2>fs</h2></header>
+
+<pre><code>var data = require( 'foo.json' );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-182"><div><section>
+
+<header><h2>path</h2></header>
+
+<pre><code>var path_ = require( 'path' );
+
+var rel_path = 'foo.txt';
+var abs_path = path_.resolve( process.cwd(), rel_path );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-183"><div><section>
+
+<header><h2>path</h2></header>
+
+<pre><code>path_.dirname( path );
+path_.extname( path );
+path_.join( path1, path2, ... );
+path_.relative( from_path, to_path );
+...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-184"><div><section>
+
+<header><h2>Buffer</h2></header>
+
+<pre><code>//  var data = fs_.readFileSync( 'foo.txt', 'utf-8' );
+var data = fs_.readFileSync( 'foo.txt' );
+
+typeof data                 //  'object'
+data instanceof Buffer      //  true
+Buffer.isBuffer( data )     //  true
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-185"><div><section>
+
+<header><h2>Buffer</h2></header>
+
+<pre><code>Buffer.byteLength( 'привет' )   //  12
+'привет'.length             //  6
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-186"><div><section>
+
+<header><h2>http</h2></header>
+
+<pre><code>http_.request( 'http://auto.ru', function( res ) {
+    var data = '';
+    res.on( 'data', function( chunk ) {
+        data += chunk;
+    } );
+    res.on( 'end', function() {
+        console.log( data );
+    }
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-187"><div><section>
+
+<header><h2>http</h2></header>
+
+<pre><code>http_.request( 'http://auto.ru', function( res ) {
+    var chunks = [], l = 0;
+    res.on( 'data', function( chunk ) {
+        chunks.push( chunk ); l += chunk.length;
+    } );
+    res.on( 'end', function() {
+        var result = Buffer.concat( chunks, l );
+    }
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-188"><div><section>
+
+<header><h2>http</h2></header>
+
+<pre><code>var server = http_.createServer( function( req, res ) {
+    if ( req.url = '/hello' ) {
+        res.statusCode = 200;
+        res.setHeader( 'Content-Type', 'text/html' );
+        res.write( '&lt;h1&gt;Hello&lt;/h1&gt;' );
+        res.end();
+    }
+} );
+server.listen( 8080 );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-189"><div><section>
+
+<header><h2>events</h2></header>
+
+<pre><code>var EventEmitter = require( 'events' );
+
+var ee = new EventEmitter();
+ee.on( 'foo', console.log );
+ee.emit( 'foo', 42 );       //  true
+ee.emit( 'bar', 24 );       //  false
+
+ee.emit( 'error', 'boo' );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-190"><div><section>
+
+<header><h2>events</h2></header>
+
+<pre><code>var Foo = function( foo ) { this.foo = foo; };
+util.inherits( Foo, EventEmitter );
+
+var foo = new Foo( 42 );
+foo.on( 'foo', function( foo ) {
+    this.foo = foo;
+} );
+foo.emit( 24 );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-191"><div><section>
+
+<header><h2>Stream</h2></header>
+
+<pre><code>foo.on( 'data', function( data ) {
+    ...
+} );
+foo.on( 'end', function() {
+    ...
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-192"><div><section>
+
+<header><h2>Stream</h2></header>
+
+<pre><code>foo.write( data1 );
+foo.write( data2 );
+foo.end();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-193"><div><section>
+
+<header><h2>Stream</h2></header>
+
+<pre><code>var r = fs_.createReadStream( 'foo.txt' );
+var w = fs_.createWriteStream( 'bar.txt' );
+
+r.pipe( w );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-194"><div><section>
+
+<header><h2>url</h2></header>
+
+<pre><code>var parsed = url_.parse( 'http://moscow.auto.ru' +
+    '/cars/audi/tt/all/?output_type=list', true );
+{
+    protocol: 'http:',
+    host: 'moscow.auto.ru',
+    path: '/cars/audi/tt/all/',
+    query: { output_type: 'list' }
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-195"><div><section>
+
+<header><h2>url</h2></header>
+
+<pre><code>var url = url.format( parsed );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-196"><div><section>
+
+<header><h2>cluster</h2></header>
+
+<pre><code>if ( cluster_.isMaster ) {
+    cluster_.fork();
+} else {
+    http_.createServer( function( req, res ) {
+        res.writeHead( 200 );
+        res.end( 'Hello' );
+    } ).listen( 8000 );
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-197"><div><section>
+
+<header><h2>cluster</h2></header>
+
+<pre><code>if ( cluster_.isMaster ) {
+    var num_cpus = require( 'os' ).cpus().length;
+    for ( var i = 0; i &lt; num_cpus - 1; i++ ) {
+        cluster_.fork();
+    }
+    cluster.on( 'exit', function( worker ) {
+        console.log( 'Worker ' + worker.process.pid + ' died' );
+        cluster_.fork();
+    } );
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-198"><div><section>
+
+<header><h2>process</h2></header>
+
+<pre><code>process.stdout      process.nextTick()
+process.stdin       process.exit()
+process.stderr      process.hrtime()
+process.argv        process.pid
+process.env         ...
+process.cwd()
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-199"><div><section>
+
+<header><h2>Promise</h2></header>
+
+<pre><code>//  Не работает.
+var result = fs_.readFile( filename );
+
+fs_.readFile( filename, function( error, result ) {
+    console.log( result );
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-200"><div><section>
+
+<header><h2>Promise</h2></header>
+
+<pre><code>var promise = read_file( filename );
+
+promise.then( function( result ) {
+    console.log( result );
+} );
+and_then( promise );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-201"><div><section>
+
+<header><h2>Promise</h2></header>
+
+<pre><code>function and_then( promise ) {
+    promise.then( function( result ) {
+        process_result( result );
+    } );
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-202"><div><section>
+
+<header><h2>Promise</h2></header>
+
+<pre><code>function read_file( filename ) {
+    return new Promise( function( resolve, reject ) {
+        fs_.readFile( function( error, result ) {
+            if ( error ) {
+                reject( error );
+            } else {
+                resolve( result );
+            }
+        } );
+    } );
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-203"><div><section>
+
+<header><h2>Promise</h2></header>
+
+<pre><code>function read_file( filename ) {
+    var promise = no.promise();
+    fs_.readFile( function( error, result ) {
+        if ( error )
+            promise.reject( error );
+        else
+            promise.resolve( result );
+    } );
+    return promise;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-204"><div><section>
+
+<header><h2>Promise</h2></header>
+
+<pre><code>promise.then(
+    function( result ) { ... },
+    function( error ) { ... }
+);
+
+promise.then( on_resolve );
+promise.then( null, on_reject );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-205"><div><section>
+
+<header><h2>Promise</h2></header>
+
+<pre><code>read_file( 'foo.txt' )
+    .then( function( foo ) {
+        read_file( 'bar.txt' )
+            .then( function( bar ) {
+                console.log( foo, bar );
+            } );
+    } );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-206"><div><section>
+
+<header><h2>Promise</h2></header>
+
+<pre><code>var promise = read_file( 'foo.txt' )
+    .then( function() {
+        return read_file( 'bar.txt' );
+    } );
+
+promise.then( function() {
+        console.log( 'done' );
+    } );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-207"><div><section>
+
+<header><h2>Promise</h2></header>
+
+<pre><code>read_file( 'foo.txt' )
+    .then( function() {
+        return read_file( 'bar.txt' );
+    } )
+    .then( function() {
+        console.log( 'done' );
+    } );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-208"><div><section>
+
+<header><h2>Promise</h2></header>
+
+<pre><code>Promise.all( [
+    read_file( 'foo.txt' ),
+    read_file( 'bar.txt' )
+] )
+    .then( function( results ) {
+        console.log( 'foo', results[ 0 ] );
+        console.log( 'bar', results[ 1 ] );
+    } );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-209"><div><section>
+
+<header><h2>Promise</h2></header>
+
+<pre><code>var _cache = {};
+
+function cached_read_file( filename ) {
+    var cached = _cache[ filename ];
+    if ( !cached ) {
+        cached = _cache[ filename ] = read_file( filename );
+    }
+    return cached;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-210"><div><section>
+
+<header><h2>Debug</h2></header>
+
+<ul>
+<li><code>console.log()</code></li>
+<li><code>node debug</code></li>
+<li><code>node-inspector</code></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-211"><div><section>
+
+<header><h2>node debug</h2></header>
+
+<pre><code>node debug test.js
+
+function add( a, b ) {
+    debugger;
+
+    return a + b;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-212"><div><section>
+
+<header><h2>node-inspector</h2></header>
+
+<pre><code>npm install -g node-inspector
+
+node-debug test.js
+</code></pre>
 </section></div></div>
 
 

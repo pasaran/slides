@@ -1843,3 +1843,600 @@ Hoisting:
         ...
     </script>
 
+---
+
+## Node.js
+
+  * V8
+  * libuv
+  * Немного javascript'а.
+
+---
+
+## Run
+
+test.js:
+
+    console.log( 'Hello' );
+
+Запускаем:
+
+    > node test.js
+    Hello
+
+---
+
+## Modules
+
+    //  foo.js
+
+    var foo = 42;
+
+    module.exports.get_foo = function() {
+        return foo;
+    };
+
+    module.exports.bar = 24;
+
+--
+
+## Modules
+
+    //  bar.js
+
+    var foo = require( './foo.js' ).get_foo;
+    var bar = require( './foo.js' ).bar;
+
+---
+
+## Modules
+
+    var foo = require( './foo.js' );
+    foo.get_foo()               //  42
+
+    require( './foo.js' ).bar   //  24
+
+---
+
+## Modules
+
+    var foo = 42;
+
+    module.exports = {
+        get_foo: function() { return foo; },
+        bar: 24
+    };
+
+---
+
+## Modules
+
+    var ns = {};
+
+    ns.foo = 42;
+    ns.bar = function() { ... };
+
+    module.exports = ns;
+
+---
+
+## Modules
+
+    module.exports = function() {
+        return 42;
+    };
+
+    //  module.exports = 42;
+
+---
+
+## Modules
+
+    function Foo() {};
+
+    Foo.prototype.get_foo = function() { return this.foo; }
+
+    module.exports = Foo;
+
+---
+
+## Modules
+
+    //  random.js
+    module.exports = Math.random();
+
+    //  main.js
+    var a = require( './random.js' );
+    var b = require( './random.js' );
+
+---
+
+## require
+
+    var fs = require( 'fs' );
+    var no = require( 'nommon' );
+    var config = require( '/etc/autoru/resources.json' );
+    var foo = require( '/usr/lib/foo/foo.js' );
+    var bar = require( '../bar/bar.js' );
+    //  var quu = require( 'quu.js' );
+    var quu = require( './quu.js' );
+
+---
+
+## npm
+
+    npm install nommon
+    npm install -g nommon
+
+    node_modules/nommon/lib/...
+
+---
+
+## nop's modules
+
+    //  no.js
+    var no = {};
+
+    module.exports = no;
+
+---
+
+## nop's modules
+
+    //  no.events.js
+    var no = require( './no.js' );
+
+    no.events = {};
+    no.events.on = function() { ... };
+
+    module.exports = no;
+
+---
+
+## nop's modules
+
+    //  index.js
+    var no = require( './no.js' );
+
+    require( './no.events.js' );
+    require( './no.promise.js' );
+    ...
+
+    module.exports = no;
+
+---
+
+## nop's modules
+
+    //  no.foo.js
+    var no = require( './no.js' );
+    no.foo = {};
+    ...
+    no.foo.get = function() {
+        var bar = no.bar.get();
+        ...
+    };
+
+---
+
+## nop's modules
+
+    //  no.bar.js
+    var no = require( './no.js' );
+    no.bar = {};
+    ...
+    no.bar.set = function() {
+        no.foo.set();
+        ...
+    };
+
+---
+
+## nop's modules
+
+    //  main.js
+
+    require( './no.foo.js' );
+    require( './no.bar.js' );
+
+    ...
+
+---
+
+## Core modules
+
+    fs              crypto
+    http            cluster
+    https           events
+    path            querystring
+    url
+
+---
+
+## fs
+
+    var fs_ = require( 'fs' );
+
+    fs_.readFile( 'foo.txt', 'utf-8', function( err, data ) {
+        if ( err ) {
+            throw err;
+        }
+        console.log( data );
+    } );
+
+---
+
+## fs
+
+    try {
+        var data = fs_.readFileSync( 'foo.txt', 'utf-8' );
+    } catch ( e ) {
+    }
+
+---
+
+## fs
+
+    var data = require( 'foo.json' );
+
+---
+
+## path
+
+    var path_ = require( 'path' );
+
+    var rel_path = 'foo.txt';
+    var abs_path = path_.resolve( process.cwd(), rel_path );
+
+---
+
+## path
+
+    path_.dirname( path );
+    path_.extname( path );
+    path_.join( path1, path2, ... );
+    path_.relative( from_path, to_path );
+    ...
+
+---
+
+## Buffer
+
+    //  var data = fs_.readFileSync( 'foo.txt', 'utf-8' );
+    var data = fs_.readFileSync( 'foo.txt' );
+
+    typeof data                 //  'object'
+    data instanceof Buffer      //  true
+    Buffer.isBuffer( data )     //  true
+
+---
+
+## Buffer
+
+    Buffer.byteLength( 'привет' )   //  12
+    'привет'.length             //  6
+
+---
+
+## http
+
+    http_.request( 'http://auto.ru', function( res ) {
+        var data = '';
+        res.on( 'data', function( chunk ) {
+            data += chunk;
+        } );
+        res.on( 'end', function() {
+            console.log( data );
+        }
+    } );
+
+---
+
+## http
+
+    http_.request( 'http://auto.ru', function( res ) {
+        var chunks = [], l = 0;
+        res.on( 'data', function( chunk ) {
+            chunks.push( chunk ); l += chunk.length;
+        } );
+        res.on( 'end', function() {
+            var result = Buffer.concat( chunks, l );
+        }
+    } );
+
+---
+
+## http
+
+    var server = http_.createServer( function( req, res ) {
+        if ( req.url = '/hello' ) {
+            res.statusCode = 200;
+            res.setHeader( 'Content-Type', 'text/html' );
+            res.write( '<h1>Hello</h1>' );
+            res.end();
+        }
+    } );
+    server.listen( 8080 );
+
+---
+
+## events
+
+    var EventEmitter = require( 'events' );
+
+    var ee = new EventEmitter();
+    ee.on( 'foo', console.log );
+    ee.emit( 'foo', 42 );       //  true
+    ee.emit( 'bar', 24 );       //  false
+
+    ee.emit( 'error', 'boo' );
+
+---
+
+## events
+
+    var Foo = function( foo ) { this.foo = foo; };
+    util.inherits( Foo, EventEmitter );
+
+    var foo = new Foo( 42 );
+    foo.on( 'foo', function( foo ) {
+        this.foo = foo;
+    } );
+    foo.emit( 24 );
+
+---
+
+## Stream
+
+    foo.on( 'data', function( data ) {
+        ...
+    } );
+    foo.on( 'end', function() {
+        ...
+    } );
+
+---
+
+## Stream
+
+    foo.write( data1 );
+    foo.write( data2 );
+    foo.end();
+
+---
+
+## Stream
+
+    var r = fs_.createReadStream( 'foo.txt' );
+    var w = fs_.createWriteStream( 'bar.txt' );
+
+    r.pipe( w );
+
+---
+
+## url
+
+    var parsed = url_.parse( 'http://moscow.auto.ru' +
+        '/cars/audi/tt/all/?output_type=list', true );
+    {
+        protocol: 'http:',
+        host: 'moscow.auto.ru',
+        path: '/cars/audi/tt/all/',
+        query: { output_type: 'list' }
+        ...
+    }
+
+---
+
+## url
+
+    var url = url.format( parsed );
+
+---
+
+## cluster
+
+    if ( cluster_.isMaster ) {
+        cluster_.fork();
+    } else {
+        http_.createServer( function( req, res ) {
+            res.writeHead( 200 );
+            res.end( 'Hello' );
+        } ).listen( 8000 );
+    }
+
+---
+
+## cluster
+
+    if ( cluster_.isMaster ) {
+        var num_cpus = require( 'os' ).cpus().length;
+        for ( var i = 0; i < num_cpus - 1; i++ ) {
+            cluster_.fork();
+        }
+        cluster.on( 'exit', function( worker ) {
+            console.log( 'Worker ' + worker.process.pid + ' died' );
+            cluster_.fork();
+        } );
+    }
+
+---
+
+## process
+
+    process.stdout      process.nextTick()
+    process.stdin       process.exit()
+    process.stderr      process.hrtime()
+    process.argv        process.pid
+    process.env         ...
+    process.cwd()
+
+---
+
+## Promise
+
+    //  Не работает.
+    var result = fs_.readFile( filename );
+
+    fs_.readFile( filename, function( error, result ) {
+        console.log( result );
+    } );
+
+
+---
+
+## Promise
+
+    var promise = read_file( filename );
+
+    promise.then( function( result ) {
+        console.log( result );
+    } );
+    and_then( promise );
+
+---
+
+## Promise
+
+    function and_then( promise ) {
+        promise.then( function( result ) {
+            process_result( result );
+        } );
+    }
+
+---
+
+## Promise
+
+    function read_file( filename ) {
+        return new Promise( function( resolve, reject ) {
+            fs_.readFile( function( error, result ) {
+                if ( error ) {
+                    reject( error );
+                } else {
+                    resolve( result );
+                }
+            } );
+        } );
+    }
+
+---
+
+## Promise
+
+    function read_file( filename ) {
+        var promise = no.promise();
+        fs_.readFile( function( error, result ) {
+            if ( error )
+                promise.reject( error );
+            else
+                promise.resolve( result );
+        } );
+        return promise;
+    }
+
+---
+
+## Promise
+
+    promise.then(
+        function( result ) { ... },
+        function( error ) { ... }
+    );
+
+    promise.then( on_resolve );
+    promise.then( null, on_reject );
+
+---
+
+## Promise
+
+    read_file( 'foo.txt' )
+        .then( function( foo ) {
+            read_file( 'bar.txt' )
+                .then( function( bar ) {
+                    console.log( foo, bar );
+                } );
+        } );
+
+---
+
+## Promise
+
+    var promise = read_file( 'foo.txt' )
+        .then( function() {
+            return read_file( 'bar.txt' );
+        } );
+
+    promise.then( function() {
+            console.log( 'done' );
+        } );
+
+---
+
+## Promise
+
+    read_file( 'foo.txt' )
+        .then( function() {
+            return read_file( 'bar.txt' );
+        } )
+        .then( function() {
+            console.log( 'done' );
+        } );
+
+---
+
+## Promise
+
+    Promise.all( [
+        read_file( 'foo.txt' ),
+        read_file( 'bar.txt' )
+    ] )
+        .then( function( results ) {
+            console.log( 'foo', results[ 0 ] );
+            console.log( 'bar', results[ 1 ] );
+        } );
+
+---
+
+## Promise
+
+    var _cache = {};
+
+    function cached_read_file( filename ) {
+        var cached = _cache[ filename ];
+        if ( !cached ) {
+            cached = _cache[ filename ] = read_file( filename );
+        }
+        return cached;
+    }
+
+---
+
+## Debug
+
+  * `console.log()`
+  * `node debug`
+  * `node-inspector`
+
+---
+
+## node debug
+
+    node debug test.js
+
+    function add( a, b ) {
+        debugger;
+
+        return a + b;
+    }
+
+---
+
+## node-inspector
+
+    npm install -g node-inspector
+
+    node-debug test.js
+
+
