@@ -113,13 +113,14 @@
 
 Не правильно:
 
-    .items["foo"]
+    .items.length
+    .items[ "foo" ]
 
 ---
 
 ## Динамический шаг
 
-    `.${ id1 }.{ id2 }`
+    no.jpath( `.${ id }`, data )
 
 Можно было бы сделать синтаксис типа:
 
@@ -162,9 +163,9 @@
 
 ## absolute vs relative jpath
 
-    jpath = no.jpath.expr( '...' );
+    compiled = no.jpath.expr( '...' );
 
-    jpath( data, root, vars )
+    compiled( data, root, vars )
 
 ---
 
@@ -187,6 +188,15 @@
   * function `foo(...)`
   * subexpr `( ... )`
   * jfilter `( ... ).foo.bar`
+  * `true`, `false`, `null`, `undefined`
+
+---
+
+## strings
+
+    "foo"
+    "id-{ .id }"
+    "{ .foo }-{ .bar }"
 
 ---
 
@@ -286,9 +296,9 @@
     result = no.jpath( '.foo + .bar', data )
 
     compiled = no.jpath.expr( '.foo' )
-    result = jpath( data )
+    result = compiled( data )
     compiled = no.jpath.expr( '.foo + .bar' )
-    result = jpath( data )
+    result = compiled( data )
 
     result = no.jpath.expr( '.foo' )( data )
 
@@ -299,18 +309,20 @@
     compiled = no.jpath.string( 'Hello, { .username }' )
     result = compiled( { username: 'nop' } )
 
+    no.jpath.string( 'https://{ config.host }/get/{ .id }' )
+
 ---
 
 ## API
 
     no.jpath( jpath, data, vars ) ->
-        data
+        result
     no.jpath.expr( jpath, type ) ->
-        ( any, root, vars ) ->
-            any
+        ( data, root, vars ) ->
+            result
     no.jpath.string( jpath, type ) ->
-        ( any, root, vars ) ->
-            string
+        ( data, root, vars ) ->
+            result_string
 
 ---
 
