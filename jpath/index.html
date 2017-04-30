@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <title>jpath</title>
+    <meta charset="utf-8"/>
+    <!--
+    <meta name="viewport" content="width=1274, user-scalable=no"/>
+    -->
+    <link rel="stylesheet" href="../ribbon/styles/screen.css"/>
+    <style>
+    .slide p {
+        margin-bottom: 25px;
+        display: inline;
+    }
+    .slide pre {
+        margin-bottom: 25px;
+    }
+    .slide>div {
+        padding-top: 60px;
+    }
+    .slide:after {
+        display: none;
+    }
+    .slide pre code {
+        -line-height: 1.7;
+    }
+    .slide pre code:before {
+        content: '';
+    }
+    /*
+    .slide section:before {
+        display: none;
+    }
+    */
+    </style>
+</head>
+
+<body class="list">
+    <header class="caption">
+        <h1>jpath</h1>
+    </header>
+
+    <div class="slide" id="slide-1"><div><section>
+
+<header><h2>jpath vs javascript</h2></header>
+
+<pre><code>result = no.jpath( '.foo.bar', data );
+result = data.foo.bar;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-2"><div><section>
+
+<header><h2>jpath vs javascript</h2></header>
+
+<ul>
+<li><p>jpath никогда (почти) не фейлится</p></li>
+<li><p>jpath компилируется</p></li>
+<li><p>Много разных дополнительных фич</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-3"><div><section>
+
+<header><h2>Простой jpath .foo.bar</h2></header>
+
+<pre><code>result = no.jpath( '.foo.bar', data );
+result = data.foo.bar;
+</code></pre>
+
+<p>Почти тоже самое, но не совсем.</p>
+
+<pre><code>result = data &amp;&amp; data.foo &amp;&amp; data.foo.bar;
+</code></pre>
+
+<p>Ближе, но все еще нет.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-4"><div><section>
+
+<header><h2>Простой jpath .foo.bar</h2></header>
+
+<pre><code>data = {
+    foo: {
+        bar: 42
+    }
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-5"><div><section>
+
+<header><h2>Простой jpath .foo.bar</h2></header>
+
+<pre><code>data = [
+    { foo: { bar: 42 } },
+    { quu: 66 },
+    { foo: { bar: 24 } }
+];
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-6"><div><section>
+
+<header><h2>Простой jpath .foo.bar</h2></header>
+
+<pre><code>data = {
+    foo: [
+        { bar: 42 },
+        { quu: 66 },
+        { bar: 24 }
+    ]
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-7"><div><section>
+
+<header><h2>jpath steps</h2></header>
+
+<ul>
+<li><code>.foo</code></li>
+<li><code>.*</code></li>
+<li><code>[ ... ]</code></li>
+<li><code>{ ... }</code></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-8"><div><section>
+
+<header><h2>.foo.bar</h2></header>
+
+<pre><code>if ( d == null ) return;
+var a = Array.isArray( d );
+if ( a ) { d = as( d , 'foo', []); }
+else {
+    d = d[ 'foo' ];
+    if ( d == null ) return;
+    a = Array.isArray( d )
+}
+return a ? as( d, 'bar', [] ) : d[ 'bar' ]
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-9"><div><section>
+
+<header><h2>Тип результата .foo</h2></header>
+
+<ul>
+<li>Массив</li>
+<li>Не массив</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-10"><div><section>
+
+<header><h2>.*</h2></header>
+
+<p>Результат всегда массив.</p>
+
+<pre><code>data = {
+    foo: 42,
+    bar: 24
+}
+
+no.jpath( '.*', data )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-11"><div><section>
+
+<header><h2>Индексы: [ ... ]</h2></header>
+
+<p>Индекс — это не обращение к свойству объекта.</p>
+
+<pre><code>.items[ 2 ]
+</code></pre>
+
+<p>Не правильно:</p>
+
+<pre><code>.items["foo"]
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-12"><div><section>
+
+<header><h2>Динамический шаг</h2></header>
+
+<pre><code>`.${ id1 }.{ id2 }`
+</code></pre>
+
+<p>Можно было бы сделать синтаксис типа:</p>
+
+<pre><code>no.jpath( '.{ id }', data, { id: "foo" } )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-13"><div><section>
+
+<header><h2>Предикаты: { ... }</h2></header>
+
+<pre><code>data = {
+    item: [
+        { count: 10 },
+        { count: 30 },
+        ...
+    ]
+};
+no.jpath( '.item{ .count &gt; 20 }', data )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-14"><div><section>
+
+<header><h2>absolute vs relative jpath</h2></header>
+
+<pre><code>.foo
+/.foo
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-15"><div><section>
+
+<header><h2>absolute vs relative jpath</h2></header>
+
+<pre><code>data = {
+    count: 42,
+    item: [
+        { count: 24 },
+        { count: 66 },
+    ]
+}
+no.jpath( '.item{ .count &gt; /.count }', data )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-16"><div><section>
+
+<header><h2>absolute vs relative jpath</h2></header>
+
+<pre><code>jpath = no.jpath.expr( '...' );
+
+jpath( data, root, vars )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-17"><div><section>
+
+<header><h2>Предикаты: { ... }</h2></header>
+
+<pre><code>.count{ . &gt; 20 }
+
+data = {
+    count: 30
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-18"><div><section>
+
+<header><h2>jpath expression</h2></header>
+
+<ul>
+<li>jpath <code>.foo.bar</code></li>
+<li>string <code>"foo"</code></li>
+<li>number <code>42</code></li>
+<li>variable <code>foo</code></li>
+<li>function <code>foo(...)</code></li>
+<li>subexpr <code>( ... )</code></li>
+<li>jfilter <code>( ... ).foo.bar</code></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-19"><div><section>
+
+<header><h2>variables</h2></header>
+
+<pre><code>no.jpath( '.item{ .id === id }', data, { id: 42 } )
+</code></pre>
+
+<p>Хуже:</p>
+
+<pre><code>no.jpath( `.item{ .id === ${ id } }`, data )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-20"><div><section>
+
+<header><h2>jfilter</h2></header>
+
+<pre><code>config.foo.bar
+( .foo || .bar ).quu
+foo().bar
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-21"><div><section>
+
+<header><h2>functions</h2></header>
+
+<p><strong>Under construction!</strong></p>
+
+<pre><code>no.jpath.defunc( 'encode', {
+    type: 'string',
+    body: function( s ) { return encodeURIComponent( s ); }
+} );
+no.jpath.string(
+    'http://yandex.ru/yandsearch?text={ encode(.text) }',
+    { text: 'Привет' }
+)
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-22"><div><section>
+
+<header><h2>ternary op</h2></header>
+
+<pre><code>( .count &gt; 0 ) ? .count : 0
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-23"><div><section>
+
+<header><h2>binary op</h2></header>
+
+<ul>
+<li><code>+ - * / %</code></li>
+<li><code>== === != !==</code></li>
+<li><code>&lt; &gt; &lt;= &gt;=</code></li>
+<li><code>&amp;&amp; ||</code></li>
+<li><code>~~ !~</code></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-24"><div><section>
+
+<header><h2>~~ и !~</h2></header>
+
+<pre><code>marks = [ 'audi', 'bwm' ]
+items = [
+    { marks: [ 'opel', 'vaz' ] },
+    { marks: [ 'audi', 'kia', 'jeep' ] },
+]
+no.jpath( '.{ .marks ~~ marks }', items,
+    { marks: marks } )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-25"><div><section>
+
+<header><h2>~~~ и !~~</h2></header>
+
+<p>Сейчас отсутствуют, надо сделать.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-26"><div><section>
+
+<header><h2>unary op</h2></header>
+
+<ul>
+<li><code>+ -</code></li>
+<li><code>!</code></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-27"><div><section>
+
+<header><h2>jpath vs jepxr vs no.jpath.expr</h2></header>
+
+<pre><code>.foo.bar
+.foo + .bar
+42 + 24
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-28"><div><section>
+
+<header><h2>API</h2></header>
+
+<pre><code>no.jpath
+no.jpath.expr
+no.jpath.string
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-29"><div><section>
+
+<header><h2>API</h2></header>
+
+<pre><code>result = no.jpath( '.foo', data )
+result = no.jpath( '.foo + .bar', data )
+
+compiled = no.jpath.expr( '.foo' )
+result = jpath( data )
+compiled = no.jpath.expr( '.foo + .bar' )
+result = jpath( data )
+
+result = no.jpath.expr( '.foo' )( data )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-30"><div><section>
+
+<header><h2>API</h2></header>
+
+<pre><code>compiled = no.jpath.string( 'Hello, { .username }' )
+result = compiled( { username: 'nop' } )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-31"><div><section>
+
+<header><h2>API</h2></header>
+
+<pre><code>no.jpath( jpath, data, vars ) -&gt;
+    data
+no.jpath.expr( jpath, type ) -&gt;
+    ( any, root, vars ) -&gt;
+        any
+no.jpath.string( jpath, type ) -&gt;
+    ( any, root, vars ) -&gt;
+        string
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-32"><div><section>
+
+<header><h2>de.jexpr</h2></header>
+
+<pre><code>de.jpexr = function( jpath ) {
+    return function( data ) {
+        return no.jpath.expr( jpath )( data, data, {
+            params: params,
+            context: context,
+            state: state
+        } );
+    };
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-33"><div><section>
+
+<header><h2>jresult</h2></header>
+
+<pre><code>jresult = no.jpath.expr( {
+    bar: { foo: '.foo.bar' }
+} );
+
+jresult( {
+    foo: { bar: 42 }
+} )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-34"><div><section>
+
+<header><h2>Types</h2></header>
+
+<p>Опциональная типизация:</p>
+
+<ul>
+<li>Валидация входных данных (а-ля React.PropTypes)</li>
+<li>Оптимизация</li>
+<li>Дополнительный синтаксический сахар</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-35"><div><section>
+
+<header><h2>Types</h2></header>
+
+<pre><code>data = {
+    foo: {
+        bar: 'Hello'
+    }
+};
+
+no.jpath( '.foo.bar', data )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-36"><div><section>
+
+<header><h2>Types. Оптимизация</h2></header>
+
+<pre><code>type = no.type( {
+    foo: {
+        bar: 'string'
+    }
+} )
+compiled = no.jpath.expr( '.foo.bar', type );
+
+var a; d = d[ "foo" ]; return d[ "bar" ]
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-37"><div><section>
+
+<header><h2>Types. Syntax sugar</h2></header>
+
+<pre><code>item = {
+    created: 1493557020246
+}
+&lt;div className="created"&gt;
+    { no.date.format(
+        new Date( no.jpath( '.created', item ) ),
+        "%H:%M"
+    ) }
+&lt;/div&gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-38"><div><section>
+
+<header><h2>Types. Syntax sugar</h2></header>
+
+<p>Лучше так:</p>
+
+<pre><code>&lt;div class="created"&gt;
+    .created.format( "%H:%M ")
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-39"><div><section>
+
+<header><h2>Types. Syntax sugar</h2></header>
+
+<pre><code>TimestampType = no.Type.Number.extend({
+    methods: {
+        format: ...
+    }
+});
+ItemType = no.type( {
+    created: TimestampType
+} )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-40"><div><section>
+
+<header><h2>Что внутри? (неонка)</h2></header>
+
+<ul>
+<li>Grammar</li>
+<li>Parser</li>
+<li>Rules</li>
+<li>Tokens</li>
+<li>Code generator</li>
+<li>Type checker</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-41"><div><section>
+
+<header><h2>Grammar</h2></header>
+
+<pre><code>expr := ternary | binary
+ternary := binary '?' expr ':' expr
+binary := unary ( BIN_OP unary )*
+unary := UN_OP unary | primary
+primary := string | number | var | func | jpath | subexpr
+...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-42"><div><section>
+
+<header><h2>Parser</h2></header>
+
+<pre><code>parser = new Parser( {
+    rules: rules,
+    tokens: tokens
+} );
+parser.parse('.foo.bar', 'jpath')
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-43"><div><section>
+
+<header><h2>Parser</h2></header>
+
+<pre><code> 0             7 = l - 1
+_________________
+|.|f|o|o|.|b|a|r| = s
+-----------------
+         ^
+         4 = x
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-44"><div><section>
+
+<header><h2>Parser</h2></header>
+
+<pre><code>parser.match( rule_id )
+parser.is_token( token_id )
+parser.token( token_id )
+parser.next_char()
+parser.next_code()
+parser.move( n )
+parser.skip()
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-45"><div><section>
+
+<header><h2>Rules</h2></header>
+
+<pre><code>function r_unary( parser ) {
+    var op = parser.next_char();
+    if ( op === '+' || op === '-' || op === '!' ) {
+        parser.move( 1 );
+        return { _id: 'unop', op: op,
+            expr: r_unary( parser ) };
+    }
+    return r_primary( parser );
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-46"><div><section>
+
+<header><h2>Rules</h2></header>
+
+<pre><code>function r_primary( parser ) {
+    var c = parser.next_code();
+    var expr;
+    if ( c === 34 ) { //  "
+        expr = r_string( parser );
+    } else if ( c === 46 || c === 47 ) { //  ./
+        expr = r_jpath( parser );
+    } else if ( c === 40 ) { //  (
+        expr = r_subexpr( parser );
+    ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-47"><div><section>
+
+<header><h2>Tokens</h2></header>
+
+<pre><code>//  /^[a-zA-Z_][a-zA-Z0-9-_]*/
+function t_id( parser ) {
+    if ( parser.x &gt;= parser.l ) { return null; }
+    var c = s.charCodeAt( parser.x );
+    if ( !( c &gt; 96 &amp;&amp; c &lt; 123 || c &gt; 64 &amp;&amp;
+        c &lt; 91 || c === 95 ) ) {
+        return null;
+    }
+    ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-48"><div><section>
+
+<header><h2>Tokens. RegExp vs charCodeAt</h2></header>
+
+<ul>
+<li><a href="https://jsperf.com/skip-spaces-regexp-vs-charat">https://jsperf.com/skip-spaces-regexp-vs-charat</a></li>
+<li><a href="https://jsperf.com/parse-binop-regexp-vs-charcodeat">https://jsperf.com/parse-binop-regexp-vs-charcodeat</a></li>
+<li><a href="http://jsperf.com/parse-id-regexp-vs-charcodeat">http://jsperf.com/parse-id-regexp-vs-charcodeat</a></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-49"><div><section>
+
+<header><h2>Code generation</h2></header>
+
+<pre><code>var exprs = [];
+var exid = ((ast._id === 'jpath') ? jpath2func : expr2func)
+    ( ast, type, type, exprs );
+var js = 'var as=R.as,ss=R.ss,ass=R.ass,f=R.f,c=R.c,ts=R.ts,tn=R.tn,tc=R.tc,e=R.e,M=R.M,j=R.j;\n';
+for ( var i = 0; i &lt;= exid; i++ )
+    js += 'function e' + i + '(d,r,v){' + exprs[ i ] + '}\n';
+js += 'return e' + exid;
+compiled = Function( 'R', js )( runtime );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-50"><div><section>
+
+<header><h2>Code generation</h2></header>
+
+<pre><code>.item{ .count &gt; 0 }
+
+e0      .count
+e1      e0 &gt; 0
+e2      .item{ e1 }
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-51"><div><section>
+
+<header><h2>Code generation</h2></header>
+
+<pre><code>function expr2func( ast, d_type, r_type, exprs ) {
+    var js = 'return(' + ast2js( ast, d_type, r_type, exprs ) + ');';
+
+    return exprs.push( js ) - 1;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-52"><div><section>
+
+<header><h2>Code generation</h2></header>
+
+<pre><code>function jpath2func( ast, d_type, r_type, exprs ) {
+    var js = d_type.js_prologue();
+    ast.steps.forEach( step =&gt; {
+        switch ( step._id ) {
+            case 'namestep':
+                js += d_type.js_namestep( step.name, is_last );
+                d_type = d_type.type_namestep( step.name );
+                break;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-53"><div><section>
+
+<header><h2>Code generation</h2></header>
+
+<pre><code>no.Type.Any = no.Type.extend( {
+    js_namestep: function( name, is_last ) {
+        if ( is_last ) return 'return a?' +
+            this.js_array_prop( name ) +
+            ':' + this.js_prop( name );
+        return 'if(a){d=' + this.js_array_prop( name ) +
+            '}else{d=' + this.js_prop( name ) +
+            ';if(d==null)return;a=Array.isArray(d)}';
+    },
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-54"><div><section>
+
+<header><h2>Code generation</h2></header>
+
+<pre><code>function ast2js( ast, d_type, r_type, exprs ) {
+    switch ( ast._id ) {
+        ...
+        case 'unop':
+            js = ast.op + '(' +
+                ast2js( ast.expr, d_type, r_type, exprs ) + ')';
+            ast._type = ( ast.op === '!' ) ?
+                 type_boolean : type_number;
+            break;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-55"><div><section>
+
+<header><h2>Code generation</h2></header>
+
+<pre><code>case 'binop':
+    left_js = ast2js( ast.left, d_type, r_type, exprs );
+    right_js = ast2js( ast.right, d_type, r_type, exprs );
+    ...
+    } else if ( ast.op === '+' || ast.op === '-' ... ) {
+        left_js = ast.left._type.js_to_number( left_js );
+        right_js = ast.right._type.js_to_number( right_js );
+        ast._type = type_number;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-56"><div><section>
+
+<header><h2>Code generation</h2></header>
+
+<pre><code>case 'var':
+    js = 'v["' + ast.name + '"]';
+    ast._type = type_default;
+    break;
+case 'jpath':
+    var exid = jpath2func( ast, d_type, r_type, exprs );
+    js = 'e' + exid + '(d,r,v)';
+    break;
+</code></pre>
+</section></div></div>
+
+
+    <script src="../core/shower.js"></script>
+</body>
+</html>

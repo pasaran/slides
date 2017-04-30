@@ -25,6 +25,7 @@ my $html = <<HTML;
     <style>
     .slide p {
         margin-bottom: 25px;
+        display: inline;
     }
     .slide pre {
         margin-bottom: 25px;
