@@ -1,19 +1,80 @@
 # jpath
 
-## jpath vs javascript
+## jpath — что такое и зачем
 
-    result = no.jpath( '.foo.bar', data );
-    result = data.foo.bar;
+  * DSL для извлечения из js-объектов каких-то данных.
+  * Прямой наследник XPath.
 
 ---
 
-## jpath vs javascript
+## jpath — что такое и зачем
+
+В JS для этого используется:
+
+  * `data.foo.bar`, `data[index]`.
+  * `forEach`, `map`, `filter`, `find`, ...
+  * Циклы, условия, все остальные конструкции JS.
+  * ...
+
+Поэтому ключевое слово: DSL.
+
+---
+
+## React vs teya
+
+    //  React
+    <div className="Foo">
+        { no.jpath( '.foo.bar', this.props ) }
+    </div>
+
+    //  teya
+    <div class="Foo">
+        .foo.bar
+
+---
+
+## install
+
+    $ npm install nommon
+
+    const no = require( 'nommon' );
+    //  const no = require( 'nommon/lib/no.jpath' );
+
+    console.log( no.jpath( '.foo.bar', data ) );
+
+---
+
+## jpath vs javascript vs _.get
+
+    result = no.jpath( '.foo.bar', data );
+
+    result = data.foo.bar;
+
+    result = _.get( data, '.foo.bar' );
+
+---
+
+## jpath vs javascript vs _.get
 
   * jpath никогда (почти) не фейлится
 
-  * jpath компилируется
+  * jpath компилируется (лучше, чем)
 
   * Много разных дополнительных фич
+
+---
+
+## Простейший get
+
+    function get( path, data ) {
+        const steps = path.split( '.' );
+        for ( let i = 0; i < steps.length; i++ ) {
+            if ( data == null ) { return data; }
+            data = data[ steps[ i ] ];
+        }
+        return data;
+    }
+    console.log( get( 'foo.bar', data ) );
 
 ---
 
@@ -88,6 +149,7 @@
 ## Тип результата .foo
 
   * Массив
+
   * Не массив
 
 ---
@@ -132,12 +194,23 @@
 
     data = {
         item: [
-            { count: 10 },
-            { count: 30 },
+            { id: 1, count: 10 },
+            { id: 2, count: 30, selected: true },
             ...
         ]
     };
     no.jpath( '.item{ .count > 20 }', data )
+    no.jpath( '.item{ .selected }.id', data )
+
+---
+
+## Предикаты: { ... }
+
+    .count{ . > 20 }
+
+    data = {
+        count: 30
+    };
 
 ---
 
@@ -166,16 +239,6 @@
     compiled = no.jpath.expr( '...' );
 
     compiled( data, root, vars )
-
----
-
-## Предикаты: { ... }
-
-    .count{ . > 20 }
-
-    data = {
-        count: 30
-    };
 
 ---
 
@@ -255,6 +318,7 @@
     items = [
         { marks: [ 'opel', 'vaz' ] },
         { marks: [ 'audi', 'kia', 'jeep' ] },
+        ...
     ]
     no.jpath( '.{ .marks ~~ marks }', items,
         { marks: marks } )
@@ -278,6 +342,8 @@
 
     .foo.bar
     .foo + .bar
+    .foo && !.bar
+    .listing.pager.total_count > 0
     42 + 24
 
 ---
@@ -328,7 +394,7 @@
 
 ## de.jexpr
 
-    de.jpexr = function( jpath ) {
+    de.jexpr = function( jpath ) {
         return function( data ) {
             return no.jpath.expr( jpath )( data, data, {
                 params: params,
@@ -374,13 +440,27 @@
 
 ---
 
+## .foo.bar
+
+    if ( d == null ) return;
+    var a = Array.isArray( d );
+    if ( a ) { d = as( d , 'foo', []); }
+    else {
+        d = d[ 'foo' ];
+        if ( d == null ) return;
+        a = Array.isArray( d )
+    }
+    return a ? as( d, 'bar', [] ) : d[ 'bar' ]
+
+---
+
 ## Types. Оптимизация
 
     type = no.type( {
         foo: {
             bar: 'string'
         }
-    } )
+    } );
     compiled = no.jpath.expr( '.foo.bar', type );
 
     var a; d = d[ "foo" ]; return d[ "bar" ]
@@ -427,8 +507,8 @@
 
   * Grammar
   * Parser
-  * Rules
-  * Tokens
+  * Grammar tokens
+  * Grammar rules
   * Code generator
   * Type checker
 
@@ -447,11 +527,11 @@
 
 ## Parser
 
-    parser = new Parser( {
+    parser = new no.Parser( {
         rules: rules,
         tokens: tokens
     } );
-    parser.parse('.foo.bar', 'jpath')
+    parser.parse( '.foo.bar', 'jpath' )
 
 ---
 
@@ -507,12 +587,26 @@
 
 ---
 
+## Rules
+
+    } else {
+        var name = parser.token( 'ID' );
+        if ( name === 'true' || name === 'false' || name === 'null' || name === 'undefined' ) {
+            expr = { _id: name };
+        } else {
+            if ( parser.next_code() === 40 ) { //  (
+                expr = {
+                    _id: 'func',
+                    ...
+
+---
+
 ## Tokens
 
     //  /^[a-zA-Z_][a-zA-Z0-9-_]*/
     function t_id( parser ) {
         if ( parser.x >= parser.l ) { return null; }
-        var c = s.charCodeAt( parser.x );
+        var c = parser.s.charCodeAt( parser.x );
         if ( !( c > 96 && c < 123 || c > 64 &&
             c < 91 || c === 95 ) ) {
             return null;
@@ -531,14 +625,17 @@
 
 ## Code generation
 
-    var exprs = [];
-    var exid = ((ast._id === 'jpath') ? jpath2func : expr2func)
-        ( ast, type, type, exprs );
-    var js = 'var as=R.as,ss=R.ss,ass=R.ass,f=R.f,c=R.c,ts=R.ts,tn=R.tn,tc=R.tc,e=R.e,M=R.M,j=R.j;\n';
-    for ( var i = 0; i <= exid; i++ )
-        js += 'function e' + i + '(d,r,v){' + exprs[ i ] + '}\n';
-    js += 'return e' + exid;
-    compiled = Function( 'R', js )( runtime );
+    const compiled = no.jpath.expr( '.item{ .count > 0 }' );
+
+---
+
+## Code generation
+
+    var as=R.as,ss=R.ss,ass=R.ass,f=R.f,c=R.c,ts=R.ts,tn=R.tn,tc=R.tc,e=R.e,M=R.M,j=R.j;
+    function e0(d,r,v){if(d==null)return;var a=Array.isArray(d);return a?as(d,"count",[]):d["count"]}
+    function e1(d,r,v){return(tc(e0(d,r,v))>0);}
+    function e2(d,r,v){if(d==null)return;var a=Array.isArray(d);if(a){d=as(d,"item",[])}else{d=d["item"];if(d==null)return;a=Array.isArray(d)}if(a)return f(d,r,v,e1,[]);if(e1(d,r,v))return d}
+    return e2
 
 ---
 
@@ -549,6 +646,19 @@
     e0      .count
     e1      e0 > 0
     e2      .item{ e1 }
+
+---
+
+## Code generation
+
+    var exprs = [];
+    var exid = ((ast._id === 'jpath') ? jpath2func : expr2func)
+        ( ast, type, type, exprs );
+    var js = 'var as=R.as,ss=R.ss,ass=R.ass,f=R.f,c=R.c,ts=R.ts,tn=R.tn,tc=R.tc,e=R.e,M=R.M,j=R.j;\n';
+    for ( var i = 0; i <= exid; i++ )
+        js += 'function e' + i + '(d,r,v){' + exprs[ i ] + '}\n';
+    js += 'return e' + exid;
+    compiled = Function( 'R', js )( runtime );
 
 ---
 
