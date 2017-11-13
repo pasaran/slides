@@ -1,4 +1,5 @@
 all :
+	./md2html descript2/slides.md > descript2/index.html
 	./md2html teya/slides.md > teya/index.html
 	./md2html js/slides.md > js/index.html
 	./md2html yate/slides.md > yate/index.html
