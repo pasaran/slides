@@ -450,3 +450,349 @@
         }
     } );
 
+---
+
+## `de.func`
+
+    const block = de.func( {
+        block: function( params, context, state ) {
+            return de.http( {
+                block: {
+                    url: `${ base_url }/?id=${ params.id }`
+                }
+            } );
+        }
+    } );
+
+---
+
+## `de.func`
+
+Можно вернуть:
+
+  * Значение
+
+  * no.Promise
+
+  * Другой блок
+
+---
+
+## `options`
+
+  * Набор параметров, управляющих поведением блока до и после action'а.
+
+  * Этот набор — общий для всех типов блоков.
+
+Более-менее актуальное [описание](https://github.com/pasaran/descript2/blob/master/docs/options.md).
+Плюс [порядок применения](https://github.com/pasaran/descript2/blob/master/docs/phases.md) разных options.
+
+---
+
+  * `options.deps`
+  * `options.guard`
+  * `options.before`
+  * `options.key`, `options.maxage`
+  * `options.params`, `options.valid_params`
+  *  action
+  * `options.error`
+  * `options.select`
+  * `options.after`
+  * `options.result`
+
+---
+
+## State
+
+    context.run( block, params, state )
+        .then( ... );
+
+---
+
+## `options.id`
+
+    options: {
+        id: 'some-block'
+    }
+
+---
+
+## `options.id`
+
+    {
+        foo: block,
+        bar: block,
+    }
+
+---
+
+## `options.id`
+
+    {
+        foo: block( {
+            options: 'id1'
+        } ),
+        bar: block( {
+            options: 'id2'
+        } )
+    }
+
+---
+
+## `options.deps`
+
+Возможность управлять порядком выполнения блоков. Три способа:
+
+  * Список id блоков, после выполнения которых можно запускать блок.
+  * Условие, после выполнения которого можно запускать блок.
+  * Приоритеты.
+
+---
+
+    options: {
+        deps: 'block-1'
+    }
+
+    options: {
+        deps: [
+            'block-1',
+            'block-2',
+        ]
+    }
+
+---
+
+    const block_1 = ...;
+    const block_2 = ...;
+    const block_3 = de.block( {
+        options: {
+            deps: [
+                block_1,
+                block_2
+            ]
+        }
+    } )
+
+---
+
+    const block_3 = de.object( {
+        block: {
+            foo: block_1( ... )
+        },
+        options: {
+            deps: block_1
+        }
+    } )
+
+---
+
+    const block_1 = de.block( {
+        options: {
+            select: {
+                foo: de.jexpr( '.foo' )
+            }
+        ...
+
+    const block_2 = de.block( {
+        options: {
+            deps: de.jexpr( 'state.foo' )
+        ...
+
+---
+
+    {
+        foo: block_1( {
+            options: {
+                priority: 10
+            }
+        } ),
+        bar: block_2,
+        quu: block_3
+    }
+
+---
+
+## `options.guard`
+
+    options: {
+        guard: function( params, context, state ) {
+            return ( params.id && state.auth );
+        }
+    }
+
+---
+
+## `options.guard`
+
+    options: {
+        guard: de.jexpr( 'params.id && state.auth' )
+    }
+
+---
+
+## `options.before`
+
+    options: {
+        before: function( params, context, state ) {
+            if ( !params.id ) {
+                return de.error( {
+                    id: 'INVALID_PARAMS'
+                } )
+            }
+            state.foo = 42;
+        },
+
+---
+
+## `options.guard` vs `options.before`
+
+  * `options.guard` синхронный и без side effects.
+
+  * `options.before` может вернуть промис или ошибку,
+    может сделать редирект и т.д.
+
+---
+
+## `options.key` и `options.maxage`
+
+    options: {
+        key: de.jstring( '{ params.mark }-{ params.model }' ),
+        maxage: 86400
+    }
+
+---
+
+## Cache
+
+    const cache = {
+        get: function( key ) { ... },
+        set: function( key, value, maxage ) { ... },
+    };
+
+    const context = new de.Context( req, res, {
+        cache: cache
+    } );
+
+---
+
+## `options.cache`
+
+Пока нет, но можно и сделать. Конкретно этот блок кэшировать как-то иначе.
+Например, все в memcache, а этот блок в памяти.
+
+---
+
+## `options.params`
+
+    options: {
+        params: function( params, context, state ) {
+            return {
+                offer_id: `${ params.sale_id }-${ params.sale_hash }`
+            };
+        }
+    }
+
+---
+
+## `options.params`
+
+    options: {
+        params: {
+            foo: 42,
+            bar: de.jexpr( 'state.bar' ),
+            quu: function( params, context, state ) {
+                return params.quu;
+            }
+        }
+    }
+
+---
+
+## `options.valid_params`
+
+    options: {
+        valid_params: {
+            id: null,
+            category: 'cars'
+        }
+    }
+
+---
+
+## `options.error`
+
+    options: {
+        error: function( params, context, state, error ) {
+            const id = no.jpath( '.error.id', error );
+            if ( id === 'NOT_REALLY_ERROR' ) {
+                return {
+                    status: 'ok'
+                };
+            }
+        },
+
+---
+
+## `options.after`
+
+    options: {
+        after: function( params, context, state, result ) {
+            //  Do something.
+        }
+    }
+
+---
+
+## `options.select`
+
+    options: {
+        select: {
+            foo: de.jexpr( '.foo' )
+        }
+    }
+
+---
+
+## `options.select`
+
+    options: {
+        after: function( params, context, state, result ) {
+            state.foo = de.jexpr( '.foo' )
+                ( params, context, state, result );
+        }
+    }
+
+---
+
+## `options.result`
+
+    options: {
+        result: function( params, context, state, result ) {
+            return {
+                id: result.foo.bar.id,
+            }
+        }
+    }
+
+---
+
+## `options.result`
+
+    options: {
+        result: {
+            id: de.jexpr( '.foo.bar.id' )
+        };
+    }
+
+---
+
+## `options.result`
+
+    options: {
+        result: {
+            foo: {
+                bar: de.jexpr( '.foo.bar' )
+            }
+        };
+    }
+

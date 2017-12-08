@@ -608,6 +608,445 @@ const block2 = block1( {
     }
 } );
 </code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-41"><div><section>
+
+<header><h2><code>de.func</code></h2></header>
+
+<pre><code>const block = de.func( {
+    block: function( params, context, state ) {
+        return de.http( {
+            block: {
+                url: `${ base_url }/?id=${ params.id }`
+            }
+        } );
+    }
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-42"><div><section>
+
+<header><h2><code>de.func</code></h2></header>
+
+<p>Можно вернуть:</p>
+
+<ul>
+<li><p>Значение</p></li>
+<li><p>no.Promise</p></li>
+<li><p>Другой блок</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-43"><div><section>
+
+<header><h2><code>options</code></h2></header>
+
+<ul>
+<li><p>Набор параметров, управляющих поведением блока до и после action'а.</p></li>
+<li><p>Этот набор — общий для всех типов блоков.</p></li>
+</ul>
+
+<p>Более-менее актуальное <a href="https://github.com/pasaran/descript2/blob/master/docs/options.md">описание</a>.
+Плюс <a href="https://github.com/pasaran/descript2/blob/master/docs/phases.md">порядок применения</a> разных options.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-44"><div><section>
+
+<ul>
+<li><code>options.deps</code></li>
+<li><code>options.guard</code></li>
+<li><code>options.before</code></li>
+<li><code>options.key</code>, <code>options.maxage</code></li>
+<li><code>options.params</code>, <code>options.valid_params</code></li>
+<li>action</li>
+<li><code>options.error</code></li>
+<li><code>options.select</code></li>
+<li><code>options.after</code></li>
+<li><code>options.result</code></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-45"><div><section>
+
+<header><h2>State</h2></header>
+
+<pre><code>context.run( block, params, state )
+    .then( ... );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-46"><div><section>
+
+<header><h2><code>options.id</code></h2></header>
+
+<pre><code>options: {
+    id: 'some-block'
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-47"><div><section>
+
+<header><h2><code>options.id</code></h2></header>
+
+<pre><code>{
+    foo: block,
+    bar: block,
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-48"><div><section>
+
+<header><h2><code>options.id</code></h2></header>
+
+<pre><code>{
+    foo: block( {
+        options: 'id1'
+    } ),
+    bar: block( {
+        options: 'id2'
+    } )
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-49"><div><section>
+
+<header><h2><code>options.deps</code></h2></header>
+
+<p>Возможность управлять порядком выполнения блоков. Три способа:</p>
+
+<ul>
+<li>Список id блоков, после выполнения которых можно запускать блок.</li>
+<li>Условие, после выполнения которого можно запускать блок.</li>
+<li>Приоритеты.</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-50"><div><section>
+
+<pre><code>options: {
+    deps: 'block-1'
+}
+
+options: {
+    deps: [
+        'block-1',
+        'block-2',
+    ]
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-51"><div><section>
+
+<pre><code>const block_1 = ...;
+const block_2 = ...;
+const block_3 = de.block( {
+    options: {
+        deps: [
+            block_1,
+            block_2
+        ]
+    }
+} )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-52"><div><section>
+
+<pre><code>const block_3 = de.object( {
+    block: {
+        foo: block_1( ... )
+    },
+    options: {
+        deps: block_1
+    }
+} )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-53"><div><section>
+
+<pre><code>const block_1 = de.block( {
+    options: {
+        select: {
+            foo: de.jexpr( '.foo' )
+        }
+    ...
+
+const block_2 = de.block( {
+    options: {
+        deps: de.jexpr( 'state.foo' )
+    ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-54"><div><section>
+
+<pre><code>{
+    foo: block_1( {
+        options: {
+            priority: 10
+        }
+    } ),
+    bar: block_2,
+    quu: block_3
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-55"><div><section>
+
+<header><h2><code>options.guard</code></h2></header>
+
+<pre><code>options: {
+    guard: function( params, context, state ) {
+        return ( params.id &amp;&amp; state.auth );
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-56"><div><section>
+
+<header><h2><code>options.guard</code></h2></header>
+
+<pre><code>options: {
+    guard: de.jexpr( 'params.id &amp;&amp; state.auth' )
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-57"><div><section>
+
+<header><h2><code>options.before</code></h2></header>
+
+<pre><code>options: {
+    before: function( params, context, state ) {
+        if ( !params.id ) {
+            return de.error( {
+                id: 'INVALID_PARAMS'
+            } )
+        }
+        state.foo = 42;
+    },
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-58"><div><section>
+
+<header><h2><code>options.guard</code> vs <code>options.before</code></h2></header>
+
+<ul>
+<li><p><code>options.guard</code> синхронный и без side effects.</p></li>
+<li><p><code>options.before</code> может вернуть промис или ошибку,
+может сделать редирект и т.д.</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-59"><div><section>
+
+<header><h2><code>options.key</code> и <code>options.maxage</code></h2></header>
+
+<pre><code>options: {
+    key: de.jstring( '{ params.mark }-{ params.model }' ),
+    maxage: 86400
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-60"><div><section>
+
+<header><h2>Cache</h2></header>
+
+<pre><code>const cache = {
+    get: function( key ) { ... },
+    set: function( key, value, maxage ) { ... },
+};
+
+const context = new de.Context( req, res, {
+    cache: cache
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-61"><div><section>
+
+<header><h2><code>options.cache</code></h2></header>
+
+<p>Пока нет, но можно и сделать. Конкретно этот блок кэшировать как-то иначе.
+Например, все в memcache, а этот блок в памяти.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-62"><div><section>
+
+<header><h2><code>options.params</code></h2></header>
+
+<pre><code>options: {
+    params: function( params, context, state ) {
+        return {
+            offer_id: `${ params.sale_id }-${ params.sale_hash }`
+        };
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-63"><div><section>
+
+<header><h2><code>options.params</code></h2></header>
+
+<pre><code>options: {
+    params: {
+        foo: 42,
+        bar: de.jexpr( 'state.bar' ),
+        quu: function( params, context, state ) {
+            return params.quu;
+        }
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-64"><div><section>
+
+<header><h2><code>options.valid_params</code></h2></header>
+
+<pre><code>options: {
+    valid_params: {
+        id: null,
+        category: 'cars'
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-65"><div><section>
+
+<header><h2><code>options.error</code></h2></header>
+
+<pre><code>options: {
+    error: function( params, context, state, error ) {
+        const id = no.jpath( '.error.id', error );
+        if ( id === 'NOT_REALLY_ERROR' ) {
+            return {
+                status: 'ok'
+            };
+        }
+    },
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-66"><div><section>
+
+<header><h2><code>options.after</code></h2></header>
+
+<pre><code>options: {
+    after: function( params, context, state, result ) {
+        //  Do something.
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-67"><div><section>
+
+<header><h2><code>options.select</code></h2></header>
+
+<pre><code>options: {
+    select: {
+        foo: de.jexpr( '.foo' )
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-68"><div><section>
+
+<header><h2><code>options.select</code></h2></header>
+
+<pre><code>options: {
+    after: function( params, context, state, result ) {
+        state.foo = de.jexpr( '.foo' )
+            ( params, context, state, result );
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-69"><div><section>
+
+<header><h2><code>options.result</code></h2></header>
+
+<pre><code>options: {
+    result: function( params, context, state, result ) {
+        return {
+            id: result.foo.bar.id,
+        }
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-70"><div><section>
+
+<header><h2><code>options.result</code></h2></header>
+
+<pre><code>options: {
+    result: {
+        id: de.jexpr( '.foo.bar.id' )
+    };
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-71"><div><section>
+
+<header><h2><code>options.result</code></h2></header>
+
+<pre><code>options: {
+    result: {
+        foo: {
+            bar: de.jexpr( '.foo.bar' )
+        }
+    };
+}
+</code></pre>
 </section></div></div>
 
 
