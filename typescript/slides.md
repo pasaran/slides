@@ -175,6 +175,26 @@ TypeScript компилируется в JavaScript, поэтому в рант�
 
 ---
 
+## `!`
+
+    const items: Array<string> = [ 'a', 'bc', 'def' ];
+    const item = items.find( x => x === 'bc' );
+    const length = item.length;
+
+---
+
+## `!`
+
+    const item = items.find( x => x === 'bc' )!;
+
+    const length = item!.length;
+
+    if ( item ) {
+        const length = item.length;
+    }
+
+---
+
 ## function overload
 
     function get_something( x: string, y: string ): number;
