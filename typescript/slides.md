@@ -142,6 +142,16 @@ TypeScript компилируется в JavaScript, поэтому в рант�
 
 ---
 
+## `readonly` и `ReadonlyArray`
+
+    interface Foo {
+        readonly id: string;
+
+        items: ReadonlyArray<string>;
+    }
+
+---
+
 ## `Array`
 
     let items: Array<Item>;

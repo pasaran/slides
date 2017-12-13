@@ -220,6 +220,19 @@ interface PointAndWhatever {
 
     <div class="slide" id="slide-14"><div><section>
 
+<header><h2><code>readonly</code> и <code>ReadonlyArray</code></h2></header>
+
+<pre><code>interface Foo {
+    readonly id: string;
+
+    items: ReadonlyArray&lt;string&gt;;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-15"><div><section>
+
 <header><h2><code>Array</code></h2></header>
 
 <pre><code>let items: Array&lt;Item&gt;;
@@ -228,7 +241,7 @@ let strings_or_numbers: Array&lt;string | number&gt;;
 
 </section></div></div>
 
-    <div class="slide" id="slide-15"><div><section>
+    <div class="slide" id="slide-16"><div><section>
 
 <header><h2><code>Array</code></h2></header>
 
@@ -244,7 +257,7 @@ let items_copy: Items = items.concat( [] );
 
 </section></div></div>
 
-    <div class="slide" id="slide-16"><div><section>
+    <div class="slide" id="slide-17"><div><section>
 
 <header><h2><code>as</code></h2></header>
 
@@ -260,7 +273,7 @@ function get_something( x: string | number, y?: string ) {
 
 </section></div></div>
 
-    <div class="slide" id="slide-17"><div><section>
+    <div class="slide" id="slide-18"><div><section>
 
 <header><h2><code>!</code></h2></header>
 
@@ -271,7 +284,7 @@ const length = item.length;
 
 </section></div></div>
 
-    <div class="slide" id="slide-18"><div><section>
+    <div class="slide" id="slide-19"><div><section>
 
 <header><h2><code>!</code></h2></header>
 
@@ -286,7 +299,7 @@ if ( item ) {
 
 </section></div></div>
 
-    <div class="slide" id="slide-19"><div><section>
+    <div class="slide" id="slide-20"><div><section>
 
 <header><h2>function overload</h2></header>
 
@@ -303,7 +316,7 @@ function get_something( x: string | number, y?: string ) {
 
 </section></div></div>
 
-    <div class="slide" id="slide-20"><div><section>
+    <div class="slide" id="slide-21"><div><section>
 
 <header><h2>Functions</h2></header>
 
@@ -316,7 +329,7 @@ function read_file( filename: string, callback: Callback ) {
 
 </section></div></div>
 
-    <div class="slide" id="slide-21"><div><section>
+    <div class="slide" id="slide-22"><div><section>
 
 <header><h2>Node + React + Redux</h2></header>
 
@@ -330,7 +343,7 @@ node_modules/redux-thunk/index.d.ts
 
 </section></div></div>
 
-    <div class="slide" id="slide-22"><div><section>
+    <div class="slide" id="slide-23"><div><section>
 
 <pre><code>interface Props {
     size: 's' | 'm' | 'l';
@@ -347,7 +360,7 @@ class MyClass extends React.Component&lt;Props&gt; {
 
 </section></div></div>
 
-    <div class="slide" id="slide-23"><div><section>
+    <div class="slide" id="slide-24"><div><section>
 
 <pre><code>interface State {
     loading: boolean;
@@ -361,7 +374,7 @@ class MyClass extends React.Component&lt;null, State&gt; {
 
 </section></div></div>
 
-    <div class="slide" id="slide-24"><div><section>
+    <div class="slide" id="slide-25"><div><section>
 
 <pre><code>class MyClass extends React.Component&lt;Props, State&gt; {
     ...
@@ -370,7 +383,7 @@ class MyClass extends React.Component&lt;null, State&gt; {
 
 </section></div></div>
 
-    <div class="slide" id="slide-25"><div><section>
+    <div class="slide" id="slide-26"><div><section>
 
 <pre><code>//  1.
 import * as React from 'react';
@@ -386,7 +399,7 @@ interface State { ... }
 
 </section></div></div>
 
-    <div class="slide" id="slide-26"><div><section>
+    <div class="slide" id="slide-27"><div><section>
 
 <pre><code>//  2.
 class MyClass extends React.Component&lt;Props
@@ -401,7 +414,7 @@ export connect( map_state_to_props )( MyClass )
 
 </section></div></div>
 
-    <div class="slide" id="slide-27"><div><section>
+    <div class="slide" id="slide-28"><div><section>
 
 <pre><code>import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
@@ -417,7 +430,7 @@ export default createStore( reducers, init_state as ModelState,
 
 </section></div></div>
 
-    <div class="slide" id="slide-28"><div><section>
+    <div class="slide" id="slide-29"><div><section>
 
 <pre><code>export enum ActionTypes = {
     OPEN_CHAT,
@@ -428,7 +441,7 @@ export default createStore( reducers, init_state as ModelState,
 
 </section></div></div>
 
-    <div class="slide" id="slide-29"><div><section>
+    <div class="slide" id="slide-30"><div><section>
 
 <pre><code>export interface ActionOpenChat {
     type: ActionTypes.OPEN_CHAT;
@@ -445,7 +458,7 @@ export type Action =
 
 </section></div></div>
 
-    <div class="slide" id="slide-30"><div><section>
+    <div class="slide" id="slide-31"><div><section>
 
 <pre><code>export function action_open_chat( chat_id: string )
     : ActionOpenChat {
@@ -460,7 +473,7 @@ export type Action =
 
 </section></div></div>
 
-    <div class="slide" id="slide-31"><div><section>
+    <div class="slide" id="slide-32"><div><section>
 
 <pre><code>export function action_open_chat( chat_id: string )
     : ActionOpenChat {
@@ -476,7 +489,7 @@ export type Action =
 
 </section></div></div>
 
-    <div class="slide" id="slide-32"><div><section>
+    <div class="slide" id="slide-33"><div><section>
 
 <pre><code>import { ThunkAction as ReduxThunkAction }
     from 'redux-thunk';
@@ -487,7 +500,7 @@ type ThunkAction =
 
 </section></div></div>
 
-    <div class="slide" id="slide-33"><div><section>
+    <div class="slide" id="slide-34"><div><section>
 
 <pre><code>export function action_open_chat( chat_id: string ): ThunkAction {
     return function( dispatch, get_state ) {
@@ -504,7 +517,7 @@ type ThunkAction =
 
 </section></div></div>
 
-    <div class="slide" id="slide-34"><div><section>
+    <div class="slide" id="slide-35"><div><section>
 
 <pre><code>export function action_resync():
     ReduxThunkAction&lt;Promise&lt;void&gt;, ModelState, void&gt; {
@@ -520,7 +533,7 @@ type ThunkAction =
 
 </section></div></div>
 
-    <div class="slide" id="slide-35"><div><section>
+    <div class="slide" id="slide-36"><div><section>
 
 <pre><code>export default function( state: ModelState, action: Action )
     : ModelState {
@@ -533,7 +546,7 @@ type ThunkAction =
 
 </section></div></div>
 
-    <div class="slide" id="slide-36"><div><section>
+    <div class="slide" id="slide-37"><div><section>
 
 <pre><code>import { ModelState } from '../models';
 import { ActionOpenChat } from '../actions';
@@ -550,7 +563,7 @@ export default function( state: ModelState,
 
 </section></div></div>
 
-    <div class="slide" id="slide-37"><div><section>
+    <div class="slide" id="slide-38"><div><section>
 
 <pre><code>declare global {
     interface Window {
