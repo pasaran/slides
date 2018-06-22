@@ -205,7 +205,7 @@
 
 ---
 
-## Стало (на самом деле нет)
+## Стало
 
     case actions.OFFER_LOADING:
         return jsetter( '.offers{  .id === id }.loading' )
@@ -227,7 +227,7 @@
 
 ---
 
-## Стало бы
+## Стало
 
     case 'ACTIVATE':
         return jsetter( '.offers{ .id === id }.isActive' )(
