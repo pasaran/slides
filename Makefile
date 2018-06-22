@@ -1,4 +1,4 @@
-TARGETS = js node jpath yate teya descript descript2 typescript
+TARGETS = js node jpath yate teya descript descript2 typescript jsetter
 
 .PHONY : all
 all: $(TARGETS)
