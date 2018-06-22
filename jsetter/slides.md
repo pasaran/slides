@@ -72,10 +72,12 @@
 
     //  enc === encodeURIComponent
 
-    de.jstring( '/foo/bar/{ enc( params.id ) }/' )
+    jstring( '/foo/bar/{ enc( params.id ) }/' )
     //  '/foo/bar/..%2F..%2Fquu'
 
-    de.jstring( '/foo/bar/{ encodeURIComponent( params.id ) }/' )
+    jstring(
+        '/foo/bar/{ encodeURIComponent( params.id ) }/'
+    )
 
 ---
 
@@ -138,7 +140,7 @@
 ## Было
 
     case actions.OFFER_UPDATE:
-        const index = offerIndexById( action.payload.offerID, state );
+        const index = byId( action.payload.offerID, state );
         return Update( state, {
             offers: {
                 [ index ]: {
@@ -152,7 +154,7 @@
 ## Стало
 
     case actions.OFFER_UPDATE:
-        return jsetter( '.offers{ .id === id || .saleId === id }' )(
+        return jsetter( '.offers{ .id === id  }' )(
             state,
             {
                 id: action.payload.offerID
@@ -165,7 +167,7 @@
 ## Было
 
     case actions.DELETE_OFFER:
-        const index = offerIndexById( action.payload.offerID, state );
+        const index = byId( action.payload.offerID, state );
         return Update( state, {
             offers: {
                 $splice: [
@@ -179,7 +181,7 @@
 ## Стало
 
     case actions.DELETE_OFFER:
-        return jsetter.delete( '.offers{ .id === id || .saleId === id }' )(
+        return jsetter.delete( '.offers{ .id === id }' )(
             state,
             {
                 id: action.payload.offerID,
@@ -191,7 +193,7 @@
 ## Было
 
     case actions.OFFER_LOADING:
-        const index = offerIndexById( action.payload.offerID, state );
+        const index = byId( action.payload.offerID, state );
         if ( index === -1 ) { return state; }
         return Update( state, {
             offers: {
@@ -206,7 +208,7 @@
 ## Стало (на самом деле нет)
 
     case actions.OFFER_LOADING:
-        return jsetter( '.offers{  .id === id || .saleId === id }.loading' )
+        return jsetter( '.offers{  .id === id }.loading' )
             ( state, { id: action.payload.offerID }, true );
 
 ---
@@ -214,7 +216,7 @@
 ## Было
 
     case 'ACTIVATE':
-        const index = offerIndexById( action.payload.offerID, state );
+        const index = byId( action.payload.offerID, state );
         if ( offerIndex === -1 ) { return state; }
         return Update( state, {
             offers: {
@@ -228,7 +230,7 @@
 ## Стало бы
 
     case 'ACTIVATE':
-        return jsetter( '.offers{  .id === id || .saleId === id }.isActive' )(
+        return jsetter( '.offers{ .id === id }.isActive' )(
             state,
             { id: action.payload.offerID },
             value => !value
