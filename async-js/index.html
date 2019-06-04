@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <title>Async JavaScript</title>
+    <meta charset="utf-8"/>
+    <!--
+    <meta name="viewport" content="width=1274, user-scalable=no"/>
+    -->
+    <link rel="stylesheet" href="../ribbon/styles/screen.css"/>
+    <style>
+    .slide p {
+        margin-bottom: 25px;
+        display: inline;
+    }
+    .slide pre {
+        margin-bottom: 25px;
+    }
+    .slide>div {
+        padding-top: 60px;
+    }
+    .slide:after {
+        display: none;
+    }
+    .slide pre code {
+        -line-height: 1.7;
+    }
+    .slide pre code:before {
+        content: '';
+    }
+    /*
+    .slide section:before {
+        display: none;
+    }
+    */
+    </style>
+</head>
+
+<body class="list">
+    <header class="caption">
+        <h1>Async JavaScript</h1>
+    </header>
+
+    <div class="slide" id="slide-1"><div><section>
+
+<ul>
+<li><p>Callbacks</p></li>
+<li><p>Promises</p></li>
+<li><p><code>async</code>, <code>await</code></p></li>
+<li><p>Generators</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-2"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>async function foo( ... ) {
+    ...
+}
+</code></pre>
+
+<p>Всегда возвращает <code>Promise</code>.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-3"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>async function foo() {
+    return 42;
+}
+
+r = foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-4"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>function foo() {
+    return Promise.resolve( 42 );
+}
+
+const r = foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-5"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>async function foo() {
+    return promise;
+}
+
+const r = foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-6"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>function foo() {
+    //  return promise;
+    return Promise.resolve( promise );
+}
+
+const r = foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-7"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>async function foo() {
+    throw Error( ... );
+}
+
+const r = foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-8"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>function foo() {
+    return Promise.reject( Error( ... ) );
+}
+
+const r = foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-9"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>function asyncify( f ) {
+    return function( ...args ) {
+        try {
+            return Promise.resolve( f( ...args ) );
+        } catch ( e ) {
+            return Promise.reject( e );
+        }
+    };
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-10"><div><section>
+
+<header><h2><code>await</code></h2></header>
+
+<pre><code>const r = await foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-11"><div><section>
+
+<header><h2><code>await</code></h2></header>
+
+<pre><code>function foo() {
+    return 42;
+}
+
+const r = await foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-12"><div><section>
+
+<header><h2><code>await</code></h2></header>
+
+<pre><code>async function foo() {
+    return 42;
+}
+
+const r = await foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-13"><div><section>
+
+<header><h2><code>await</code></h2></header>
+
+<pre><code>const p = new Promise( ... );
+
+const r = await p;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-14"><div><section>
+
+<header><h2><code>await</code></h2></header>
+
+<pre><code>try {
+    r = await foo();
+
+} catch ( e ) {
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-15"><div><section>
+
+<header><h2><code>async</code> и <code>await</code></h2></header>
+
+<pre><code>async function() {
+    //  Только внутри async-функций.
+    r = await foo();
+
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-16"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>/* eslint require-await: "error" */
+
+async function foo() {
+    return 42;
+}
+
+r = await foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-17"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>/* eslint require-await: "error" */
+
+// Не одно и то же.
+function foo() {
+    return 42;
+}
+
+//  А тут пофигу.
+r = await foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-18"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>/* eslint no-return-await: "error" */
+
+async function foo() {
+    return await bar();
+}
+
+r = await foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-19"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>/* eslint no-return-await: "error" */
+
+function foo() {
+    return bar();
+}
+
+r = await foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-20"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<pre><code>/* eslint no-return-await: "error" */
+
+async function foo() {
+    const r = await bar();
+
+    return r;
+}
+
+r = await foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-21"><div><section>
+
+<header><h2>Последовательное выполнение</h2></header>
+
+<pre><code>r1 = await fetch( url1 );
+r2 = await fetch( url2 );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-22"><div><section>
+
+<header><h2>Параллельное выполнение</h2></header>
+
+<pre><code>[ r1, r2 ] = await Promise.all( [
+    fetch( url1 ),
+    fetch( url2 ),
+] );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-23"><div><section>
+
+<header><h2>Смешанное выполнение</h2></header>
+
+<pre><code>p1 = fetch( url1 );
+p2 = fetch( url2 );
+
+r2 = await( p2 );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-24"><div><section>
+
+<header><h2>Timeout</h2></header>
+
+<pre><code>setTimeout( () =&gt; {
+    //  ?!!
+}, 500 );
+
+const r = await do_something();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-25"><div><section>
+
+<header><h2>Timeout</h2></header>
+
+<pre><code>function reject_after( timeout, reason ) {
+    return new Promise( ( resolve, reject ) =&gt; {
+        setTimeout(
+            () =&gt; reject( reason ),
+            timeout
+        );
+    } );
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-26"><div><section>
+
+<header><h2>Timeout</h2></header>
+
+<pre><code>try {
+    const r = await Promise.race( [
+        do_something(),
+        reject_after( 500, Error( 'TIMEOUT' ) ),
+    ] );
+
+} catch ( e ) {
+    //  Timeout! (or error)
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-27"><div><section>
+
+<header><h2>Timeout</h2></header>
+
+<pre><code>await do_something();
+await do_something_else();
+...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-28"><div><section>
+
+<header><h2>Timeout</h2></header>
+
+<pre><code>await Promise.race( [
+    ( async function() {
+        await do_something();
+        await do_something_else();
+        ...
+    } )(),
+    reject_after( 500, Error( 'TIMEOUT' ) ),
+] );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-29"><div><section>
+
+<header><h2>Timeout</h2></header>
+
+<pre><code>await Promise.race( [
+    Promise.all( [
+        do_something(),
+        do_something_else(),
+        ...
+    ] ),
+    reject_after( 500, Error( 'TIMEOUT' ) ),
+] );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-30"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<pre><code>await Promise.race( [
+    ( async function() {
+        await do_something();
+        await do_something_else();
+        ...
+        //  Выполняются до конца!
+    } )(),
+    reject_after( 500, Error( 'TIMEOUT' ) ),
+] );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-31"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<p><code>fetch</code> vs <code>xhr</code></p>
+
+<pre><code>xhr.abort();
+
+const p = fetch( url );
+//  p.abort()
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-32"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<pre><code>function do_something() {
+    const p = no.promise();
+    ...
+    p.on( 'cancel', ... );
+    return p;
+}
+const p = do_something();
+...
+p.trigger( 'cancel', ... );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-33"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<pre><code>//  Всегда возвращает Promise.
+async function() {
+    return 42;
+}
+
+//  Вообще нет никакого промиса.
+const r = await fetch( url );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-34"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<p><a href="https://github.com/tc39/proposal-cancellation/tree/master/stage0">tc39/proposal-cancellation</a></p>
+
+<ul>
+<li>Stage 1</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-35"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<pre><code>const cancel = Cancel();
+
+setTimeout( () =&gt; {
+    //  Чуваки, хорошо бы тормознуться!
+    cancel.cancel( Error( 'TIMEOUT' ) );
+}, 500 );
+
+await do_something( ..., cancel );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-36"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<pre><code>async function do_something( ..., cancel ) {
+    ...
+    cancel.subscribe( ( reason ) =&gt; {
+        //  Пытаемся отменить что-нибудь.
+    } );
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-37"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<pre><code>async do_something( cancel ) {
+    await do_foo();
+    await do_bar();
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-38"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<pre><code>async do_something( cancel ) {
+    await do_foo();
+    cancel.throw_if_cancelled();
+
+    await do_bar();
+    cancel.throw_if_cancelled();
+
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-39"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<pre><code>function cancel_after( timeout, reason ) {
+    const cancel = Cancel();
+    setTimeout( () =&gt; {
+        cancel.cancel( reason );
+    }, timeout );
+    return cancel;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-40"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<pre><code>const cancel = cancel_after( 500, Error( 'TIMEOUT' ) );
+await Promise.race( [
+    ( async function() {
+        await do_something();
+        cancel.throw_if_cancelled();
+        ...
+    } )(),
+    cancel.get_promise(),
+] );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-41"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<pre><code>async do_something( cancel ) {
+    await do_foo( cancel );
+    await do_bar( cancel );
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-42"><div><section>
+
+<header><h2>Cancel</h2></header>
+
+<pre><code>async do_something( parent_cancel ) {
+    const cancel = parent_cancel.create();
+
+    return Promise.all( [
+        do_foo( cancel ),
+        do_bar( cancel ),
+        ...
+    ] );
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-43"><div><section>
+
+<header><h2>Иерархия cancel-токенов</h2></header>
+
+<pre><code>de.Context
+    de.object
+        de.http
+        de.http
+        ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-44"><div><section>
+
+<header><h2>Идеи про Cancel</h2></header>
+
+<ul>
+<li>Токен не возвращается, а передается сверху вниз.</li>
+<li>Есть дерево токенов.</li>
+<li>Можно подписаться на "событие" <code>cancel</code>.</li>
+<li>Можно кинуть исключение, если токен отменен.</li>
+<li>Можно использовать промис, который зарежектится после отмены.</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-45"><div><section>
+
+<header><h2>Cancel API</h2></header>
+
+<pre><code>cancel.cancel( reason )
+cancel.throw_if_cancelled();
+cancel.get_promise();
+cancel.create();
+cancel.close();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-46"><div><section>
+
+<header><h2><code>for-await-of</code></h2></header>
+
+<pre><code>for await ( const item of iterator ) {
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-47"><div><section>
+
+<header><h2><code>for-await-of</code></h2></header>
+
+<pre><code>let s = '';
+res.on( 'data', ( chunk ) =&gt; {
+    s += chunk;
+}
+res.on( 'end', () =&gt; {
+    console.log( s );
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-48"><div><section>
+
+<header><h2><code>for-await-of</code></h2></header>
+
+<pre><code>let s = '';
+for await ( const chunk of res ) {
+    s += chunk;
+}
+console.log( s );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-49"><div><section>
+
+<header><h2><code>for-await-of</code></h2></header>
+
+<pre><code>for await ( const chunk of res ) {
+    cancel.throw_if_cancelled();
+    s += chunk;
+}
+console.log( s );
+</code></pre>
+</section></div></div>
+
+
+    <script src="../core/shower.js"></script>
+</body>
+</html>
