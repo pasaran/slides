@@ -9,6 +9,8 @@
 
   * Generators
 
+[Faster async functions and promises](https://v8.dev/blog/fast-async)
+
 ---
 
 ## `async`
@@ -27,7 +29,7 @@
         return 42;
     }
 
-    r = foo();
+    const r = foo();
 
 ---
 
@@ -110,6 +112,8 @@
 
     const r = await foo();
 
+    //  const r = await 42;
+
 ---
 
 ## `await`
@@ -130,22 +134,11 @@
 
 ---
 
-## `await`
-
-    try {
-        r = await foo();
-
-    } catch ( e ) {
-        ...
-    }
-
----
-
 ## `async` и `await`
 
     async function() {
         //  Только внутри async-функций.
-        r = await foo();
+        const r = await foo();
 
         ...
     }
@@ -160,7 +153,7 @@
         return 42;
     }
 
-    r = await foo();
+    const r = await foo();
 
 ---
 
@@ -174,7 +167,7 @@
     }
 
     //  А тут пофигу.
-    r = await foo();
+    const r = await foo();
 
 ---
 
@@ -186,7 +179,7 @@
         return await bar();
     }
 
-    r = await foo();
+    const r = await foo();
 
 ---
 
@@ -198,7 +191,7 @@
         return bar();
     }
 
-    r = await foo();
+    const r = await foo();
 
 ---
 
@@ -212,32 +205,107 @@
         return r;
     }
 
-    r = await foo();
+    const r = await foo();
 
 ---
 
 ## Последовательное выполнение
 
-    r1 = await fetch( url1 );
-    r2 = await fetch( url2 );
+    const r1 = await fetch( url1 );
+    const r2 = await fetch( url2 );
 
 ---
 
 ## Параллельное выполнение
 
-    [ r1, r2 ] = await Promise.all( [
+    const [ r1, r2 ] = await Promise.all( [
         fetch( url1 ),
         fetch( url2 ),
     ] );
 
 ---
 
-## Смешанное выполнение
+## Параллельное выполнение
 
-    p1 = fetch( url1 );
-    p2 = fetch( url2 );
+    const p1 = fetch( url1 );
+    const p2 = fetch( url2 );
 
-    r2 = await( p2 );
+    const r2 = await p2;
+    ...
+    const r1 = await p1;
+
+---
+
+## Параллельное выполнение
+
+    const p1 = fetch( url1 );
+    const p2 = fetch( url2 );
+
+    do_something( await p1, await p2 );
+
+---
+
+## Сложное выполнение
+
+    const p1 = fetch( url1 );
+    const p2 = fetch( url2 );
+
+    const r2 = await p2;
+
+    const [ r1, r3 ] = await Promise.all( [
+        p1,
+        fetch( r2.url ),
+    ] );
+
+---
+
+## Обработка ошибок
+
+    try {
+        await do_something();
+
+    } catch ( e ) {
+        ...
+    }
+
+---
+
+## Обработка ошибок
+
+    try {
+        await do_something();
+        await do_something_else();
+        ...
+
+    } catch ( e ) {
+        ...
+    }
+
+---
+
+## Pause
+
+    await do_something();
+    //  wait 1 second
+    await do_something_else();
+
+---
+
+## Pause
+
+    function resolve_after( timeout, value ) {
+        return new Promise( ( resolve ) => {
+            setTimeout( resolve, timeout, value );
+        } );
+    }
+
+---
+
+## Pause
+
+    await do_something();
+    await resolve_after( 1000 );
+    await do_something_else();
 
 ---
 
@@ -253,12 +321,9 @@
 
 ## Timeout
 
-    function reject_after( timeout, reason ) {
+    function reject_after( timeout, value ) {
         return new Promise( ( resolve, reject ) => {
-            setTimeout(
-                () => reject( reason ),
-                timeout
-            );
+            setTimeout( reject, timeout, value );
         } );
     }
 
@@ -339,13 +404,13 @@
 
 ## Cancel
 
-    function do_something() {
+    function request( url ) {
         const p = no.promise();
         ...
         p.on( 'cancel', ... );
         return p;
     }
-    const p = do_something();
+    const p = request( ... );
     ...
     p.trigger( 'cancel', ... );
 
@@ -373,7 +438,7 @@
 
 ## Cancel
 
-    const cancel = Cancel();
+    const cancel = new Cancel();
 
     setTimeout( () => {
         //  Чуваки, хорошо бы тормознуться!
@@ -423,7 +488,7 @@
 ## Cancel
 
     function cancel_after( timeout, reason ) {
-        const cancel = Cancel();
+        const cancel = new Cancel();
         setTimeout( () => {
             cancel.cancel( reason );
         }, timeout );
