@@ -57,8 +57,11 @@
 
 <header><h2><code>async</code></h2></header>
 
-<pre><code>async function foo( ... ) {
-    ...
+<pre><code>async function foo( ... ) { ... }
+async function() { ... }
+async ( ... ) =&gt; { ... }
+class {
+    async foo( ... ) { ... }
 }
 </code></pre>
 
@@ -75,6 +78,8 @@
 }
 
 const r = foo();
+
+foo().then( ... );
 </code></pre>
 
 </section></div></div>
@@ -88,6 +93,8 @@ const r = foo();
 }
 
 const r = foo();
+
+foo().then( ... );
 </code></pre>
 
 </section></div></div>
@@ -97,10 +104,13 @@ const r = foo();
 <header><h2><code>async</code></h2></header>
 
 <pre><code>async function foo() {
-    return promise;
+    //  throw 42;
+    throw Error( ... );
 }
 
 const r = foo();
+
+foo().catch( ... );
 </code></pre>
 
 </section></div></div>
@@ -110,11 +120,13 @@ const r = foo();
 <header><h2><code>async</code></h2></header>
 
 <pre><code>function foo() {
-    //  return promise;
-    return Promise.resolve( promise );
+    //  return Promise.reject( 42 );
+    return Promise.reject( Error( ... ) );
 }
 
 const r = foo();
+
+foo().catch( ... );
 </code></pre>
 
 </section></div></div>
@@ -124,10 +136,8 @@ const r = foo();
 <header><h2><code>async</code></h2></header>
 
 <pre><code>async function foo() {
-    throw Error( ... );
+    return promise;
 }
-
-const r = foo();
 </code></pre>
 
 </section></div></div>
@@ -137,15 +147,22 @@ const r = foo();
 <header><h2><code>async</code></h2></header>
 
 <pre><code>function foo() {
-    return Promise.reject( Error( ... ) );
+    //  WRONG: return promise;
+    return Promise.resolve( promise );
 }
-
-const r = foo();
 </code></pre>
 
 </section></div></div>
 
     <div class="slide" id="slide-9"><div><section>
+
+<header><h2><code>async</code></h2></header>
+
+<p><code>async</code> — это декоратор.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-10"><div><section>
 
 <header><h2><code>async</code></h2></header>
 
@@ -162,31 +179,43 @@ const r = foo();
 
 </section></div></div>
 
-    <div class="slide" id="slide-10"><div><section>
-
-<header><h2><code>await</code></h2></header>
-
-<pre><code>const r = await foo();
-</code></pre>
-
-</section></div></div>
-
     <div class="slide" id="slide-11"><div><section>
 
 <header><h2><code>await</code></h2></header>
 
-<pre><code>function foo() {
-    return 42;
-}
+<pre><code>const r = await ...;
 
-const r = await foo();
-
-//  const r = await 42;
+await ...;
 </code></pre>
 
 </section></div></div>
 
     <div class="slide" id="slide-12"><div><section>
+
+<header><h2><code>await</code></h2></header>
+
+<pre><code>const r = await foo();
+const r = await 42;
+const r = await promise;
+const r = await ...
+
+await &lt;expr&gt;;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-13"><div><section>
+
+<header><h2><code>await</code></h2></header>
+
+<pre><code>const r = await 42;
+//  const r = await Promise.resolve( 42 );
+const r = 42;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-14"><div><section>
 
 <header><h2><code>await</code></h2></header>
 
@@ -199,18 +228,56 @@ const r = await foo();
 
 </section></div></div>
 
-    <div class="slide" id="slide-13"><div><section>
+    <div class="slide" id="slide-15"><div><section>
 
 <header><h2><code>await</code></h2></header>
 
-<pre><code>const p = new Promise( ... );
+<pre><code>function foo() {
+    return new Promise( ... );
+}
 
-const r = await p;
+try {
+    const r = await foo();
+} catch ( e ) {
+    ...
+}
 </code></pre>
 
 </section></div></div>
 
-    <div class="slide" id="slide-14"><div><section>
+    <div class="slide" id="slide-16"><div><section>
+
+<header><h2><code>await</code>?</h2></header>
+
+<pre><code>function foo() {
+    return new Promise( ... );
+}
+
+foo()
+    .then( ( r ) =&gt; {... } )
+    .catch( ( e ) =&gt; { ... } );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-17"><div><section>
+
+<header><h2><code>await</code></h2></header>
+
+<pre><code>function foo() {
+    if ( ... ) {
+        return 42;
+    }
+
+    return new Promise( ... );
+}
+
+const r = await foo();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-18"><div><section>
 
 <header><h2><code>async</code> и <code>await</code></h2></header>
 
@@ -224,7 +291,7 @@ const r = await p;
 
 </section></div></div>
 
-    <div class="slide" id="slide-15"><div><section>
+    <div class="slide" id="slide-19"><div><section>
 
 <header><h2><code>async</code></h2></header>
 
@@ -239,7 +306,7 @@ const r = await foo();
 
 </section></div></div>
 
-    <div class="slide" id="slide-16"><div><section>
+    <div class="slide" id="slide-20"><div><section>
 
 <header><h2><code>async</code></h2></header>
 
@@ -256,7 +323,7 @@ const r = await foo();
 
 </section></div></div>
 
-    <div class="slide" id="slide-17"><div><section>
+    <div class="slide" id="slide-21"><div><section>
 
 <header><h2><code>async</code></h2></header>
 
@@ -271,7 +338,7 @@ const r = await foo();
 
 </section></div></div>
 
-    <div class="slide" id="slide-18"><div><section>
+    <div class="slide" id="slide-22"><div><section>
 
 <header><h2><code>async</code></h2></header>
 
@@ -286,7 +353,7 @@ const r = await foo();
 
 </section></div></div>
 
-    <div class="slide" id="slide-19"><div><section>
+    <div class="slide" id="slide-23"><div><section>
 
 <header><h2><code>async</code></h2></header>
 
@@ -303,7 +370,7 @@ const r = await foo();
 
 </section></div></div>
 
-    <div class="slide" id="slide-20"><div><section>
+    <div class="slide" id="slide-24"><div><section>
 
 <header><h2>Последовательное выполнение</h2></header>
 
@@ -313,7 +380,7 @@ const r2 = await fetch( url2 );
 
 </section></div></div>
 
-    <div class="slide" id="slide-21"><div><section>
+    <div class="slide" id="slide-25"><div><section>
 
 <header><h2>Параллельное выполнение</h2></header>
 
@@ -325,7 +392,7 @@ const r2 = await fetch( url2 );
 
 </section></div></div>
 
-    <div class="slide" id="slide-22"><div><section>
+    <div class="slide" id="slide-26"><div><section>
 
 <header><h2>Параллельное выполнение</h2></header>
 
@@ -339,7 +406,7 @@ const r1 = await p1;
 
 </section></div></div>
 
-    <div class="slide" id="slide-23"><div><section>
+    <div class="slide" id="slide-27"><div><section>
 
 <header><h2>Параллельное выполнение</h2></header>
 
@@ -351,7 +418,7 @@ do_something( await p1, await p2 );
 
 </section></div></div>
 
-    <div class="slide" id="slide-24"><div><section>
+    <div class="slide" id="slide-28"><div><section>
 
 <header><h2>Сложное выполнение</h2></header>
 
@@ -368,7 +435,7 @@ const [ r1, r3 ] = await Promise.all( [
 
 </section></div></div>
 
-    <div class="slide" id="slide-25"><div><section>
+    <div class="slide" id="slide-29"><div><section>
 
 <header><h2>Обработка ошибок</h2></header>
 
@@ -382,7 +449,7 @@ const [ r1, r3 ] = await Promise.all( [
 
 </section></div></div>
 
-    <div class="slide" id="slide-26"><div><section>
+    <div class="slide" id="slide-30"><div><section>
 
 <header><h2>Обработка ошибок</h2></header>
 
@@ -398,7 +465,24 @@ const [ r1, r3 ] = await Promise.all( [
 
 </section></div></div>
 
-    <div class="slide" id="slide-27"><div><section>
+    <div class="slide" id="slide-31"><div><section>
+
+<header><h2>try-catch hell</h2></header>
+
+<pre><code>try {
+    await do_1();
+} catch ( e ) {
+    try {
+        await do_2();
+    } catch ( e ) {
+        await do_3();
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-32"><div><section>
 
 <header><h2>Pause</h2></header>
 
@@ -409,7 +493,7 @@ await do_something_else();
 
 </section></div></div>
 
-    <div class="slide" id="slide-28"><div><section>
+    <div class="slide" id="slide-33"><div><section>
 
 <header><h2>Pause</h2></header>
 
@@ -422,7 +506,7 @@ await do_something_else();
 
 </section></div></div>
 
-    <div class="slide" id="slide-29"><div><section>
+    <div class="slide" id="slide-34"><div><section>
 
 <header><h2>Pause</h2></header>
 
@@ -433,7 +517,7 @@ await do_something_else();
 
 </section></div></div>
 
-    <div class="slide" id="slide-30"><div><section>
+    <div class="slide" id="slide-35"><div><section>
 
 <header><h2>Timeout</h2></header>
 
@@ -446,7 +530,7 @@ const r = await do_something();
 
 </section></div></div>
 
-    <div class="slide" id="slide-31"><div><section>
+    <div class="slide" id="slide-36"><div><section>
 
 <header><h2>Timeout</h2></header>
 
@@ -459,7 +543,7 @@ const r = await do_something();
 
 </section></div></div>
 
-    <div class="slide" id="slide-32"><div><section>
+    <div class="slide" id="slide-37"><div><section>
 
 <header><h2>Timeout</h2></header>
 
@@ -470,13 +554,13 @@ const r = await do_something();
     ] );
 
 } catch ( e ) {
-    //  Timeout! (or error)
+    //  Timeout! (or another error)
 }
 </code></pre>
 
 </section></div></div>
 
-    <div class="slide" id="slide-33"><div><section>
+    <div class="slide" id="slide-38"><div><section>
 
 <header><h2>Timeout</h2></header>
 
@@ -487,7 +571,7 @@ await do_something_else();
 
 </section></div></div>
 
-    <div class="slide" id="slide-34"><div><section>
+    <div class="slide" id="slide-39"><div><section>
 
 <header><h2>Timeout</h2></header>
 
@@ -503,7 +587,7 @@ await do_something_else();
 
 </section></div></div>
 
-    <div class="slide" id="slide-35"><div><section>
+    <div class="slide" id="slide-40"><div><section>
 
 <header><h2>Timeout</h2></header>
 
@@ -519,7 +603,7 @@ await do_something_else();
 
 </section></div></div>
 
-    <div class="slide" id="slide-36"><div><section>
+    <div class="slide" id="slide-41"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -536,7 +620,7 @@ await do_something_else();
 
 </section></div></div>
 
-    <div class="slide" id="slide-37"><div><section>
+    <div class="slide" id="slide-42"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -545,12 +629,12 @@ await do_something_else();
 <pre><code>xhr.abort();
 
 const p = fetch( url );
-//  p.abort()
+//  p.abort();
 </code></pre>
 
 </section></div></div>
 
-    <div class="slide" id="slide-38"><div><section>
+    <div class="slide" id="slide-43"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -567,7 +651,7 @@ p.trigger( 'cancel', ... );
 
 </section></div></div>
 
-    <div class="slide" id="slide-39"><div><section>
+    <div class="slide" id="slide-44"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -582,7 +666,7 @@ const r = await fetch( url );
 
 </section></div></div>
 
-    <div class="slide" id="slide-40"><div><section>
+    <div class="slide" id="slide-45"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -594,7 +678,7 @@ const r = await fetch( url );
 
 </section></div></div>
 
-    <div class="slide" id="slide-41"><div><section>
+    <div class="slide" id="slide-46"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -610,7 +694,7 @@ await do_something( ..., cancel );
 
 </section></div></div>
 
-    <div class="slide" id="slide-42"><div><section>
+    <div class="slide" id="slide-47"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -618,6 +702,8 @@ await do_something( ..., cancel );
     ...
     cancel.subscribe( ( reason ) =&gt; {
         //  Пытаемся отменить что-нибудь.
+
+        //  Пытаемся убиться вином (с) Настя
     } );
     ...
 }
@@ -625,7 +711,7 @@ await do_something( ..., cancel );
 
 </section></div></div>
 
-    <div class="slide" id="slide-43"><div><section>
+    <div class="slide" id="slide-48"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -638,7 +724,7 @@ await do_something( ..., cancel );
 
 </section></div></div>
 
-    <div class="slide" id="slide-44"><div><section>
+    <div class="slide" id="slide-49"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -655,7 +741,7 @@ await do_something( ..., cancel );
 
 </section></div></div>
 
-    <div class="slide" id="slide-45"><div><section>
+    <div class="slide" id="slide-50"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -670,7 +756,7 @@ await do_something( ..., cancel );
 
 </section></div></div>
 
-    <div class="slide" id="slide-46"><div><section>
+    <div class="slide" id="slide-51"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -687,7 +773,7 @@ await Promise.race( [
 
 </section></div></div>
 
-    <div class="slide" id="slide-47"><div><section>
+    <div class="slide" id="slide-52"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -700,7 +786,7 @@ await Promise.race( [
 
 </section></div></div>
 
-    <div class="slide" id="slide-48"><div><section>
+    <div class="slide" id="slide-53"><div><section>
 
 <header><h2>Cancel</h2></header>
 
@@ -717,7 +803,7 @@ await Promise.race( [
 
 </section></div></div>
 
-    <div class="slide" id="slide-49"><div><section>
+    <div class="slide" id="slide-54"><div><section>
 
 <header><h2>Иерархия cancel-токенов</h2></header>
 
@@ -730,21 +816,21 @@ await Promise.race( [
 
 </section></div></div>
 
-    <div class="slide" id="slide-50"><div><section>
+    <div class="slide" id="slide-55"><div><section>
 
 <header><h2>Идеи про Cancel</h2></header>
 
 <ul>
-<li>Токен не возвращается, а передается сверху вниз.</li>
-<li>Есть дерево токенов.</li>
+<li>Cancel-токен не возвращается, а передается сверху вниз.</li>
+<li>Есть дерево cancel-токенов.</li>
 <li>Можно подписаться на "событие" <code>cancel</code>.</li>
-<li>Можно кинуть исключение, если токен отменен.</li>
+<li>Можно кинуть исключение, если cancel-токен отменен.</li>
 <li>Можно использовать промис, который зарежектится после отмены.</li>
 </ul>
 
 </section></div></div>
 
-    <div class="slide" id="slide-51"><div><section>
+    <div class="slide" id="slide-56"><div><section>
 
 <header><h2>Cancel API</h2></header>
 
@@ -757,7 +843,7 @@ cancel.close();
 
 </section></div></div>
 
-    <div class="slide" id="slide-52"><div><section>
+    <div class="slide" id="slide-57"><div><section>
 
 <header><h2><code>for-await-of</code></h2></header>
 
@@ -768,7 +854,7 @@ cancel.close();
 
 </section></div></div>
 
-    <div class="slide" id="slide-53"><div><section>
+    <div class="slide" id="slide-58"><div><section>
 
 <header><h2><code>for-await-of</code></h2></header>
 
@@ -783,7 +869,7 @@ res.on( 'end', () =&gt; {
 
 </section></div></div>
 
-    <div class="slide" id="slide-54"><div><section>
+    <div class="slide" id="slide-59"><div><section>
 
 <header><h2><code>for-await-of</code></h2></header>
 
@@ -796,7 +882,7 @@ console.log( s );
 
 </section></div></div>
 
-    <div class="slide" id="slide-55"><div><section>
+    <div class="slide" id="slide-60"><div><section>
 
 <header><h2><code>for-await-of</code></h2></header>
 

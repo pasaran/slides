@@ -15,8 +15,11 @@
 
 ## `async`
 
-    async function foo( ... ) {
-        ...
+    async function foo( ... ) { ... }
+    async function() { ... }
+    async ( ... ) => { ... }
+    class {
+        async foo( ... ) { ... }
     }
 
 Всегда возвращает `Promise`.
@@ -31,6 +34,8 @@
 
     const r = foo();
 
+    foo().then( ... );
+
 ---
 
 ## `async`
@@ -41,6 +46,34 @@
 
     const r = foo();
 
+    foo().then( ... );
+
+---
+
+## `async`
+
+    async function foo() {
+        //  throw 42;
+        throw Error( ... );
+    }
+
+    const r = foo();
+
+    foo().catch( ... );
+
+---
+
+## `async`
+
+    function foo() {
+        //  return Promise.reject( 42 );
+        return Promise.reject( Error( ... ) );
+    }
+
+    const r = foo();
+
+    foo().catch( ... );
+
 ---
 
 ## `async`
@@ -49,38 +82,20 @@
         return promise;
     }
 
-    const r = foo();
-
 ---
 
 ## `async`
 
     function foo() {
-        //  return promise;
+        //  WRONG: return promise;
         return Promise.resolve( promise );
     }
 
-    const r = foo();
-
 ---
 
 ## `async`
 
-    async function foo() {
-        throw Error( ... );
-    }
-
-    const r = foo();
-
----
-
-## `async`
-
-    function foo() {
-        return Promise.reject( Error( ... ) );
-    }
-
-    const r = foo();
+`async` — это декоратор.
 
 ---
 
@@ -100,19 +115,28 @@
 
 ## `await`
 
-    const r = await foo();
+    const r = await ...;
+
+    await ...;
 
 ---
 
 ## `await`
 
-    function foo() {
-        return 42;
-    }
-
     const r = await foo();
+    const r = await 42;
+    const r = await promise;
+    const r = await ...
 
-    //  const r = await 42;
+    await <expr>;
+
+---
+
+## `await`
+
+    const r = await 42;
+    //  const r = await Promise.resolve( 42 );
+    const r = 42;
 
 ---
 
@@ -128,9 +152,41 @@
 
 ## `await`
 
-    const p = new Promise( ... );
+    function foo() {
+        return new Promise( ... );
+    }
 
-    const r = await p;
+    try {
+        const r = await foo();
+    } catch ( e ) {
+        ...
+    }
+
+---
+
+## `await`?
+
+    function foo() {
+        return new Promise( ... );
+    }
+
+    foo()
+        .then( ( r ) => {... } )
+        .catch( ( e ) => { ... } );
+
+---
+
+## `await`
+
+    function foo() {
+        if ( ... ) {
+            return 42;
+        }
+
+        return new Promise( ... );
+    }
+
+    const r = await foo();
 
 ---
 
@@ -283,6 +339,20 @@
 
 ---
 
+## try-catch hell
+
+    try {
+        await do_1();
+    } catch ( e ) {
+        try {
+            await do_2();
+        } catch ( e ) {
+            await do_3();
+        }
+    }
+
+---
+
 ## Pause
 
     await do_something();
@@ -338,7 +408,7 @@
         ] );
 
     } catch ( e ) {
-        //  Timeout! (or error)
+        //  Timeout! (or another error)
     }
 
 ---
@@ -398,7 +468,7 @@
     xhr.abort();
 
     const p = fetch( url );
-    //  p.abort()
+    //  p.abort();
 
 ---
 
@@ -455,6 +525,8 @@
         ...
         cancel.subscribe( ( reason ) => {
             //  Пытаемся отменить что-нибудь.
+
+            //  Пытаемся убиться вином (с) Настя
         } );
         ...
     }
@@ -547,10 +619,10 @@
 
 ## Идеи про Cancel
 
-  * Токен не возвращается, а передается сверху вниз.
-  * Есть дерево токенов.
+  * Cancel-токен не возвращается, а передается сверху вниз.
+  * Есть дерево cancel-токенов.
   * Можно подписаться на "событие" `cancel`.
-  * Можно кинуть исключение, если токен отменен.
+  * Можно кинуть исключение, если cancel-токен отменен.
   * Можно использовать промис, который зарежектится после отмены.
 
 ---
