@@ -183,9 +183,9 @@ foo().catch( ... );
 
 <header><h2><code>await</code></h2></header>
 
-<pre><code>const r = await ...;
+<pre><code>const r = await &lt;expr&gt;;
 
-await ...;
+await &lt;expr&gt;;
 </code></pre>
 
 </section></div></div>
@@ -194,12 +194,10 @@ await ...;
 
 <header><h2><code>await</code></h2></header>
 
-<pre><code>const r = await foo();
-const r = await 42;
-const r = await promise;
-const r = await ...
+<pre><code>const promise = new Promise( ... );
 
-await &lt;expr&gt;;
+//  const r = await fetch( ... );
+const r = await promise;
 </code></pre>
 
 </section></div></div>
@@ -209,7 +207,7 @@ await &lt;expr&gt;;
 <header><h2><code>await</code></h2></header>
 
 <pre><code>const r = await 42;
-//  const r = await Promise.resolve( 42 );
+
 const r = 42;
 </code></pre>
 
@@ -254,7 +252,7 @@ try {
 }
 
 foo()
-    .then( ( r ) =&gt; {... } )
+    .then( ( r ) =&gt; { ... } )
     .catch( ( e ) =&gt; { ... } );
 </code></pre>
 
@@ -265,9 +263,7 @@ foo()
 <header><h2><code>await</code></h2></header>
 
 <pre><code>function foo() {
-    if ( ... ) {
-        return 42;
-    }
+    if ( ... ) { return 42; }
 
     return new Promise( ... );
 }

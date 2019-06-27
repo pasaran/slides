@@ -115,18 +115,7 @@
 
 ## `await`
 
-    const r = await ...;
-
-    await ...;
-
----
-
-## `await`
-
-    const r = await foo();
-    const r = await 42;
-    const r = await promise;
-    const r = await ...
+    const r = await <expr>;
 
     await <expr>;
 
@@ -134,8 +123,17 @@
 
 ## `await`
 
+    const promise = new Promise( ... );
+
+    //  const r = await fetch( ... );
+    const r = await promise;
+
+---
+
+## `await`
+
     const r = await 42;
-    //  const r = await Promise.resolve( 42 );
+
     const r = 42;
 
 ---
@@ -171,7 +169,7 @@
     }
 
     foo()
-        .then( ( r ) => {... } )
+        .then( ( r ) => { ... } )
         .catch( ( e ) => { ... } );
 
 ---
@@ -179,9 +177,7 @@
 ## `await`
 
     function foo() {
-        if ( ... ) {
-            return 42;
-        }
+        if ( ... ) { return 42; }
 
         return new Promise( ... );
     }
