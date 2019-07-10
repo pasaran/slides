@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <title>descript</title>
+    <meta charset="utf-8"/>
+    <!--
+    <meta name="viewport" content="width=1274, user-scalable=no"/>
+    -->
+    <link rel="stylesheet" href="../ribbon/styles/screen.css"/>
+    <style>
+    .slide p {
+        margin-bottom: 25px;
+        -display: inline;
+    }
+    .slide pre {
+        margin-bottom: 25px;
+    }
+    .slide>div {
+        padding-top: 60px;
+    }
+    .slide:after {
+        display: none;
+    }
+    .slide pre code {
+        -line-height: 1.7;
+    }
+    .slide pre code:before {
+        content: '';
+    }
+    /*
+    .slide section:before {
+        display: none;
+    }
+    */
+    </style>
+</head>
+
+<body class="list">
+    <header class="caption">
+        <h1>descript</h1>
+    </header>
+
+    <div class="slide" id="slide-1"><div><section>
+
+<header><h2>descript</h2></header>
+
+<p>Дескрипт — это агрегатор данных.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-2"><div><section>
+
+<header><h2>Чем <code>descript</code> не является</h2></header>
+
+<ul>
+<li>Это не веб-сервер, принимающий входящие запросы</li>
+<li>В нем нет роутинга</li>
+<li>В нем нет шаблонизации</li>
+<li>Как правило ничего не пишет в response.</li>
+</ul>
+
+<p>Только получает данные и все.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-3"><div><section>
+
+<header><h2>descript-блок</h2></header>
+
+<p>descript-блок это такой объект, описывающий как получать те или иные данные.
+Блоки можно переиспользовать, доопределять и расширять, собирать из них более сложные блоки и т.д.
+Блоки бывают разных типов (<code>http</code>, <code>file</code>, ...), но у всех у них одинаковый интерфейс.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-4"><div><section>
+
+<header><h2>descript-блок</h2></header>
+
+<pre><code>try {
+    const result = await block.run();
+
+} catch ( e ) {
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-5"><div><section>
+
+<header><h2>descript-блок</h2></header>
+
+<pre><code>const result = await block.run( {
+    params,
+    context,
+    cancel,
+    ...
+} );
+</code></pre>
+
+<p>Блок создается, как правило, один раз и неизменяем (нет стейта).</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-6"><div><section>
+
+<header><h2>Виды блоков</h2></header>
+
+<p>Базовые: <code>http</code>, <code>file</code>, <code>value</code>.</p>
+
+<p>Составные: <code>object</code>, <code>array</code>, <code>func</code>.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-7"><div><section>
+
+<header><h2>Определение блока</h2></header>
+
+<pre><code>const de = require( 'descript' );
+const block = de.&lt;type&gt;( {
+    block: {
+        ...
+    },
+    options: {
+        ...
+    },
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-8"><div><section>
+
+<header><h2>Определение блока</h2></header>
+
+<p><a href="https://github.com/pasaran/descript3/blob/master/docs/examples-01-basics.md">Примеры</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-9"><div><section>
+
+<header><h2>Жизненный цикл блоков</h2></header>
+
+<ul>
+<li><code>options.deps</code></li>
+<li><code>options.params</code></li>
+<li><code>options.guard</code></li>
+<li><code>options.before</code></li>
+<li><code>options.cache</code></li>
+<li>action</li>
+<li><code>options.after</code> / <code>options.error</code></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-10"><div><section>
+
+<header><h2><code>options.deps</code></h2></header>
+
+<p>Позволяет выполнить блок после указанных блоков.
+Все происходит внутри <code>de.object</code> или <code>de.array</code> только.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-11"><div><section>
+
+<header><h2><code>options.params</code></h2></header>
+
+<pre><code>const params = {
+    ...
+};
+block.run( { params } );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-12"><div><section>
+
+<header><h2><code>options.params</code></h2></header>
+
+<p>Позволяет переопределить параметры, которые приходят в блок:</p>
+
+<pre><code>options: {
+    params: ...
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-13"><div><section>
+
+<header><h2><code>options.params</code></h2></header>
+
+<pre><code>params: ( { params, context, deps } ) =&gt; ( {
+    ...params,
+    debug: 'true',
+} ),
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-14"><div><section>
+
+<header><h2><code>options.params</code></h2></header>
+
+<pre><code>params: {
+    mark: null,
+    page_num: 1,
+    debug: ( { context } ) =&gt;
+        ( context.config.env === 'development' ),
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-15"><div><section>
+
+<header><h2><code>options.params</code></h2></header>
+
+<pre><code>params: ( { params, context } ) =&gt; ( {
+    mark: params.mark,
+    page_num: ( params.page_num !== undefined ) ?
+        params.page_num : 1,
+    debug: ( context.config.env === 'development' ),
+} ),
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-16"><div><section>
+
+<header><h2><code>options.params</code></h2></header>
+
+<pre><code>parent.parans   -&gt;  child.params
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-17"><div><section>
+
+<header><h2><code>options.params</code></h2></header>
+
+<pre><code>block( {
+    options: {
+        params: ( { params } ) =&gt; ( {
+            ...params,
+            id: 42,
+        } ),
+    },
+} )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-18"><div><section>
+
+<header><h2><code>options.guard</code></h2></header>
+
+<p>Выполнять или не выполнять блок.</p>
+
+<pre><code>guard: ( { params } ) =&gt; Boolean( params.id ),
+</code></pre>
+
+<p>Если гард возвращает falsy-значение, то блок не выполняется и результатом его
+будет ошибка:</p>
+
+<pre><code>de.error( {
+    id: de.ERROR_ID.BLOCK_GUARDED,
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-19"><div><section>
+
+<header><h2><code>options.before</code></h2></header>
+
+<p>Можно до запуска экшена или бросить ошибку, или вернуть какое-то значение,
+которе и будет использовано как результат экшена. Экшен при этом не вызывается.</p>
+
+<p>Ну или просто сделать что-нибудь (что?).</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-20"><div><section>
+
+<header><h2><code>options.before</code></h2></header>
+
+<pre><code>before: ( { params } ) =&gt; {
+    if ( !params.foo ) {
+        throw de.error( {
+            id: 'INVALID_ERROR',
+        } );
+    }
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-21"><div><section>
+
+<header><h2><code>options.before</code></h2></header>
+
+<pre><code>before: ( { params } ) =&gt; {
+    if ( params.bar ) {
+        return {
+            bar: params.bar,
+        };
+    }
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-22"><div><section>
+
+<header><h2><code>options.before</code></h2></header>
+
+<pre><code>before: () =&gt; {
+    //  Do something.
+
+    return undefined;
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-23"><div><section>
+
+<header><h2><code>options.before</code></h2></header>
+
+<pre><code>parent.before   &lt;-  child.before    !?!
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-24"><div><section>
+
+<header><h2><code>before</code> vs <code>guard</code></h2></header>
+
+<p>Можно обойтись и before, но guard короче:</p>
+
+<pre><code>before: ( { params } ) =&gt; {
+    if ( !params.id ) {
+        throw de.error( {
+            id: de.ERROR_ID.BLOCK_GUARDED,
+        } );
+    }
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-25"><div><section>
+
+<header><h2><code>options.after</code></h2></header>
+
+<p>Возможность как-то обработать получившийся результат:</p>
+
+<ul>
+<li>Бросить ошибку.</li>
+<li>Постобработать результат.</li>
+<li>Выставить куки и т.д.</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-26"><div><section>
+
+<header><h2><code>options.after</code></h2></header>
+
+<pre><code>after: ( { result } ) =&gt; {
+    if ( result.status !== 'ok' ) {
+        throw de.error( {
+            id: 'SOME_ERROR',
+        } );
+    }
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-27"><div><section>
+
+<header><h2><code>options.after</code></h2></header>
+
+<pre><code>after: ( { result } ) =&gt; {
+    return {
+        status: 'ok',
+        data: result.data,
+    };
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-28"><div><section>
+
+<header><h2><code>options.after</code></h2></header>
+
+<pre><code>after: ( { context, result } ) =&gt; {
+    const session_id = result.session.id;
+
+    context.res.cookie( 'session_id', session_id );
+
+    return undefined;
+    //  return result;
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-29"><div><section>
+
+<header><h2><code>options.after</code></h2></header>
+
+<pre><code>parent.after    -&gt;  child.after
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-30"><div><section>
+
+<header><h2><code>before</code> vs <code>after</code></h2></header>
+
+<p>Если <code>before</code> что-то возвращает (или throws), то прекращение цепочки останавливается.
+Поэтому, когда мы переопределеяем before, имеет смысл выполнять его до родительского.</p>
+
+<p>А если <code>after</code> что-то возвращает, то результат отправляется в следующий элемент цепочки.
+И здесь наоборот.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-31"><div><section>
+
+<header><h2>Аргументы у <code>options.*</code></h2></header>
+
+<pre><code>options: {
+    after: ( { ... } ) =&gt; {
+        //  Do something.
+    },
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-32"><div><section>
+
+<header><h2>Аргументы у <code>options.*</code></h2></header>
+
+<pre><code>{ params, context, cancel } //  всегда
+{ get_id }                  //  в de.func
+{ deps }                    //  если есть
+{ result }                  //  после успешного action
+{ error }                   //  после ошибки
+{ ??? }                     //  в query, headers, body (?)
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-33"><div><section>
+
+<header><h2>Жизненный цикл у потомка</h2></header>
+
+<pre><code>deps
+parent.params   -&gt;  child.params
+parent.guard    -&gt;  child.guard
+parent.before   &lt;-  child.before    !?!
+action
+parent.after    -&gt;  child.after
+
+parent.error    -&gt;  child.error
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-34"><div><section>
+
+<header><h2>Не наследуется</h2></header>
+
+<pre><code>options.id
+options.deps
+options.required
+options.priority
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-35"><div><section>
+
+<header><h2>Моржится</h2></header>
+
+<pre><code>block.query         options.params
+block.headers       options.guard ???
+                    options.before
+                    options.after
+                    options.error
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-36"><div><section>
+
+<header><h2>Перезатирается</h2></header>
+
+<pre><code>block.*             options.name
+                    options.timeout
+                    options.key
+                    options.maxage
+                    options.cache
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-37"><div><section>
+
+<header><h2>no options</h2></header>
+
+<p><a href="https://github.com/pasaran/descript3/blob/master/docs/examples-02-no-options.md">no options</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-38"><div><section>
+
+<header><h2><code>de.http</code></h2></header>
+
+<p><a href="https://github.com/pasaran/descript3/blob/master/docs/examples-03-http-block.md">de.http</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-39"><div><section>
+
+<header><h2>Иерархия http-блоков</h2></header>
+
+<ul>
+<li>Ресурсы</li>
+<li>Методы</li>
+<li>Блоки</li>
+<li>Еще блоки</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-40"><div><section>
+
+<header><h2>Иерархия http-блоков</h2></header>
+
+<pre><code>resources
+    ...
+    public_api
+        methods
+            do_something.js
+            ...
+        get_resource.js
+    ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-41"><div><section>
+
+<header><h2>Иерархия http-блоков. Ресурс</h2></header>
+
+<p>Условно, ресурс — это комбинация protocol, host и port.
+Все такие запросы должны использовать de-блок ресурса в качестве предка.
+Такой блок должен быть единственным.
+Не должно быть <code>public_api</code> и <code>public_api_card</code>.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-42"><div><section>
+
+<header><h2>Иерархия http-блоков. Ресурс</h2></header>
+
+<pre><code>//  get_resource.js
+module.exports = de.http( {
+    block: {
+        protocol: 'http:',
+        host: 'api.auto.ru',
+        port: 9000,
+    },
+    options: ...
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-43"><div><section>
+
+<header><h2>Иерархия http-блоков. Ресурс</h2></header>
+
+<pre><code>block.protocol      options.after
+block.host          options.error
+block.port
+block.headers
+block.auth
+block.agent
+
+block.ca, ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-44"><div><section>
+
+<header><h2>Иерархия http-блоков. Метод</h2></header>
+
+<p>Метод — это комбинация path и method (GET, POST, ...) внутри определенного ресурса.
+Все такие запросы должны использовать de-блок метода в качестве предка.
+Такой блок должен быть единственным.</p>
+
+<p>Метод не должен переопределять protocol, host, protocol.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-45"><div><section>
+
+<header><h2>Иерархия http-блоков. Метод</h2></header>
+
+<pre><code>//  methods/do_something.js
+module.exports = require( '../get_resource' );
+const method = resource( {
+    block: {
+        method: 'POST',
+        path: '/1.0/do_something',
+    },
+    options: ...
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-46"><div><section>
+
+<header><h2>Иерархия http-блоков. Метод</h2></header>
+
+<pre><code>block.method        options.key
+block.path          options.maxage
+block.query         options.cache
+block.body          options.is_error
+block.headers       options.after
+block.timeout       options.error
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-47"><div><section>
+
+<header><h2>Иерархия http-блоков. Блок</h2></header>
+
+<p>Ни ресурсы, ни методы не должны напрямую запускаться. Для этого есть блоки.
+Блок наследуюется от метода (или нет). При этом может быть много блоков, которые ходят в один метод.</p>
+
+<p>Так же блоки используются для комбинации нескольких методов.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-48"><div><section>
+
+<header><h2>Иерархия http-блоков. Блок</h2></header>
+
+<pre><code>//  blocks/do_something.js
+module.exports = require( '.../methods/do_something' );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-49"><div><section>
+
+<header><h2>Иерархия http-блоков. Блок</h2></header>
+
+<pre><code>const method = require( '.../methods/do_something' );
+module.exports = method( {
+    options: {
+        params: ( { params } ) =&gt; {
+            ...params,
+            debug: true,
+        },
+    }
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-50"><div><section>
+
+<header><h2>Чего не должны быть в блоке</h2></header>
+
+<pre><code>options.params (*)
+options.id
+options.deps
+options.guard
+options.required
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-51"><div><section>
+
+<header><h2>Иерархия http-блоков. Блок</h2></header>
+
+<pre><code>blocks/
+    session.js
+    index/
+        presets.js
+        ...
+    listing/
+        listing.js
+        ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-52"><div><section>
+
+<header><h2>Иерархия http-блоков. Блок</h2></header>
+
+<pre><code>www-desktop/server/blocks
+auto-core/server/blocks
+</code></pre>
+
+<p><code>session</code>, <code>index/presets</code>, <code>listing/listing</code> ... — это block-id.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-53"><div><section>
+
+<header><h2>Универсальная аякс-ручка</h2></header>
+
+<pre><code>get_blocks( [
+    {
+        block_id: 'session',
+    },
+    {
+        block_id: 'listing/listing',
+        block_params: { ... },
+    },
+] )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-54"><div><section>
+
+<header><h2>Иерархия http-блоков. Блок</h2></header>
+
+<p><strong>Вопрос.</strong> Где хранить мета-информацию типа списка всех параметров и флага <code>need_auth</code>?</p>
+
+<p><strong>Ответ.</strong> ХЗ</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-55"><div><section>
+
+<header><h2>Cookbook</h2></header>
+
+</section></div></div>
+
+    <div class="slide" id="slide-56"><div><section>
+
+<header><h2>Результат блока как параметр другого блока?</h2></header>
+
+<pre><code>module.exports = async function( args ) {
+    const result = await block1.run( args );
+    const params = {
+        id: result.id,
+    };
+    return block2.run( { ...args, params } );
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-57"><div><section>
+
+<header><h2>Как неправильно делать редирект</h2></header>
+
+<pre><code>after: ( { context } ) =&gt; {
+    context.res.statusCode = 302;
+    context.res.setHeader( 'Location', '...' );
+    context.res.end();
+},
+</code></pre>
+
+<p>Вообще никогда не нужно делать <code>res.end()</code> изнутри дескрипта.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-58"><div><section>
+
+<header><h2>Как правильно делать редирект</h2></header>
+
+<pre><code>after: ( { cancel } ) =&gt; {
+    cancel( de.error( {
+        id: de.ERROR.REDIRECT,
+        location: '...',
+        status_code: 302,
+    } );
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-59"><div><section>
+
+<header><h2>Как правильно делать редирект</h2></header>
+
+<pre><code>try {
+    const result = await block.run( params, context );
+} catch ( e ) {
+    if ( de.is_error( e ) ) {
+        if ( e.error.id === de.ERROR.REDIRECT ) {
+            ...
+        }
+    }
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-60"><div><section>
+
+<header><h2>Как считать ошибку не ошибкой</h2></header>
+
+<pre><code>is_error: ( error, request_options ) =&gt; {
+    const status_code =
+        no.jpath( '.error.status_code', error );
+    if ( status_code === 404 ) { return false; }
+
+    return de.request.DEFAULT_OPTIONS.is_error( error, request_options );
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-61"><div><section>
+
+<header><h2>Как писать в лог кастомные сообщения</h2></header>
+
+<pre><code>console.log
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-62"><div><section>
+
+<header><h2><code>no.jpath</code></h2></header>
+
+<p><a href="https://github.com/pasaran/nommon/blob/master/docs/jpath.md">jpath</a></p>
+</section></div></div>
+
+
+    <script src="../core/shower.js"></script>
+</body>
+</html>
