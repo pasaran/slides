@@ -49,6 +49,21 @@ descript-блок это такой объект, описывающий как 
 
 ---
 
+## Контекст. Было
+
+    const context = de.Context( req, res );
+    const result = await context.run( block, params );
+
+---
+
+## Контекст. Стало
+
+    const context = { req, res };
+    const result = await block.run( { params, context } );
+    //  const result = await block.run( { params } );
+
+---
+
 ## Виды блоков
 
 Базовые: `http`, `file`, `value`.
