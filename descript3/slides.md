@@ -429,7 +429,7 @@ descript-блок это такой объект, описывающий как 
 
     block.protocol      options.after
     block.host          options.error
-    block.port
+    block.port          options.cache
     block.headers
     block.auth
     block.agent
@@ -466,10 +466,10 @@ descript-блок это такой объект, описывающий как 
 
     block.method        options.key
     block.path          options.maxage
-    block.query         options.cache
-    block.body          options.is_error
-    block.headers       options.after
-    block.timeout       options.error
+    block.query         options.is_error
+    block.body          options.after
+    block.headers       options.error
+    block.timeout
 
 ---
 
@@ -633,4 +633,13 @@ descript-блок это такой объект, описывающий как 
 ## `no.jpath`
 
 [jpath](https://github.com/pasaran/nommon/blob/master/docs/jpath.md)
+
+---
+
+## `v2 -> v3`
+
+  * Работа с зависимостями и стейтом.
+  * Работа с параметрами.
+
+[Миграция v2 -> v3](https://github.com/pasaran/descript3/blob/master/docs/examples-04-v2-v3.md).
 
