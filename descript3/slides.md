@@ -125,17 +125,11 @@ descript-блок это такой объект, описывающий как 
 Позволяет переопределить параметры, которые приходят в блок:
 
     options: {
-        params: ...
+        params: ( { params, context, deps } ) => ( {
+            ...params,
+            debug: 'true',
+        } ),
     },
-
----
-
-## `options.params`
-
-    params: ( { params, context, deps } ) => ( {
-        ...params,
-        debug: 'true',
-    } ),
 
 ---
 
@@ -337,20 +331,7 @@ descript-блок это такой объект, описывающий как 
     { deps }                    //  если есть
     { result }                  //  после успешного action
     { error }                   //  после ошибки
-    { ??? }                     //  в query, headers, body (?)
-
----
-
-## Жизненный цикл у потомка
-
-    deps
-    parent.params   ->  child.params
-    parent.guard    ->  child.guard
-    parent.before   <-  child.before    !?!
-    action
-    parent.after    ->  child.after
-
-    parent.error    ->  child.error
+    { ??? }                     //  в query, headers
 
 ---
 
@@ -359,7 +340,6 @@ descript-блок это такой объект, описывающий как 
     options.id
     options.deps
     options.required
-    options.priority
 
 ---
 
@@ -380,6 +360,18 @@ descript-блок это такой объект, описывающий как 
                         options.key
                         options.maxage
                         options.cache
+
+---
+
+## Жизненный цикл у потомка
+
+    deps
+    parent.params   ->  child.params
+    parent.guard    ->  child.guard
+    parent.before   <-  child.before    !?!
+    action
+    parent.after    ->  child.after
+    parent.error    ->  child.error
 
 ---
 
@@ -466,8 +458,8 @@ descript-блок это такой объект, описывающий как 
 ## Иерархия http-блоков. Метод
 
     //  methods/do_something.js
-    module.exports = require( '../get_resource' );
-    const method = resource( {
+    const resource = require( '../get_resource' );
+    module.exports = resource( {
         block: {
             method: 'POST',
             path: '/1.0/do_something',
@@ -511,7 +503,7 @@ descript-блок это такой объект, описывающий как 
         options: {
             params: ( { params } ) => {
                 ...params,
-                debug: true,
+                debug: 'true',
             },
         }
     } );
