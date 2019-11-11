@@ -27,6 +27,9 @@ my $html = <<HTML;
         margin-bottom: 25px;
         -display: inline;
     }
+    .slide li p {
+        display: inline;
+    }
     .slide pre {
         margin-bottom: 25px;
     }

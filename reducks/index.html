@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <title>reducks</title>
+    <meta charset="utf-8"/>
+    <!--
+    <meta name="viewport" content="width=1274, user-scalable=no"/>
+    -->
+    <link rel="stylesheet" href="../ribbon/styles/screen.css"/>
+    <style>
+    .slide p {
+        margin-bottom: 25px;
+        -display: inline;
+    }
+    .slide li p {
+        display: inline;
+    }
+    .slide pre {
+        margin-bottom: 25px;
+    }
+    .slide>div {
+        padding-top: 60px;
+    }
+    .slide:after {
+        display: none;
+    }
+    .slide pre code {
+        -line-height: 1.7;
+    }
+    .slide pre code:before {
+        content: '';
+    }
+    /*
+    .slide section:before {
+        display: none;
+    }
+    */
+    </style>
+</head>
+
+<body class="list">
+    <header class="caption">
+        <h1>reducks</h1>
+    </header>
+
+    <div class="slide" id="slide-1"><div><section>
+
+<header><h2>Что не нравится в redux</h2></header>
+
+<ul>
+<li><p>Нет явной связи между компонентами,
+экшенами, редьюсерами и данными.</p></li>
+<li><p>Много boilerplate-кода. Особенно в typescript'е.</p></li>
+<li><p>Один стор превращается в помойку.</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-2"><div><section>
+
+<header><h2>Нет связи ...</h2></header>
+
+<pre><code>const actions = require( 'actions' );
+const getFoo = require( 'selectors/getFoo' );
+class Foo extend React.Component {
+    ... this.props.dispatch( actions.doFoo() );
+}
+
+module.exports = connect( state =&gt; ( {
+    foo: getFoo( state ),
+} ), Foo );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-3"><div><section>
+
+<header><h2>Boilerplate в typescript</h2></header>
+
+<pre><code>enum ActionTypes {
+    DO_FOO = 1,
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-4"><div><section>
+
+<header><h2>Boilerplate в typescript</h2></header>
+
+<pre><code>interface ActionDoFoo {
+    type: ActionTypes.DO_FOO,
+    payload: { ... }
+}
+
+type Action =
+    ActionDoFoo |
+    ...
+;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-5"><div><section>
+
+<header><h2>Boilerplate в typescript</h2></header>
+
+<pre><code>function action_do_foo(): ActionDoFoo {
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-6"><div><section>
+
+<header><h2>Boilerplate в typescript</h2></header>
+
+<pre><code>function reducer_do_foo(
+    state: State,
+    action: ActionDoFoo
+): State {
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-7"><div><section>
+
+<header><h2>Boilerplate в typescript</h2></header>
+
+<pre><code>function reducer(
+    state: State,
+    action: Action
+): State {
+    switch ( action.type ) {
+        case ActionTypes.DO_FOO: {
+            ...
+        }
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-8"><div><section>
+
+<header><h2>redux -> reducks</h2></header>
+
+<ul>
+<li><p>Стор разбивается на несколько сторов.</p></li>
+<li><p>Компоненты коннектятся к конкретным сторам
+и получают весь стор целиком в виде пропса.</p></li>
+<li><p>Стор содержит в себе экшены/редьюсеры/селекторы.</p></li>
+<li><p>SPA из коробки</p></li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-9"><div><section>
+
+<header><h2>Store</h2></header>
+
+<pre><code>import { BlockStore } from 'auto-core/reducks';
+impoty { TOfferListing } from 'auto-core/types/TOfferListing';
+
+const initialState: TOfferListing = { ... };
+
+const store = new BlockStore( initialState, {
+    //  Selectors/Actions.
+} );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-10"><div><section>
+
+<header><h2>Selectors</h2></header>
+
+<pre><code>getTotalOffersCount() {
+    return this.state.pagination.total_offers_count;
+},
+
+getFiltereOrTotalOffersCount() {
+    return this.state.filteredOffersCount ||
+        this.actions.getTotalOffersCount();
+},
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-11"><div><section>
+
+<header><h2>Selectors</h2></header>
+
+<pre><code>const count = this.props.listing.getTotalOffersCount();
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-12"><div><section>
+
+<header><h2>Actions</h2></header>
+
+<pre><code>fetchCount() {
+    this.update( {
+        ...this.state,
+        pendingCount: true,
+    } );
+
+    ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-13"><div><section>
+
+<header><h2>Actions</h2></header>
+
+<pre><code>    ...
+
+    return this.request( ... )
+        .then( ( result ) =&gt; {
+            this.update( {
+                ...this.state,
+                pendingCount: false,
+                filteredOffersCount: ...
+            } );
+        } );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-14"><div><section>
+
+<header><h2>Actions</h2></header>
+
+<pre><code>onFilterChange() {
+    ...
+
+    this.props.listing.fetchCount();
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-15"><div><section>
+
+<header><h2>Blocks</h2></header>
+
+<p>reducks-блок состоит из:</p>
+
+<ul>
+<li>id</li>
+<li>Стора</li>
+<li>Набора параметров</li>
+<li>Каких-то флагов</li>
+<li>Дескриптового блока</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-16"><div><section>
+
+<header><h2>Blocks</h2></header>
+
+<pre><code>//  auto-core/reducks/blocks/id.ts
+
+export enum BLOCK_ID {
+    BANKS = 'getBankConfig',
+    BREADCRUMBS_PUBLICAPI = 'breadcrumbsPublicApi',
+    BUNKER = 'bunker',
+    ...
+</code></pre>
+
+<p>Хорошо бы этот enum генерить автоматически.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-17"><div><section>
+
+<header><h2>Blocks</h2></header>
+
+<pre><code>//  auto-core/reducks/blocks/listing/index.ts
+
+const Store = ( initialState: TOfferListing ) =&gt;
+    new BlockStore( initialState, {
+        ...
+    } );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-18"><div><section>
+
+<header><h2>Blocks</h2></header>
+
+<pre><code>//  auto-core/reducks/blocks/listing/index.ts
+
+export default {
+    blockId: BLOCK_ID.LISTING,
+    BlockStore: Store,
+    blockParams: validPublicApiSearchParams,
+    //  server: false,
+    //  cache: true,
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-19"><div><section>
+
+<header><h2>Pages</h2></header>
+
+<pre><code>//  www-mobile/reducks/pages/listing/index.ts
+
+import favoritesLocalCacheBlock from
+    'auto-core/reducks/blocks/favoritesLocalCache';
+import listingBlock from
+    'auto-core/reducks/blocks/listing';
+...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-20"><div><section>
+
+<header><h2>Pages</h2></header>
+
+<pre><code>...
+export default {
+    blocks: [
+        { block: favoritesLocalCacheBlock },
+        {
+            block: listingBlock,
+            required: true,
+        },
+        ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-21"><div><section>
+
+<header><h2>Components</h2></header>
+
+<pre><code>import listingBlock from 'auto-core/reducks/blocks/listing';
+import pageBlock from 'auto-core/reducks/blocks/page';
+
+const blocks = {
+    listing: listingBlock,
+    page: pageBlock,
+    ...
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-22"><div><section>
+
+<header><h2>Components</h2></header>
+
+<pre><code>import { connect, ConnectedProps } from
+    'auto-core/reducks';
+
+interface OwnProps { ... };
+type Props = ConnectedProps&lt;typeof blocks&gt; &amp; OwnProps;
+
+class PageListing extends React.Component&lt;Props&gt; {
+    ...
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-23"><div><section>
+
+<header><h2>Components</h2></header>
+
+<pre><code>export default connect(blocks, PageListing)
+    as unknown
+    as React.ComponentClass&lt;OwnProps&gt;;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-24"><div><section>
+
+<header><h2>Async blocks (Lazy?!)</h2></header>
+
+<pre><code>import { asyncBlock } from 'auto-core/reducks';
+
+import indexReviewsBlock from
+    'auto-core/reducks/blocks/indexReviews';
+const blocks = {
+    indexReviews: asyncBlock(indexReviewsBlock),
+};
+type Props = ConnectedProps&lt;typeof blocks&gt;;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-25"><div><section>
+
+<header><h2>Async blocks</h2></header>
+
+<pre><code>connect( blocks, Component, {
+    //  loader: null,
+    loader: &lt;Spinner/&gt;,
+} )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-26"><div><section>
+
+<header><h2>Request</h2></header>
+
+<pre><code>fetchCount() {
+    return this.request( {
+        blockId: BLOCK_ID.LISTING,
+        blockParams: { ... },
+    } )
+        .then( ( result ) =&gt; {
+
+        } );
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-27"><div><section>
+
+<header><h2>Request</h2></header>
+
+<pre><code>this.request( [
+    {
+        blockId: BLOCK_ID.FOO,
+        blockParams: { ... },
+    },
+    {
+        blockId: BLOCK_ID.BAR,
+        blockParams: { ... },
+    },
+    ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-28"><div><section>
+
+<header><h2>Выбираем название:</h2></header>
+
+<ul>
+<li><code>reducks</code></li>
+<li><code>ducks</code></li>
+<li><code>regoose</code></li>
+<li>...</li>
+</ul>
+</section></div></div>
+
+
+    <script src="../core/shower.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-TARGETS = js node jpath yate teya descript descript2 typescript jsetter async-js descript3
+TARGETS = js node jpath yate teya descript descript2 typescript jsetter async-js descript3 reducks
 
 .PHONY : all
 all: $(TARGETS)
