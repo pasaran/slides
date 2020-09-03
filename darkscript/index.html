@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <title>Dark Magic of Typescript</title>
+    <meta charset="utf-8"/>
+    <!--
+    <meta name="viewport" content="width=1274, user-scalable=no"/>
+    -->
+    <link rel="stylesheet" href="../ribbon/styles/screen.css"/>
+    <style>
+    .slide p {
+        margin-bottom: 25px;
+        -display: inline;
+    }
+    .slide li p {
+        display: inline;
+    }
+    .slide pre {
+        margin-bottom: 25px;
+    }
+    .slide>div {
+        padding-top: 60px;
+    }
+    .slide:after {
+        display: none;
+    }
+    .slide pre code {
+        -line-height: 1.7;
+    }
+    .slide pre code:before {
+        content: '';
+    }
+    /*
+    .slide section:before {
+        display: none;
+    }
+    */
+    </style>
+</head>
+
+<body class="list">
+    <header class="caption">
+        <h1>Dark Magic of Typescript</h1>
+    </header>
+
+    <div class="slide" id="slide-1"><div><section>
+
+<header><h2>TypeScript = JavaScript + ???</h2></header>
+
+<pre><code>type Foo = ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-2"><div><section>
+
+<header><h2>Array vs Tuple</h2></header>
+
+<pre><code>function foo( x: string, y: number ) {
+    return [ x, y ];
+}
+
+const [ x, y, z ] = foo( 'hello', 42 );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-3"><div><section>
+
+<header><h2>Array vs Tuple</h2></header>
+
+<pre><code>function foo( x: string, y: number ) {
+    return [ x, y ];
+}
+
+const [ x, y, z ] = foo( 'hello', 42 );
+//  string | number
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-4"><div><section>
+
+<header><h2>Array vs Tuple</h2></header>
+
+<pre><code>let a: Array&lt; string &gt;;
+let i: number;
+
+const x = a[ i ];
+//  string
+</code></pre>
+
+<p><a href="https://github.com/microsoft/TypeScript/issues/13778">#13778</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-5"><div><section>
+
+<header><h2>Array vs Tuple</h2></header>
+
+<pre><code>function foo( x: string, y: number ): [ string, number ] {
+    return [ x, y ];
+}
+
+const [ x, y, z ] = foo( 'hello', 42 );
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-6"><div><section>
+
+<header><h2>Array vs Tuple</h2></header>
+
+<pre><code>function foo( x: string, y: number ) {
+    return [ x, y ] as const; //  TS 3.4
+}
+
+const [ x, y, z ] = foo( 'hello', 42 );
+</code></pre>
+
+<p><a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#const-assertions">TS 3.4</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-7"><div><section>
+
+<header><h2><code>typeof</code></h2></header>
+
+<pre><code>const x = { foo: 'hello', bar: 42 };
+
+type T = typeof x;
+//  { foo: string, bar: number }
+
+let y: T;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-8"><div><section>
+
+<header><h2><code>keyof</code></h2></header>
+
+<pre><code>type Foo = { foo: string, bar: number };
+
+type Keys = keyof Foo; //  It's a type, not an array!
+//  "foo" | "bar"
+
+type Values = Foo[ Keys ];
+//  string | number
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-9"><div><section>
+
+<header><h2><code>keyof</code></h2></header>
+
+<pre><code>type Foo = Array&lt; string &gt;;
+
+type Keys = keyof Foo;
+//  number | "length" | "toString" ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-10"><div><section>
+
+<header><h2><code>keyof</code></h2></header>
+
+<pre><code>type Foo = [ string, number, boolean ];
+
+type Keys = keyof Foo;
+//  number | "0" | "1" | "2" | "length" ...
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-11"><div><section>
+
+<header><h2>Generics</h2></header>
+
+<pre><code>type Pair&lt; T &gt; = { x: T, y: T };
+</code></pre>
+
+<p>Generic isn't a type:</p>
+
+<pre><code>let pair1: Pair; //  ❌
+let pair2: Pair&lt; number &gt;; //  ✅
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-12"><div><section>
+
+<header><h2>Problems</h2></header>
+
+<pre><code>type Block&lt; Params, Result &gt; = ...;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-13"><div><section>
+
+<header><h2>Problems</h2></header>
+
+<pre><code>const b = de.http( ... );
+type B = typeof b;
+//  Block&lt; P, R &gt;
+
+B -&gt; P
+B -&gt; R
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-14"><div><section>
+
+<header><h2>Problems</h2></header>
+
+<pre><code>type B1 = Block&lt; P1, R1 &gt;;
+type B2 = Block&lt; P2, R2 &gt;;
+...
+
+const A = de.array( {
+    block: [ b1, b2, ... ] as const,
+} );
+//  Block&lt; P1 &amp; P2 &amp; ..., [ R1, R2, ... ] &gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-15"><div><section>
+
+<header><h2>Problems</h2></header>
+
+<pre><code>[ B1, B2, ... ] -&gt; P1 &amp; P2 &amp; ...
+[ B1, B2, ... ] -&gt; [ R1, R2, ... ]
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-16"><div><section>
+
+<header><h2>Problems</h2></header>
+
+<pre><code>const O = de.object( {
+    block: { k1: b1, k2: b2, ... },
+} );
+//  Block&lt;
+//      P1 &amp; P2 &amp; ...,
+//      { k1: R1, k2: R2, ... }
+//  &gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-17"><div><section>
+
+<header><h2>Problems</h2></header>
+
+<pre><code>{ k1: B1, k2: B2, ... } -&gt; P1 &amp; P2 &amp; ...
+{ k1: B1, k2: B2, ... } -&gt; { k1: R1, k2: R2, ... }
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-18"><div><section>
+
+<header><h2>Problems</h2></header>
+
+<p>How to:</p>
+
+<ul>
+<li>Invert generic</li>
+<li>Map tuple</li>
+<li>Reduce tuple</li>
+<li>Map interface</li>
+<li>Reduce interface</li>
+<li>...and more</li>
+</ul>
+
+</section></div></div>
+
+    <div class="slide" id="slide-19"><div><section>
+
+<header><h2>Type is a set</h2></header>
+
+<pre><code>let a: string;
+let b: number;
+let c: { x: string };
+
+type A = X | Y;
+type B = X &amp; Y;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-20"><div><section>
+
+<header><h2>Type Y extends type X</h2></header>
+
+<p>Y — subtype (subset) of X:</p>
+
+<pre><code>let x: X; //  x ∈ X
+let y: Y; //  y ∈ Y
+
+x = y; //  ✅ Y ⊂ X, y ∈ Y ⟹ y ∈ X
+y = x; //  ❌ X ⊄ Y
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-21"><div><section>
+
+<header><h2><code>any</code> and <code>never</code></h2></header>
+
+<pre><code>let x: X;
+let a: any;
+let n: never; //  ∅
+a = x; //  ✅  X ⊂ any
+x = n; //  ✅  never ⊂ X
+a = n; //  ✅  never ⊂ any
+n = x; //  ❌  X ⊄ never
+n = a; //  ❌  any ⊄ never
+x = a; //  ✅  any ⊂ X // WTF?!
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-22"><div><section>
+
+<header><h2><code>any</code> and <code>never</code></h2></header>
+
+<pre><code>∅ ⊂ X ⊂ any
+X ⊄ ∅
+</code></pre>
+
+<p>Но:</p>
+
+<pre><code>any ⊂ X
+any ≠ ∅
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-23"><div><section>
+
+<header><h2><code>extends</code></h2></header>
+
+<pre><code>interface X {
+    x: string;
+}
+
+interface Y extends X {
+    y: string;
+}
+
+Y ⊂ X
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-24"><div><section>
+
+<header><h2><code>extends</code></h2></header>
+
+<pre><code>interface X {
+    x: string;
+}
+
+interface Y extends X {
+    x: number;
+}
+
+Y ⊄ X
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-25"><div><section>
+
+<header><h2>Conditional types</h2></header>
+
+<pre><code>type X = A extends B ? C : D;
+</code></pre>
+
+<p><a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#conditional-types">TS 2.8</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-26"><div><section>
+
+<header><h2>Invert generic</h2></header>
+
+<pre><code>type ArrayOf&lt; T &gt; = T extends Array&lt; infer X &gt;
+    ? X : never;
+
+type S = ArrayOf&lt; Array&lt; string &gt; &gt;;
+//  string
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-27"><div><section>
+
+<header><h2>Invert generic</h2></header>
+
+<pre><code>type BlockParams&lt; B &gt; =
+    B extends Block&lt; infer P, infer R &gt; ? P : never;
+
+type BlockResult&lt; B &gt; =
+    B extends Block&lt; infer P, infer R &gt; ? R : never;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-28"><div><section>
+
+<header><h2>Map interface</h2></header>
+
+<pre><code>type O = {
+    k1: Block&lt; P1, R1 &gt;,
+    k2: Block&lt; P2, R2 &gt;,
+    ...
+};
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-29"><div><section>
+
+<header><h2>Map interface</h2></header>
+
+<pre><code>type ObjectResult&lt; O &gt; = {
+    [ K in keyof O ]: BlockResult&lt; O[ K ] &gt;
+};
+
+type R = ObjectResult&lt; O &gt;;
+//  { k1: R1, k2: R2, ... }
+</code></pre>
+
+<p><a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#mapped-types">Mapped types</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-30"><div><section>
+
+<header><h2>Map tuple</h2></header>
+
+<pre><code>type A = [
+    Block&lt; P1, R1 &gt;,
+    Block&lt; P2, R2 &gt;,
+    ...
+];
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-31"><div><section>
+
+<header><h2>Map tuple</h2></header>
+
+<pre><code>type First&lt; T extends Array&lt; any &gt; &gt; =
+    T extends [ infer First, ...infer Rest ]
+    ? First : never;
+
+type Last&lt; T extends Array&lt; any &gt; &gt; =
+    T extends [ ...infer Rest, infer Last ]
+    ? Last : never;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-32"><div><section>
+
+<header><h2>Map tuple</h2></header>
+
+<pre><code>type Head&lt; T extends Array&lt; any &gt; &gt; =
+    T extends [ ...infer Rest, infer Last ]
+    ? Rest : never;
+
+type Tail&lt; T extends Array&lt; any &gt; &gt; =
+    T extends [ infer First, ...infer Rest ]
+    ? Rest : never;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-33"><div><section>
+
+<header><h2><code>extends</code> vs <code>extends</code></h2></header>
+
+<pre><code>type Foo&lt; T extends Array&lt; any &gt; &gt; = Expr&lt; T &gt;;
+
+type Bar&lt; T &gt; = T extends Array&lt; any &gt;
+    ? Expr&lt; T &gt; : never;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-34"><div><section>
+
+<header><h2><code>extends</code> vs <code>extends</code></h2></header>
+
+<pre><code>... Foo&lt; string &gt; ...
+//  assert
+
+... Bar&lt; string &gt; ...
+//  conditional expression
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-35"><div><section>
+
+<header><h2>Recursive types</h2></header>
+
+<pre><code>type Tree = {
+    value: any;
+    left?: Tree;
+    right?: Tree;
+}
+</code></pre>
+
+<p><a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#more-recursive-type-aliases">TS 3.7</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-36"><div><section>
+
+<header><h2>Recursive types</h2></header>
+
+<pre><code>type Json =
+    string |
+    number |
+    boolean |
+    null |
+    { [ property: string ]: Json } |
+    Array&lt; Json &gt;;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-37"><div><section>
+
+<header><h2>Map tuple</h2></header>
+
+<pre><code>type ArrayResult&lt; A &gt; = {
+    0: A,
+    1: [ BlockResult&lt; First&lt; A &gt; &gt; ],
+    2: [
+        BlockResult&lt; First&lt; A &gt; &gt;,
+        ...ArrayResult&lt; Tail&lt; A &gt; &gt;,
+    ],
+}[ A extends [] ? 0 : A extends [ any ] ? 1 : 2 ];
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-38"><div><section>
+
+<header><h2>Map tuple</h2></header>
+
+<pre><code>type ArrayResult&lt; A &gt; =
+    A extends [] ?
+        [] :
+        [
+            BlockResult&lt; First&lt; A &gt; &gt;,
+            ...ArrayResult&lt; Tail&lt; A &gt; &gt;,
+        ];
+</code></pre>
+
+<p><a href="https://github.com/microsoft/TypeScript/pull/40002">TS 4.1?</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-39"><div><section>
+
+<header><h2>Reverse tuple</h2></header>
+
+<pre><code>type ReverseTuple&lt; T extends any[] &gt; &gt; =
+    T extends [] ?
+        T :
+        [ ...Reverse&lt; Tail&lt; T &gt; &gt;, First&lt; T &gt; ];
+
+type T = ReverseTuple&lt; [ A, B, C ]&gt;
+//  [ C, B, A ]
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-40"><div><section>
+
+<header><h2>Tuple to intersection</h2></header>
+
+<pre><code>type TupleToIntersection&lt; T extends any[] &gt; =
+    T extends [] ? never :
+    T extends [ any ] ? First&lt; T &gt; :
+        First&lt; T &gt; &amp; TupleToIntersection&lt; Tail&lt; T &gt; &gt;;
+
+type I = TupleToIntersection&lt; [ A, B, C ] &gt;;
+//  A &amp; B &amp; C
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-41"><div><section>
+
+<header><h2>Tuple to intersection</h2></header>
+
+<pre><code>type ArrayParams&lt; A &gt; =
+    A extends [] ?
+        {} :
+        BlockParams&lt; First&lt; A &gt; &gt; &amp;
+            ArrayParams&lt; Tail&lt; A &gt; &gt;;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-42"><div><section>
+
+<header><h2>Tuple to union</h2></header>
+
+<pre><code>type U = [ A, B, C ][ number ];
+//  A | B | C
+
+type K = keyof [ A, B, C ];
+//  number | "0" | "1" | "2" | "length" | ...
+
+type U = [ A, B, C ][ 0 | 1 | 2 ];
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-43"><div><section>
+
+<header><h2>Distributive conditional types</h2></header>
+
+<pre><code>type Array1&lt; T &gt; = Array&lt; T &gt;;
+
+type Array2&lt; T &gt; = T extends any ? Array&lt; T &gt; : never;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-44"><div><section>
+
+<header><h2>Distributive conditional types</h2></header>
+
+<pre><code>type A1 = Array1&lt; string | number &gt;;
+
+type A2 = Array2&lt; string | number &gt;;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-45"><div><section>
+
+<header><h2>Distributive conditional types</h2></header>
+
+<pre><code>type A1 = Array1&lt; string | number &gt;;
+//  Array&lt; string | number &gt;
+
+type A2 = Array2&lt; string | number &gt;;
+//  Array&lt; string &gt; | Array&lt; number &gt;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-46"><div><section>
+
+<header><h2><code>never</code></h2></header>
+
+<pre><code>type IfNever&lt; T, Y = true, N = false &gt; =
+    [ T ] extends [ never ] ? Y : N;
+
+type X = IfNever&lt; never &gt;;
+//  true
+type Y = IfNever&lt; any &gt;;
+// false
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-47"><div><section>
+
+<header><h2><code>never</code></h2></header>
+
+<pre><code>type IfNever&lt; T, Y = true, N = false &gt; =
+    T extends never ? Y : N;
+
+type X = IfNever&lt; never &gt;;
+//  never ( never === union of zero elements )
+type Y = IfNever&lt; any &gt;;
+//  boolean ( boolean === true | false )
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-48"><div><section>
+
+<header><h2><code>any</code></h2></header>
+
+<pre><code>type IfAny&lt; T &gt; =
+    0 extends ( 1 &amp; T ) ? true : false;
+</code></pre>
+
+<p><a href="https://stackoverflow.com/questions/49927523/disallow-call-with-any/49928360#49928360">Why?!</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-49"><div><section>
+
+<header><h2>Union to intersection</h2></header>
+
+<pre><code>type UnionToIntersection&lt; U &gt; =
+    ( U extends any ?
+        ( k: U ) =&gt; void :
+        never
+    ) extends
+        ( ( k: infer I ) =&gt; void ) ? I : never;
+
+UnionToIntersection&lt; A | B | C &gt;;
+//  A &amp; B &amp; C
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-50"><div><section>
+
+<header><h2>Union to intersection</h2></header>
+
+<pre><code>U extends any ? ( k: U ) =&gt; void : never
+
+U := A | B | C
+
+( k: A ) =&gt; void |
+( k: B ) =&gt; void |
+( k: C ) =&gt; void
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-51"><div><section>
+
+<header><h2>Union to intersection</h2></header>
+
+<pre><code>( k: A ) =&gt; void |
+( k: B ) =&gt; void |
+( k: C ) =&gt; void
+</code></pre>
+
+<p>Это а) функция б) от одного параметра.
+Параметр какого типа можно передать в любую из этих трех функций?</p>
+
+<pre><code>A &amp; B &amp; C
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-52"><div><section>
+
+<header><h2>Type inference in conditional types</h2></header>
+
+<blockquote>
+  <p>Multiple candidates for the same type variable in contra-variant positions
+causes an intersection type to be inferred</p>
+</blockquote>
+
+<p><a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-inference-in-conditional-types">Type inference in conditional types</a>.</p>
+
+<p><a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-6.html#strict-function-types">Strict function types</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-53"><div><section>
+
+<header><h2>Union to overloads</h2></header>
+
+<pre><code>type UnionToOverloads&lt; U &gt; =
+    UnionToIntersection&lt; U extends any ?
+        ( k: U ) =&gt; void : never &gt;;
+
+UnionToOverloads&lt; A | B | C &gt;
+//  ( k: A ) =&gt; void &amp;
+//  ( k: B ) =&gt; void &amp;
+//  ( k: C ) =&gt; void
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-54"><div><section>
+
+<header><h2>Union to overloads</h2></header>
+
+<pre><code>interface {
+    ( k: A ): void;
+    ( k: B ): void;
+    ( k: C ): void;
+}
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-55"><div><section>
+
+<header><h2>Last element of union</h2></header>
+
+<pre><code>type LastOfUnion&lt; U &gt; = UnionToOverloads&lt; U &gt; extends
+    ( ( a: infer X ) =&gt; void )
+        ? X : never;
+
+LastOfUnion&lt; A | B | C &gt;
+//  C
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-56"><div><section>
+
+<header><h2>Last element of union</h2></header>
+
+<blockquote>
+  <p>When inferring from a type with multiple call signatures
+(such as the type of an overloaded function),
+inferences are made from the last signature
+(which, presumably, is the most permissive catch-all case).</p>
+</blockquote>
+
+<p><a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-inference-in-conditional-types">Type inference in conditional types</a>.</p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-57"><div><section>
+
+<header><h2>Union to tuple</h2></header>
+
+<pre><code>type UnionToTuple&lt;
+    U,
+    R extends any[] = [],
+    L = LastOfUnion&lt; U &gt;
+&gt; =
+    [ L ] extends [ never ] ?
+        R :
+        UnionToTuple&lt; Exclude&lt; U, L &gt;, [ L, ...R ] &gt;;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-58"><div><section>
+
+<header><h2>Union to tuple</h2></header>
+
+<pre><code>type UnionToTuple&lt;
+    U,
+    R extends any[] = [],
+    L = LastOfUnion&lt; U &gt;
+&gt; = IfNever&lt;
+    L,
+    R,
+    UnionToTuple&lt; Exclude&lt; U, L &gt;, [ L, ...R ] &gt;
+&gt;;
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-59"><div><section>
+
+<header><h2>Union to tuple</h2></header>
+
+<pre><code>UnionToTuple&lt; A | B | C &gt;
+//  [ A, B, C ]
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-60"><div><section>
+
+<header><h2>Map interface</h2></header>
+
+<pre><code>type Keys&lt; O &gt; = UnionToTuple&lt; keyof O &gt;;
+
+Keys&lt; {
+    a: A,
+    b: B,
+    c: C,
+} &gt;
+//  [ "a", "b", "c" ]
+</code></pre>
+
+</section></div></div>
+
+    <div class="slide" id="slide-61"><div><section>
+
+<header><h2>Is two types are equal</h2></header>
+
+<pre><code>type IsEqual&lt; X, Y &gt; =
+    ( &lt; T &gt;() =&gt; T extends X ? 1 : 2 ) extends
+    ( &lt; T &gt;() =&gt; T extends Y ? 1 : 2 ) ? true : false;
+</code></pre>
+
+<p><a href="https://stackoverflow.com/questions/53807517/how-to-test-if-two-types-are-exactly-the-same">Why?!</a></p>
+
+<p><a href="https://github.com/Microsoft/TypeScript/issues/27024">#27024</a></p>
+
+</section></div></div>
+
+    <div class="slide" id="slide-62"><div><section>
+
+<header><h2>Further reading</h2></header>
+
+<ul>
+<li><p>Changelog</p></li>
+<li><p><a href="https://stackoverflow.com/users/2887218/jcalz">jcalz at SO</a></p></li>
+</ul>
+</section></div></div>
+
+
+    <script src="../core/shower.js"></script>
+</body>
+</html>
